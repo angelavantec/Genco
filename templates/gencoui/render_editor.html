@@ -1,0 +1,426 @@
+{% load staticfiles %}
+<html lang="en" ng-app="StarterApp">
+  <head>
+    <link rel="stylesheet" href="{% static 'gencoui/bower_components/angular-material/angular-material.min.css' %}">
+    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic"> -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.css' %}" /> 
+    <meta name="viewport" content="initial-scale=1" />
+    <script src="{% static 'gencoui/js/jquery.js' %}"></script>
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+        <script src="{% static 'gencoui/js/matchMedia.js' %}" ></script>
+
+    <script type="text/javascript" src="{% static 'gencoui/js/matchMedia.addListener.js' %}" ></script>
+        <script type="text/javascript">
+            var typeScreen  = window.matchMedia('screen'),
+                typePrint   = window.matchMedia('print'),
+                onlyAll     = window.matchMedia('only all'),
+                minWidth    = window.matchMedia('(min-width: 0px)'),
+                minWidth768 = window.matchMedia('(min-width: 768px)'),
+                handleMinWidth768 = function(mql) {
+                    //alert('Browsers that support CSS3 media queries: "(min-width: 768px)" = ' + mql.matches);
+                };
+            // This group should be supported by everything
+            //alert('All browsers: "screen" = ' + typeScreen.matches);
+            //alert('All browsers: "print" = ' + typePrint.matches);
+            // Supports CSS3 media queries such as width/height, device-width/height, orientation but not matchMedia api
+            // See http://caniuse.com/#search=media%20queries and http://caniuse.com/#search=matchMedia
+            // The following browsers should return true to 'onlyAll.matches' and 'minWidth.matches'
+            // IE 9, 
+            // Firefox 3.5 - 5.0, 
+            // Chrome 4.0 - 8.0, 
+            // Safari 4 - 5.0, 
+            // Opera 9.5 - 12.0, 
+            // iOS 3.2 - 4.3, 
+            // Android 2.1 - 2.3
+            // Opera mini 10.0 - 12.0
+            // Blackberry 7.0
+            //alert('Browsers that support CSS3 media queries: "only all" = ' + onlyAll.matches);
+            //alert('Browsers that support CSS3 media queries: "(min-width: 0px)" = ' + minWidth.matches);
+            // Testing addListener support
+            minWidth768.addListener(handleMinWidth768);
+        </script>
+
+    <style type="text/css" media="screen">
+/*     #editor { 
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    .ace_editor { height: 200px; }
+
+    md-tabs md-ink-bar {
+    color: rgb(64, 64, 255);
+    background: rgb(64, 64, 255);
+    }*/
+
+
+    md-sidenav {   
+    max-width:1024px;
+    }
+    
+
+.fabSpeedDialdemoBasicUsage .text-capitalize {
+  text-transform: capitalize;
+}
+
+.fabSpeedDialdemoBasicUsage .md-fab:hover,
+.fabSpeedDialdemoBasicUsage .md-fab.md-focused {
+  background-color: #000 !important;
+}
+
+.fabSpeedDialdemoBasicUsage p.note {
+  font-size: 1.2rem;
+}
+
+.fabSpeedDialdemoBasicUsage .lock-size {
+  min-width: 300px;
+  min-height: 300px;
+  width: 300px;
+  height: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+md-toolbar md-icon {
+    color: rgb(63, 81, 181);
+}
+    </style>  
+
+</head>
+<body  ng-controller="AppCtrl" style="">
+<!--             <div  style="display: inline-block; border-color: #ABABFB; border-radius:30px; border-style: solid; background-color: #ffffff; border-width: 3px;">   
+            <md-button ng-click=""
+              class="md-fab md-mini md-primary" style="text-transform: none">            
+                <md-icon md-svg-src="{% static 'gencoui/img/ic_save_24px.svg' %}"  aria-label="Save"></md-icon>        
+                Render    
+                <md-tooltip>
+                  Save Template
+                </md-tooltip>
+            </md-button>          
+          </div> -->
+    <md-toolbar layout="row" style="top:5px; display: inline-block; border-color: #ABABFB; border-radius:30px; border-style: solid; background-color: #CCCEF1; border-width: 2px;"> 
+      <div class="md-toolbar-tools">
+        <md-button ng-click=""
+              class="md-icon-button" style="text-transform: none">            
+                <md-icon md-svg-src="{% static 'gencoui/img/ic_save_24px.svg' %}"  aria-label="Save" ></md-icon>        
+                
+                <md-tooltip>
+                  Save Template
+                </md-tooltip>
+          </md-button>                       
+      </div>
+      
+    </md-toolbar>
+
+<!-- <div ng-controller="AppCtrl" layout="column"> -->
+
+     
+      
+<!--   <section layout="row" flex> -->
+
+
+<!-- <div ng-controller="AppCtrl" class="fabSpeedDialdemoBasicUsage">
+<md-fab-toolbar md-open="demo.isOpen" count="demo.count" ng-class="demo.selectedAlignment" style="height:56px">
+    <md-fab-trigger class="align-with-text">
+      <md-button aria-label="menu" class="md-fab md-primary">
+        <md-icon md-svg-src="img/icons/menu.svg"></md-icon>
+      </md-button>
+    </md-fab-trigger>
+    <md-toolbar>
+      <md-fab-actions class="md-toolbar-tools">
+        <md-button aria-label="comment" class="md-icon-button">
+          <md-icon md-svg-src="img/icons/ic_comment_24px.svg"></md-icon>
+        </md-button>
+        <md-button aria-label="label" class="md-icon-button">
+          <md-icon md-svg-src="img/icons/ic_label_24px.svg"></md-icon>
+        </md-button>
+        <md-button aria-label="photo" class="md-icon-button">
+          <md-icon md-svg-src="img/icons/ic_photo_24px.svg"></md-icon>
+        </md-button>
+      </md-fab-actions>
+    </md-toolbar>
+  </md-fab-toolbar>
+  <md-content class="md-padding" layout="column">
+    <div layout="row" layout-align="space-around">
+      <div layout="column">
+        <b>Open/Closed</b>
+        <md-radio-group ng-model="demo.isOpen">
+          <md-radio-button ng-value="true">Open</md-radio-button>
+          <md-radio-button ng-value="false">Closed</md-radio-button>
+        </md-radio-group>
+      </div>
+      <div layout="column">
+        <b>Alignment</b>
+        <md-radio-group ng-model="demo.selectedAlignment">
+          <md-radio-button ng-value="'md-left'">Left</md-radio-button>
+          <md-radio-button ng-value="'md-right'">Right</md-radio-button>
+        </md-radio-group>
+      </div>
+    </div>
+  </md-content>
+</div> -->
+<!-- <div layout="row" style="">
+  <div style="display: inline-block">I'm left.</div>
+  <div style="display: inline-block">I'm right.</div>
+</div>
+<div layout="column">
+  <div>I'm above.</div>
+  <div>I'm below.</div>
+</div> -->
+      <div layout="row">
+        <div style="display: inline-block">
+          <md-button id="componentsButton" ng-click="toggleSidenav('left')"  class="md-fab md-mini" style="display:none;">
+            <md-icon md-svg-src="{% static 'gencoui/img/ic_extension_24px.svg' %}"  aria-label="Cake Icon"></md-icon>         
+            <md-tooltip>
+              Componets
+            </md-tooltip>
+          </md-button>
+        </div>    
+        <div id="componentsTree" class="md-whiteframe-z2" style="width:300px; max-width: 300px; background-color:#ffffff; border-radius: 5px;display: inline-block">
+          <md-button id="componentsButtonTree" ng-click="toggleSidenav('left')"  class="md-fab md-mini"  ng-hide="treecollapse">
+            <md-icon md-svg-src="{% static 'gencoui/img/ic_extension_24px.svg' %}"  aria-label="Cake Icon" ></md-icon>
+            <md-tooltip>
+              Componets
+            </md-tooltip>          
+          </md-button>  
+          <div id="jstree" style="padding-left: 16px;" style="width:300px;" >
+            <ul>
+              <li id="component1" data-renderas='component' data-jstree='{"icon":"{% static 'gencoui/img/ic_folder_open_24px.svg' %}"}'>Components1
+                <ul>         
+                  <li id="archive1" data-renderas='archive' data-jstree='{"icon":"{% static 'gencoui/img/ic_description_24px.svg' %}"}' ondblclick="getCode();">OrmFile</li>
+                  <li id="archive2" data-renderas='archive' data-jstree='{"icon":"{% static 'gencoui/img/ic_description_24px.svg' %}"}'>DaoFile</li>
+                  <li id="archive3" data-renderas='archive' data-jstree='{"icon":"{% static 'gencoui/img/ic_description_24px.svg' %}"}'>CtrlFile</li>
+                </ul>
+              </li>
+              <li id="component2" data-renderas='component' data-jstree='{"icon":"{% static 'gencoui/img/ic_folder_open_24px.svg' %}"}' >Components2
+                <ul>
+                  <li id="archive4" data-renderas='archive' data-jstree='{"icon":"{% static 'gencoui/img/ic_description_24px.svg' %}"}'>Android developer center component                 
+                  </li>    
+                </ul>
+              </li>
+            </ul>
+          </div>   
+        </div>
+        <!-- <div>      -->
+        <div layout="column" style="display: inline-block">
+          <div  style="display: inline-block; border-color: #ABABFB; border-radius:30px; border-style: solid; background-color: #ffffff; border-width: 3px;">   
+            <md-button ng-click=""
+              class="md-fab md-mini md-primary">            
+                <md-icon md-svg-src="{% static 'gencoui/img/ic_save_24px.svg' %}"  aria-label="Save"></md-icon>            
+                <md-tooltip>
+                  Save Template
+                </md-tooltip>
+            </md-button>
+            <md-button ng-click="toggleRight()"
+              class="md-raised md-primary md-mini" style="text-transform: none">            
+              <!-- <md-icon md-svg-src="{% static 'gencoui/img/ic_save_24px.svg' %}"></md-icon>               -->
+              Render
+              <md-tooltip>
+                Preview
+              </md-tooltip>
+            </md-button>
+          </div>
+        <!-- <div style="background-color:#black;"> -->
+          
+          <div  style="display: inline-block">   
+            <!-- Tabs Editor -->
+            <md-tabs md-dynamic-height md-border-bottom style="background-color:#ffffff;left: 10; width:90%;" >
+              <md-tab label="orm.java">
+
+                <md-content class="md-padding">             
+                    <!-- <div ui-ace="{ onLoad : aceLoaded, onChange: aceChanged }"></div> -->
+                </md-content>
+              </md-tab>
+              <md-tab label="dao.java">
+                <md-content class="md-padding">
+                  <!-- <div ui-ace="{ onLoad : aceLoaded, onChange: aceChanged }"></div> -->
+                </md-content>
+              </md-tab>
+              <md-tab label="three">
+                <md-content class="md-padding">
+                  <h1 class="md-display-2">Tab Three</h1>
+                  <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus. Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam. Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim scelerisque, finibus commodo lectus.</p>
+                </md-content>
+              </md-tab>
+            </md-tabs>
+          </div>
+         </div> 
+        <!-- </div> -->
+      </div>  <!-- end div row -->
+ <!--      <div flex>
+
+      </div> -->
+
+
+<!--     <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right" style="width:600px">
+      <md-toolbar class="md-theme-light">
+        <h1 class="md-toolbar-tools">Preview</h1>
+      </md-toolbar>
+      <md-content ng-controller="RightCtrl" layout-padding>
+        <form>
+          <md-input-container>
+          </md-input-container>
+        </form>
+        <md-button ng-click="close()" class="md-primary">
+          Close
+        </md-button>
+      </md-content>
+    </md-sidenav> -->
+  <!-- </section> -->
+<!-- </div> -->
+
+    <!-- Angular Material Dependencies -->
+    <script src="{% static 'gencoui/bower_components/angular/angular.min.js' %}"></script>
+    <script src="{% static 'gencoui/bower_components/angular-animate/angular-animate.min.js' %}"></script>
+    <script src="{% static 'gencoui/bower_components/angular-aria/angular-aria.min.js' %}"></script>
+
+    <script src="{% static 'gencoui/bower_components/angular-material/angular-material.min.js' %}"></script>
+
+    <script src="{% static 'gencoui/ace/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static 'gencoui/bower_components/angular-ui-ace/ui-ace.js' %}" ></script>
+
+
+<script>
+    //var editor = ace.edit("editor");
+    //editor.setTheme("ace/theme/monokai");
+    //editor.getSession().setMode("ace/mode/javascript");
+</script>
+
+    <script type="text/javascript">
+    $(function () {
+      // 6 create an instance when the DOM is ready
+      $.jstree.defaults.core.themes.responsive = false;
+      $("#jstree").jstree({
+                "core" : {
+                "check_callback" : function (operation, node, node_parent, node_position, more) {
+                  // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                  // in case of 'rename_node' node_position is filled with the new node name                  
+                  var validator;
+
+                  //console.log(typeof node_parent.data); 
+                  if(typeof node_parent.data == 'undefined'){
+                    return false;
+                  }
+                 // console.log(node.data['renderas']);
+                 // console.log(node_parent.data['renderas']);                 
+                  validator = node_parent.data['renderas'] === 'component' ? true : false;  
+                  if(validator && operation == 'move_node'){
+                    
+                    validator = node.data['renderas'] === 'archive' ? true : false; 
+
+                  } 
+                  return validator;
+                  
+              }
+            },
+            "plugins" : [ "dnd" ]
+            });
+
+    });
+    </script>
+
+    <script type="text/javascript">      
+var app = angular.module('StarterApp', ['ui.ace', 'ngMaterial']);
+      app.controller('AppCtrl', function ($scope, $timeout, $mdSidenav, $mdUtil, $log) {
+        $scope.toggleLeft = buildToggler('left');
+        $scope.toggleRight = buildToggler('right');
+        $scope.treecollapse = false;
+        /**
+         * Build handler to open/close a SideNav; when animation finishes
+         * report completion in console
+         */
+        function buildToggler(navID) {
+          var debounceFn =  $mdUtil.debounce(function(){
+                $mdSidenav(navID)
+                  .toggle()
+                  .then(function () {
+                    $log.debug("toggle " + navID + " is done");
+                  });
+              },300);
+          return debounceFn;
+        }
+
+
+        $scope.aceLoaded = function(_editor) {
+          // Options
+          //_editor.setReadOnly(true);
+          //_editor.getSession();
+          console.log('renderas load');
+        };
+
+        $scope.aceChanged = function() {
+          //
+          console.log('renderas change');
+          //console.log($scope.aceSession.getDocument().getValue(););
+        };
+
+        // $scope.toggleSidenav = function(menuId) {
+        //   $mdSidenav(menuId).toggle();
+        // }; 
+
+        $scope.toggleSidenav = function(menuId) {
+            var tmp = $('#componentsTree').is(':visible');
+           //console.log('seteado ' + $scope.treecollapse);   
+                
+            // $( "#componentsTree" ).toggle("fast", function(){              
+            //  console.log('termina '  + $scope.treecollapse);    
+                
+            // });
+            //$scope.treecollapse = tmp;           
+            $( "#componentsButton" ).toggle();
+            $( "#componentsButtonTree" ).toggle();
+            if(tmp){
+              $( "#componentsTree" ).toggle();    
+            }else{
+              $( "#componentsTree" ).toggle("fast");    
+            }          
+            
+        };  
+
+      })
+
+      
+      app.config(function($mdThemingProvider) {
+        $mdThemingProvider.theme('altTheme').primaryPalette('lime') // specify primary color, all
+                                  // other color intentions will be inherited
+                                  // from default
+        $mdThemingProvider.theme('dark').primaryPalette('lime').dark();                                  
+        //$mdThemingProvider.setDefaultTheme('altTheme');
+      });
+      
+      app.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+        $scope.close = function () {
+          $mdSidenav('left').close()
+            .then(function () {
+              $log.debug("close LEFT is done");
+            });
+        };
+      })
+
+      app.controller('RightCtrl', function ($scope, $timeout, $mdSidenav, $log) {
+        $scope.close = function () {
+          $mdSidenav('right').close()
+            .then(function () {
+              $log.debug("close RIGHT is done");
+            });
+        };
+      });
+
+
+
+    app.controller('AppCtrl', function($scope) {
+      $scope.isOpen = false;
+      $scope.demo = {
+        isOpen: false,
+        count: 0,
+        selectedAlignment: 'md-left'
+      };
+    });
+
+     </script> 
+  </body>
+</html>     

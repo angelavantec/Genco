@@ -1,0 +1,43 @@
+ {% load staticfiles %}
+
+ {% block extrastyle %}
+  <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.css' %}">
+ <script src="{% static 'gencoui/bower_components/webcomponentsjs/webcomponents-lite.js' %}"></script>
+  <link rel="import" href="{% static 'gencoui/bower_components/paper-styles/paper-styles.html' %}">
+  <link rel="import" href="{% static 'gencoui/bower_components/paper-styles/demo-pages.html' %}">
+  <!-- <link rel="import" href="{% static 'gencoui/bower_components/iron-icons/iron-icons.html' %}"> -->
+  <link rel="import" href="{% static 'gencoui/bower_components/paper-button/paper-button.html' %}">
+  {% endblock %}
+
+  {% block content %}
+<h4>Flat</h4>
+      <div class="horizontal-section">
+        <paper-button tabindex="0">button</paper-button>
+        <paper-button tabindex="0" class="colorful">colorful</paper-button>
+        <paper-button tabindex="0" disabled>disabled</paper-button>
+        <paper-button tabindex="0" noink>noink</paper-button>
+        <paper-button tabindex="0" class="colorful custom"><iron-icon icon="check"></iron-icon>ok</paper-button>
+        <paper-button tabindex="0" class="custom"><iron-icon icon="clear"></iron-icon>cancel</paper-button>
+
+      </div>
+
+       <h4>Raised</h4>
+      <div class="horizontal-section">
+        <paper-button tabindex="0" raised>button</paper-button>
+        <paper-button tabindex="0" raised class="colorful">colorful</paper-button>
+        <paper-button tabindex="0" raised disabled>disabled</paper-button>
+        <paper-button tabindex="0" raised noink>noink</paper-button>
+        <paper-button tabindex="0" raised class="colorful custom"><iron-icon icon="check"></iron-icon>ok</paper-button>
+        <paper-button tabindex="0" raised class="custom"><iron-icon icon="clear"></iron-icon>cancel</paper-button>
+      </div>
+
+            <h4>Color</h4>
+      <div class="horizontal-section">
+        <paper-button tabindex="0" class="blue ripple">button</paper-button>
+        <paper-button tabindex="0" class="red ripple">noink</paper-button>
+        <paper-button tabindex="0" class="orange ripple">colorful</paper-button>
+        <paper-button tabindex="0" class="green ripple">colorful</paper-button>
+        <paper-button tabindex="0" class="red ripple"><iron-icon icon="check"></iron-icon>ok</paper-button>
+        <paper-button tabindex="0" class="blue ripple"><iron-icon icon="clear"></iron-icon>cancel</paper-button>
+      </div>
+  {% endblock %}

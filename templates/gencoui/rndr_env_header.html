@@ -1,0 +1,95 @@
+{% load staticfiles %}
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_env.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_env.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+	</script>
+{% endblock %}
+
+
+{% block extrahead %}    
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+    <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                height: main1.outerHeight(),
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
+{% endblock %}
+
+

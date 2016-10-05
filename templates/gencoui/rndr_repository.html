@@ -1,0 +1,531 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+{% block title %}Render Developer{% endblock %}
+
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_repository.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_entities.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_repository.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+
+		$('#example').popover('show');
+	</script>
+{% endblock %}
+
+{% block extrahead %}    
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+    <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                height: main1.outerHeight(),
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
+{% endblock %}
+
+{% block content %}
+<div  id="ctrl_entities" ng-app="app_entities" ng-controller="ctrl_entities" >
+
+	    <div id="sidebar" >
+	    	<span id="position"></span>
+	    	<div id="dragbar"></div>		    
+
+
+	    		
+
+	    		<div class="container-fluid" style="margin-top:20px;">
+
+	    				<!-- <div class="" style="display:inline; margin-left:5%; margin-right: 5%;  margin-bottom:20px;background-color: blue;border-radius: 5px;">
+				            <a class="" href="#">
+				            <img alt="Brand" src="{% static 'gencoui/img/rndr/Generics_saturn.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="40px" data-toggle="modal" data-target="#myModal">
+				            </a>
+	    				</div> -->
+
+					    <div style="display:inline; margin-bottom: 15px; ">				    	
+							<img src="{% static 'gencoui/img/rndr/repository.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"></img>
+					    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Repositories </h4>
+							<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#repository-create-modal" data-placement="bottom" data-tt="tooltip" title="Add Repository" ng-click="new_repository()">
+								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+							</a>
+								<!-- <a style="left:250px" class="action-button shadow animate blue" data-toggle="modal" data-target="#repository-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Repository" ng-click="new_repository()"><span class="glyphicon glyphicon-plus" ></span></a> -->
+					    </div>	
+
+							<div id="rndr"></div>
+				</div>			
+	    	
+		</div>
+
+		<!--main-->
+		<div id="main">
+	    <div style="height: 100%;min-height: 200px; overflow-y: scroll;">
+
+
+	
+	    		{% verbatim %}
+		    	<div class="container-fluid" style="margin-left:5%; margin-right: 5%;  margin-top:20px; margin-bottom:20px; padding-bottom:20px; background-color: white; padding-top: 10px;border-radius: 5px;"
+		    	ng-show="entity_selected.id!=null">
+		    	{% endverbatim %}	
+
+
+	    		<div class="modal-header" style="margin-bottom: 20px">				    	
+					<!-- <img src="{% static 'gencoui/img/rndr/entity.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"> -->
+					<h3> 
+		    		{% verbatim %}
+		    		{{GencoEntidad.nombre}}
+		    		</h3>
+				</div>	
+		    		<p>{{GencoEntidad.descripcion}}</p>
+		    		{% endverbatim %}
+
+		    		<!-- {{form_entitie_definition}} -->
+	  				<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 20px;  background-color:rgba(236, 240, 241, 0.39);">
+						<p style="display:inline;"><b>Fields</b></p>
+						<table class="table table-bordered" style="margin-top: 20px;">
+						  	<thead>
+								<th>Name</th>
+				      			<th>Datatype</th>
+				      			<th>Length</th>
+				      			<th>Key</th>
+				      			<th>Mandatory</th>
+				      			<th>Options</th>
+						  	</thead>
+						  	<tbody >
+						  		<tr style="background-color:rgba(220, 228, 236, 0.36);">
+						      		<td style="min-width:150px">{{form_add_entitydef.nombre}}</td>
+						      		<td style="min-width:150px">{{form_add_entitydef.id_tipodato}}</td>
+						      		<td width="120px">{{form_add_entitydef.longitud}}</td>
+						      		<td>{{form_add_entitydef.es_pk}}</td>
+						      		<td>{{form_add_entitydef.obligatorio}}</td>
+						      		<td style="min-width:75px">		        	 
+						      			<a class="btn icon-btn btn-default" data-placement="bottom" data-tt="tooltip" title="Add Field" ng-click="add_field()"><span class="glyphicon btn-glyphicon glyphicon-floppy-save img-circle" ></span>
+						      			</a>
+						      		</td>
+						      	</tr>							  		
+						      	{% verbatim %}
+								<tr  ng-repeat="field in GencoEntidadFields | filter: {entidad_ref: null}" style="background-color: white;">
+						      		<td>{{field.nombre}}</td>
+						      		<td>{{field.tipodato.nombre}}</td>
+						      		<td>{{field.longitud}}</td>						      	
+						      		<td><span ng-if="(field.es_pk | uppercase) == 'TRUE'" class="glyphicon glyphicon-ok" ></span></td>
+						      		<td><span ng-if="(field.obligatorio  | uppercase) == 'TRUE' " class="glyphicon glyphicon-ok" ></span></td>
+						      		<td>
+							        	<div class="btn-group" role="group" aria-label="...">
+								        	<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#field-edit-modal" data-placement="bottom" data-tt="tooltip" title="Edit Field" ng-click="editField(field)">
+												<span class="glyphicon glyphicon-pencil" ></span>					
+											</a>
+											<a class="btn btn-default btn-xs" ng-click="deleteField(field)" data-placement="bottom" data-tt="tooltip" title="Remove Field">
+												<span class="glyphicon glyphicon-minus" ></span>					
+											</a>
+										</div>
+						      		</td>
+						      	</tr>
+						      	{% endverbatim %}					      
+						  	</tbody>
+						</table> 
+			 		</div>
+
+			 		<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 20px;margin-bottom: 20px; background-color:rgba(236, 240, 241, 0.39);">
+						<p style="display:inline;"><b>Linked Entities  </b></span></p><span class="glyphicon glyphicon-link" ></span>
+						<table class="table table-bordered" style="margin-top: 20px;">
+						  	<thead>
+								<th>Entity</th>			      						      			
+				      			<th>Linked Fields</th>				      			
+				      			<th>Key</th>
+				      			<th>Options</th>
+						  	</thead>
+						  	<tbody >
+						  		<tr style="background-color:rgba(220, 228, 236, 0.36);">
+						  			<!-- <td>{{form_add_entitydef.entidad_ref}}</td> -->
+						  			<td>					              
+					                    <select class="form-control" ng-model="GencoEntidadDefinicion.entidad_ref" ng-change="get_pk_fields()">
+					                    {% for x,y in form_add_entitydef.entidad_ref.field.choices %}
+					                        <option value="{{ x }}" >{{ y }}</option>
+					                    {% endfor %}
+					                    </select> 
+					                </td>
+					                {% verbatim %}
+								    <td><li ng-repeat="pk in pk_fields | filter: {es_pk: true}">{{pk.nombre}} ({{pk.id_tipodato}})</li></td>
+								    {% endverbatim %}				      		
+						      		<td>{{form_add_entitydef.es_pk}}</td>				      		
+						      		<td>		        	 
+										<a class="btn icon-btn btn-default" data-placement="bottom" data-tt="tooltip" title="Add Field" ng-click="add_entity_ref()"><span class="glyphicon btn-glyphicon glyphicon-floppy-save img-circle" ></span>
+						      			</a>
+						      		</td>
+						      	</tr>	
+						  		{% verbatim %}
+								<tr  ng-repeat="field in GencoEntidadFields | filter: greaterThan('entidad_ref', 0)" style="background-color: white;">
+									<td>{{field.entidad.nombre}}</td>
+						      		<td>
+						      			<li ng-repeat="field_ref in field.ref_pk">{{field_ref.nombre}} ({{field_ref.tipodato}})</li>	
+						      		</td>
+						      		<td><span ng-if="(field.es_pk  | uppercase) == 'TRUE' " class="glyphicon glyphicon-ok" ></span></td>						      		
+						      		<td>
+							        	<div class="btn-group" role="group" aria-label="...">								        	
+											<a class="btn btn-default btn-xs" ng-click="deleteField(field)" data-placement="bottom" data-tt="tooltip" title="Remove Link">
+												<span class="glyphicon glyphicon-minus" ></span>					
+											</a>
+										</div>
+						      		</td>
+						      	</tr>
+						      	{% endverbatim %}	
+						  	</tbody>
+						</table> 
+			 		</div>
+
+ 		          	<div class="modal-footer" >
+<!--           				<div style="display:inline">
+          					<a class="btn icon-btn btn-default" ng-click="save_lang()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>
+							</a>
+						</div>
+          				<div style="display:inline">
+          					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>
+						</a>		
+          				</div>	 -->	          								
+					</div>
+
+		
+		    	</div>
+
+
+
+
+	    </div>
+		</div>
+
+<div class="modal fade" id="repository-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Create Repository</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+          		<form ng-submit="save_repository()">
+				{{form_add_repository}}
+				<button type="submit" hidden></button>
+				</form>
+          	</div>
+          	<div class="modal-footer">
+  				<div style="display:inline">
+  					<a class="btn icon-btn btn-default" ng-click="save_repository()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>
+					</a>
+				</div>
+  				<div style="display:inline">
+  					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+					<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>
+				</a>		
+  				</div>		 
+          	</div>
+
+        </div>
+  	</div>
+
+</div>
+
+<div class="modal fade" id="repository-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Edit Repository</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+          		<form ng-submit="update_repository()">
+          		<input type="hidden" ng-model="GencoRepositorio.id_repositorio">
+				{{form_add_repository}}
+				<button type="submit" hidden></button>
+				</form>
+          	</div>
+          	<div class="modal-footer">
+  				<div style="display:inline">
+  					<a class="btn icon-btn btn-default" ng-click="update_repository()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>
+					</a>
+				</div>
+  				<div style="display:inline">
+  					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+					<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>
+				</a>		
+  				</div>	
+          	</div>
+
+        </div>
+  	</div>
+
+</div>
+
+
+<!-- Modal Templates -->
+<div class="modal fade" id="repository-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog modal-sm">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Confirm</h4>
+		    </div>	     
+          	<div class="modal-body">
+          		{% verbatim %}
+          		Do you really want to delete {{repository_selected.nombre}} repository?
+          		{% endverbatim %}
+          	</div>
+          	<div class="modal-footer">
+          		<div style="display:inline">
+	          		<a class="btn icon-btn btn-default" ng-click="delete_repository()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+					</a>
+				</div>
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="entity-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header" >
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" style="display:inline">Create Entity</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+
+          		<form ng-submit="save_entity()">
+				{{form_add_entity}}	
+				<button type="submit" hidden></button>
+				</form>
+
+          	</div>
+          	<div class="modal-footer">
+  				<div style="display:inline">
+  					<a class="btn icon-btn btn-default" ng-click="save_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>
+					</a>
+				</div>
+  				<div style="display:inline">
+  					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+					<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>
+				</a>		
+  				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="entity-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog modal-sm">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Confirm</h4>
+		    </div>	     
+          	<div class="modal-body">
+          		{% verbatim %}
+          		Do you really want to delete {{entity_selected.nombre}} entity?
+          		{% endverbatim %}
+          	</div>
+          	<div class="modal-footer">
+          		<div style="display:inline">
+	          		<a class="btn icon-btn btn-default" ng-click="delete_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+					</a>
+				</div>
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="field-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog modal-sm">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Confirm</h4>
+		    </div>	     
+          	<div class="modal-body">
+          		{% verbatim %}
+          		Do you really want to delete {{field_selected.nombre}} field?
+          		{% endverbatim %}
+          	</div>
+          	<div class="modal-footer">
+          		<div style="display:inline">
+	          		<a class="btn icon-btn btn-default" ng-click="delete_field()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+					</a>
+				</div>
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+	
+
+<div class="modal fade" id="field-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Edit Field</h4>
+		    </div>	     
+          	<div class="modal-body">
+          		<form ng-submit="update_field()">
+						<table class="table table-bordered" style="margin-top: 20px;">
+						  	<thead>
+								<th>Name</th>
+				      			<th>Datatype</th>
+				      			<th>Length</th>
+				      			<th>Key</th>
+				      			<th>Mandatory</th>
+						  	</thead>
+						  	<tbody >
+						  		<tr style="background-color:rgba(220, 228, 236, 0.36);">
+						      		<td style="min-width:150px">{{form_edit_entitydef.nombre}}</td>
+						      		<td style="min-width:150px">{{form_edit_entitydef.id_tipodato}}</td>
+						      		<td width="120px">{{form_edit_entitydef.longitud}}</td>
+						      		<td>{{form_edit_entitydef.es_pk}}</td>
+						      		<td>{{form_edit_entitydef.obligatorio}}</td>
+						  
+						      	</tr>				      
+						  	</tbody>
+						</table> 
+					<button type="submit" hidden></button>
+				</form>
+          	</div>
+          	<div class="modal-footer">
+          		<div style="display:inline">
+	          		<a class="btn icon-btn btn-default" ng-click="update_field()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+					</a>
+				</div>
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+</div>
+
+{% endblock %}

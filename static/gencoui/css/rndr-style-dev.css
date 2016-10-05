@@ -1,0 +1,155 @@
+
+		body,html {
+		    width: 100%;
+		    height: 100%;
+		    padding: 0;
+		    margin: 0;
+		    /*font-family: 'Roboto', sans-serif;*/
+		    font-family: 'Gotham Rounded';
+		}
+
+
+		.icon-btn {
+		    padding: 1px 1px 2px 2px;
+		    border-radius:50px;
+		    padding-right: 2px;
+    		padding-bottom: 3px;
+		}
+
+		.btn-glyphicon {
+		    padding:8px;
+		    background:#ffffff;
+		    color:#777;
+		    /*margin-right:2px;*/
+		}    
+/*
+		 .well {
+		 	     background-color: transparent;
+		 }  */ 
+
+		.btn-circle {	
+			width: 48px;
+			height: 48px;
+		    padding: 10px 10px;
+		    border-radius: 35px;
+		    font-size: 12px;
+		    line-height: 1.33;
+		    text-align: center;
+		}
+
+		
+	    .editor{ 
+	        position: absolute;
+	        //top: 5px;
+	        right: 8px;
+	        bottom: 0;
+	        left: 8px;
+	        min-height: 400px;
+	    }
+
+	    .editor2{ 
+	        position: absolute;
+	       // top: 5px;
+	        right: 30px;
+	        bottom: 0;
+	        left: 8px;
+	        min-height: 400px;
+	    }
+
+	    #rendernav{
+	    	min-height: 400px;
+	    	//background-color:#eee;		    	
+	    }
+
+
+		.navbar-brand {
+		    float: left;
+		    padding: 10px 15px;
+		}
+
+
+		#rendertoolbar{
+	    	//background-color:#2F3129;	
+	    	padding-top:8px;
+	    	height: 48px;	
+	    }
+
+		#main {
+		    float: right;
+		    position: absolute;
+		    height: 100%;
+		    min-height: 200px;
+		    right: 0;
+		    left: 250px;
+		   // background-color:#eee;
+		}
+
+		#sidebar {
+		   
+		    width: 250px;		   
+		    float: left;
+		    position: absolute;
+		    height: 100%;
+		    overflow-y: hidden;
+		   //overflow-x: scroll;
+		    min-height: 400px;
+	    	//background-color:#eee;	    	
+		}
+
+		#dragbar {
+		    background-color: #ccc;
+		    height: 100%;
+		    float: right;
+		    width: 8px;
+		    cursor: col-resize;
+		}
+
+		#ghostbar  {
+		    width: 8px;
+		    background-color: #000;
+		    opacity: 0.5;
+		    position: absolute;
+		    cursor: col-resize;
+		    z-index: 999;
+		    
+		}
+
+		#main1 {
+		    float: right;
+		    position: absolute;
+		    /*min-height: 400px;*/
+		    right: 0;
+		    left: 450px;
+		    /*overflow: scroll;*/
+		   
+		}
+
+		#sidebar1 {
+		    
+		    width: 450px;
+		    float: left;
+		    position: absolute;
+		    height: 100%;
+		    //overflow-y: hidden;
+		    //overflow: scroll;
+		    //min-height: 400px;
+	    	//background-color:#eee;
+		}
+
+		#dragbar1 {
+		    background-color: #777;
+		    height: 100%;
+		    float: right;
+		    width: 8px;
+		    cursor: col-resize;
+		}
+
+		#ghostbar1 {
+		    width: 8px;
+		    background-color: #000;
+		    opacity: 0.5;
+		    position: absolute;
+		    cursor: col-resize;
+		    z-index: 999;
+		}
+

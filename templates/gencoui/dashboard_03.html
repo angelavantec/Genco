@@ -1,0 +1,181 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jsTree test</title>
+    <!-- 2 load the theme CSS file -->
+    <link rel="stylesheet" href="{% static 'gencoui/dist/themes/default/style.min.css' %}" />
+    <!--link rel="stylesheet" type="text/css" href="{% static 'gencoui/style.css' %}" /-->
+    <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.css' %}">
+
+	<style type="text/css" media="screen">
+	    #editor { 
+	        position: absolute;
+	        top: 40px;
+	        right: 0;
+	        bottom: 0;
+	        left: 0;
+	        min-height: 400px;
+	    }
+	    #rendernav{
+	    	min-height: 400px;
+	    	background-color:#eee;	
+	    }
+	    #rendertoolbar{
+	    	background-color:#2F3129;		
+	    }
+	    .rendertoolbar{
+	    	background-color:#2F3129;			
+	    }
+
+	</style>
+
+	<!-- 4 include the jQuery library -->
+    <script src="{% static 'gencoui/js/jquery.js' %}"></script>
+    <!-- 5 include the minified jstree source -->
+    <script src="{% static 'gencoui/dist/jstree.min.js' %}"></script>
+
+
+    <script>
+    
+		 // $(function() {
+
+		 //    if($('.container-fluid').innerWidth()>992)
+		 //    {
+		 //    $( "#rendernav" ).resizable({ maxWidth: $('.container-fluid').innerWidth()-200 });
+		 //    }
+
+		 //    $( window ).resize(function() {  
+		 //    if($('.container-fluid').innerWidth()<=992){
+		 //    $('.col-xs-12').css('width','100%');
+		 //    $( "#rendernav" ).resizable({ disabled: true });
+		 //    }
+		 //    else {
+		 //    if($("#rendernav").innerWidth()===$('.container-fluid').innerWidth())
+		 //    {
+		 //    $('.col-xs-12').css('width','');
+		 //    }
+		 //    $( "#rendernav" ).resizable({ disabled: false, maxWidth: $('.container-fluid').innerWidth()-200 });
+		 //    $('#mirror').css('width', Math.floor($('.container-fluid').innerWidth() -  $( "#rendernav" ).innerWidth()));
+		 //    }         
+		 //    });
+
+		 //  });
+
+    </script>
+
+</head>
+<body>
+
+<div class="container-fluid" style="padding:0;">
+ <div class="row" style="margin:0;">
+
+	    <div id="rendernav" class="col-xs-12 col-md-4">
+		    <button type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+		    <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+		    Files
+		    </button>
+		    <div id="jstree">
+			    <ul>
+			      <li id="component1" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Components1
+			        <ul>         
+			          <li id="archive1" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>OrmFile</li>
+			          <li id="archive2" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>DaoFile</li>
+			          <li id="archive3" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>CtrlFile</li>
+			        </ul>
+			      </li>
+			      <li id="component2" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Components2
+			      </li>
+			    </ul>
+		    </div>
+		</div>
+
+	    <div id="mirror" class="col-xs-12 col-md-8 rendertoolbar">
+			<div id="rendertoolbar">
+				<button type="button" class="btn btn-default" aria-label="Left Align">
+			    	<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+			    	Save
+			    </button>
+				<button type="button" class="btn btn-primary" aria-label="Left Align">
+			    	<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+			    	Render
+			    </button>
+			</div>
+		  	<div  class="panel" style="background-color:#2F3129">
+			
+	  				<div class="panel-body">
+					    <div id="editor">function foo(items) {
+					        var x = "All this is syntax highlighted";
+					        return x;
+					    }</div>
+					</div>	   
+		  	</div>
+	    </div>
+	</div> 
+
+</div>
+
+    <script src="{% static 'gencoui/ace/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/default");
+    editor.getSession().setMode("ace/mode/java");
+    editor.$blockScrolling = Infinity;
+    </script>
+ 
+  <script>
+        
+        $(function () {
+            $("#jstree").jstree({
+                "core" : {
+                "check_callback" : function (operation, node, node_parent, node_position, more) {
+			            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+			            // in case of 'rename_node' node_position is filled with the new node name			            
+			            var validator;
+
+			            //console.log(typeof node_parent.data);	
+			            if(typeof node_parent.data == 'undefined'){
+			            	return false;
+			            }
+			           // console.log(node.data['renderas']);
+			           // console.log(node_parent.data['renderas']);			           
+			            validator = node_parent.data['renderas'] === 'component' ? true : false;	
+			            if(validator && operation == 'move_node'){
+			            	
+			            	validator = node.data['renderas'] === 'archive' ? true : false;	
+
+			            }	
+			            return validator;
+			            
+			        }
+            },
+            "plugins" : [ "dnd" ]
+            });
+        });
+
+
+  $(function () {
+    // 6 create an instance when the DOM is ready
+    $('#jstree').jstree();
+    // 7 bind to events triggered on the tree
+    $('#jstree').on("changed.jstree", function (e, data) {
+      console.log(data.selected);
+
+		$.get( "http://localhost:8000/gencoui/code", function( data ) {
+		  editor.setValue(data);
+		});
+
+      //editor.setValue(data.selected.toString());
+    });
+    // 8 interact with the tree - either way is OK
+    $('button').on('click', function () {
+      $('#jstree').jstree(true).select_node('child_node_1');
+      $('#jstree').jstree('select_node', 'child_node_1');
+      $.jstree.reference('#jstree').select_node('child_node_1');
+    });
+
+  });
+  </script>
+</body>
+</html>

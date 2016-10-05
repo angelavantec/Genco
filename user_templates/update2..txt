@@ -1,0 +1,33 @@
+-- -----------------------------------------------------
+-- Table `genco_directorio_elementos`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `genco_directorio_elementos` ;
+
+CREATE  TABLE IF NOT EXISTS `genco_directorio_elementos` (
+  `id_direlemento` INT NOT NULL AUTO_INCREMENT ,
+  `id_directorio` INT NOT NULL ,
+  `id_plantilla` INT NULL ,
+  `id_archivo` INT NULL ,
+  `creado_por` VARCHAR(30) NOT NULL ,
+  `fecha_creacion` DATETIME NOT NULL ,
+  INDEX `fk_genco_proyecto_plantilla_genco_directorios1` (`id_directorio` ASC) ,
+  INDEX `fk_genco_proyecto_plantilla_genco_plantillas1` (`id_plantilla` ASC) ,
+  PRIMARY KEY (`id_direlemento`) ,
+  INDEX `fk_genco_directorio_plantilla_genco_archivos1` (`id_archivo` ASC) ,
+  CONSTRAINT `fk_genco_proyecto_plantilla_genco_directorios1`
+    FOREIGN KEY (`id_directorio` )
+    REFERENCES `genco_directorios` (`id_directorio` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_genco_proyecto_plantilla_genco_plantillas1`
+    FOREIGN KEY (`id_plantilla` )
+    REFERENCES `genco_plantillas` (`id_plantilla` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_genco_directorio_plantilla_genco_archivos1`
+    FOREIGN KEY (`id_archivo` )
+    REFERENCES `genco_archivos` (`id_archivo` )
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB, 
+COMMENT = 'Asocia plantillas o archivos a un directorio' ;

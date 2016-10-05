@@ -1,0 +1,439 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jsTree test</title>
+    <!-- 2 load the theme CSS file -->
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+    <!--link rel="stylesheet" type="text/css" href="{% static 'gencoui/style.css' %}" /-->
+    <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap-theme.css' %}"> -->
+
+	<style type="text/css" media="screen">
+	    #editor{ 
+	        position: absolute;
+	        //top: 5px;
+	        right: 8px;
+	        bottom: 0;
+	        left: 8px;
+	        min-height: 400px;
+	    }
+
+	    #editor2{ 
+	        position: absolute;
+	       // top: 5px;
+	        right: 30px;
+	        bottom: 0;
+	        left: 8px;
+	        min-height: 400px;
+	    }
+
+	    #rendernav{
+	    	min-height: 400px;
+	    	//background-color:#eee;		    	
+	    }
+
+	  /*  .nav{
+			background-color:#2F3129;	
+	    }*/
+	    
+	  /* tab color */
+		.nav-tabs>li>a {
+		  padding: 5px;
+/*		  margin-right: 1px;	
+		  background-color: #eee; 
+		  border-color: #eee;
+		  color:#fff;
+		  font-size: 14px;		*/ 
+		}
+
+		/* active tab color */
+/*		.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {
+		  color: #fff;
+		  background-color: #5bc0de;
+		  border: 1px solid #5bc0de;
+		}
+*/
+		/* hover tab color */
+/*		.nav-tabs>li>a:hover {
+		  border-color: #5bc0de;
+		  background-color: #5bc0de;
+		}
+*/
+	</style>
+
+	<style>
+		body,html {
+		    width: 100%;
+		    height: 100%;
+		    padding: 0;
+		    margin: 0;
+		}
+
+		#rendertoolbar{
+	    	//background-color:#2F3129;	
+	    	padding-top:8px;
+	    	height: 48px;	
+	    }
+
+		#main {
+		    float: right;
+		    position: absolute;
+		   // height: 90%;
+		    min-height: 400px;
+		    right: 0;
+		    left: 250px;
+		   // background-color:#eee;
+		}
+
+		#sidebar {
+		   
+		    width: 250px;		   
+		    float: left;
+		    position: absolute;
+		    height: 90%;
+		    overflow-y: hidden;
+		   //overflow-x: scroll;
+		    min-height: 400px;
+	    	//background-color:#eee;	    	
+		}
+
+		#dragbar {
+		    background-color: #777;
+		    height: 100%;
+		    float: right;
+		    width: 8px;
+		    cursor: col-resize;
+		}
+
+		#ghostbar  {
+		    width: 8px;
+		    background-color: #000;
+		    opacity: 0.5;
+		    position: absolute;
+		    cursor: col-resize;
+		    z-index: 999;
+		    
+		}
+
+		#main1 {
+		    float: right;
+		    position: absolute;
+		    min-height: 400px;
+		    right: 0;
+		    left: 650px;
+		    overflow: scroll;
+		   
+		}
+
+		#sidebar1 {
+		    
+		    width: 650px;
+		    float: left;
+		    position: absolute;
+		    height: 100%;
+		    //overflow-y: hidden;
+		    //overflow: scroll;
+		    //min-height: 400px;
+	    	//background-color:#eee;
+		}
+
+		#dragbar1 {
+		    background-color: #777;
+		    height: 100%;
+		    float: right;
+		    width: 8px;
+		    cursor: col-resize;
+		}
+
+		#ghostbar1 {
+		    width: 8px;
+		    background-color: #000;
+		    opacity: 0.5;
+		    position: absolute;
+		    cursor: col-resize;
+		    z-index: 999;
+		}
+
+	</style>
+
+	<!-- 4 include the jQuery library -->
+    <script src="{% static 'gencoui/js/jquery.js' %}"></script>
+    <!-- 5 include the minified jstree source -->
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+    <script src="{% static 'gencoui/js/bootstrap.js' %}"></script>
+
+
+    <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                height: main1.outerHeight(),
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
+
+</head>
+<body>
+
+<!-- <div class="container-fluid" style="padding:0;">
+ <div class="row" style="margin:0;"> -->
+ 	<div class="container-fluid">
+ 		<nav class="navbar navbar-default">
+		    <div class="navbar-header" style="width:100%;">
+		      <a class="navbar-brand" href="#" style="color: #428bca;">
+		      	<button type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+					<span class="glyphicon glyphicon glyphicon-th" aria-hidden="true"></span>
+				</button>
+		       	<span class="glyphicon glyphicon-cog" aria-hidden="true" ></span>Render
+		      </a>
+		    </div>
+		</nav>
+	</div>	
+	    <div id="sidebar">
+	    	<span id="position"></span>
+	    	<div id="dragbar"></div>			    
+
+	    		<div class="container-fluid">
+					    <div class="well well-sm">
+					    	
+					       	<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+					        <span class="label label-default" style="max-width: 30px;">Generic Django</span>
+							<button type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+						    	<span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span>
+						    </button>
+						    <button type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+						    	<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						    </button>			
+							
+					    </div>
+					    {{titulo}}	
+					   
+				    <span class="glyphicon glyphicon-folder-open" aria-hidden="true" style="padding-left: 8px;"></span>
+				    <div id="jstree" style="padding-left: 8px;">
+					    <ul>
+					      <li id="component1" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Components1
+					        <ul>         
+					          <li id="archive1" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}' ondblclick="getCode();">OrmFile</li>
+					          <li id="archive2" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>DaoFile</li>
+					          <li id="archive3" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>CtrlFile</li>
+					        </ul>
+					      </li>
+					      <li id="component2" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Components2
+					      </li>
+					    </ul>
+				    </div>
+				</div>   
+	    	
+		</div>
+
+	    <div id="main" >
+	    	<div class="container-fluid">
+				<div id="rendertoolba" class="well well-sm">
+					<button type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+				    	<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+				    </button>
+					<button type="button" class="btn btn-primary btn-sm" aria-label="Left Align">
+				    	<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+				    	Renderize
+				    </button>
+				</div>
+			</div>	
+
+			<div role="tabpanel" >
+
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" style="left:8px;"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+			    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+			  </ul>
+
+			  <!-- Tab panes -->
+			  <div class="tab-content">
+			    <div role="tabpanel" class="tab-pane active" id="home">
+					<div id="sidebar1" >
+					    				<span id="position1"></span>
+							    		<div id="dragbar1"></div>
+							    			<div >
+								    			<div id="editor">function foo(items) {
+				var x = "All this is syntax highlighted";
+				return x;
+				}
+												</div>
+											</div>
+							    	</div>
+							    	<div id="main1" >
+							    						    			<div >
+								    			<div id="editor2">function foo(items) {
+				var x = "All this is syntax highlighted";
+				return x;
+				}
+												</div>
+											</div>
+							    	</div>			
+			    </div>
+			    <div role="tabpanel" class="tab-pane" id="profile">xx</div>
+			  </div>
+
+			</div>
+					
+	
+			
+<script type="text/javascript" src="<your installation path>/tinymce/tinymce.min.js"></script>
+				
+					
+		 
+	
+	    </div>
+<!-- 	</div> 
+
+</div> -->
+
+
+
+
+
+
+    <script src="{% static 'gencoui/ace/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/default");
+    editor.getSession().setMode("ace/mode/java");
+    editor.$blockScrolling = Infinity;
+
+    var editor2 = ace.edit("editor2");
+    editor2.setTheme("ace/theme/default");
+    editor2.getSession().setMode("ace/mode/java");
+    editor2.$blockScrolling = Infinity;
+    </script>
+ 
+  <script>
+        
+        $(function () {
+            $("#jstree").jstree({
+                "core" : {
+                "check_callback" : function (operation, node, node_parent, node_position, more) {
+			            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+			            // in case of 'rename_node' node_position is filled with the new node name			            
+			            var validator;
+
+			            //console.log(typeof node_parent.data);	
+			            if(typeof node_parent.data == 'undefined'){
+			            	return false;
+			            }
+			           // console.log(node.data['renderas']);
+			           // console.log(node_parent.data['renderas']);			           
+			            validator = node_parent.data['renderas'] === 'component' ? true : false;	
+			            if(validator && operation == 'move_node'){
+			            	
+			            	validator = node.data['renderas'] === 'archive' ? true : false;	
+
+			            }	
+			            return validator;
+			            
+			        }
+            },
+            "plugins" : [ "dnd" ]
+            });
+        });
+
+
+	function getCode(){
+		$.get( "http://localhost:8000/gencoui/code", function( data ) {
+		editor.setValue(data);	
+		});	
+	};
+
+
+
+  $(function () {
+    // 6 create an instance when the DOM is ready
+    $('#jstree').jstree();
+    // 7 bind to events triggered on the tree
+    $('#jstree').on("changed.jstree", function (e, data) {
+      console.log(data.selected);
+
+		// $.get( "http://localhost:8000/gencoui/code", function( data ) {
+		//   editor.setValue(data);
+		// });
+
+      //editor.setValue(data.selected.toString());
+    });
+    // 8 interact with the tree - either way is OK
+    $('button').on('click', function () {
+      $('#jstree').jstree(true).select_node('child_node_1');
+      $('#jstree').jstree('select_node', 'child_node_1');
+      $.jstree.reference('#jstree').select_node('child_node_1');
+    });
+
+  });
+  </script>
+</body>
+</html>

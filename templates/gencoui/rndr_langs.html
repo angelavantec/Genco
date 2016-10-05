@@ -1,0 +1,481 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+<!-- {% block title %}Render Developer{% endblock %} -->
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" >
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+        <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                // height: main1.outerHeight(),
+		                height: '90%',
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
+{% endblock %}
+
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_lang.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+
+		$('#example').popover('show');
+	</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid" id="ctrl_lang" ng-app="app_lang" ng-controller="ctrl_lang">
+
+	    <div class="jumbotron">
+
+    			<div class="rndr-head-container" style="margin-bottom:20px">
+					<div class="rndr-title">Languages</div>
+				  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
+				        <p><b>+</b></p>
+				    </button>	  		  		 -->
+		 
+				    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#lang-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Lang" ng-click="new_lang()">
+							<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+					</a>
+					<!-- <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button> -->
+				</div>
+
+	    		<div class="container-fluid">
+
+
+
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingOne">
+				    	
+				      <!-- <h4 class="panel-title"> -->
+				        <p style="display:inline;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				          Own 
+				        </p>
+				      <!-- </h4> -->
+
+				    </div>
+				    {% verbatim %}
+				    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="subheadingOne">
+				      <div class="panel-body">
+
+
+							<div class="panel-group" id="subaccordion" role="tablist" aria-multiselectable="true">
+
+							  <div class="panel panel-default" style="border: 2px solid #ECF0F1;border-radius: 4px;padding: 10px;" ng-repeat="lang in langs">
+							    <div class="panel-heading" role="tab" id="subheadingOne{{$index}}">
+							      <h4 class="panel-title">
+							      	
+							        <p role="button" data-toggle="collapse" data-parent="#subaccordion" href="#subcollapseOne{{$index}}" aria-expanded="true" aria-controls="subcollapseOne{{$index}}" ng-click="load_lang(lang.id_lenguaje)">
+							
+							          	{{lang.nombre}}
+							          	
+							        </p>
+							      </h4>							      
+							    </div>
+							    <div id="subcollapseOne{{$index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="subheadingOne{{$index}}">
+							      <div class="panel-body">
+							      	{% endverbatim %}
+
+										<table class="table table-bordered" style="margin-top: 20px;">
+										  	<tbody >
+										  		{% verbatim %}
+										  		<thead>
+										  			<th colspan="3" width="50%" style="background-color: #ECF0F1;"><p ></p>Datatypes  
+										  				<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#type-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Type" ng-click="new_type(lang.id_lenguaje)">
+															<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+														</a>	
+										  			</th>
+										  			<th style="background-color: #2C3E50;">
+										  				<span style="color:white;">Conversion to </span>
+						   							    <select id="repeatSelect" ng-model="data.repeatSelect" ng-change="getTypesCombos(lang.id_lenguaje)">
+													      	<option ng-repeat="option in data.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }}</option>
+													    </select>
+													     <!-- <tt>repeatSelect = {{data.repeatSelect}}</tt><br/> -->
+													    <div style="display:inline; margin-left:15px;">
+														    <a class="btn icon-btn btn-default" ng-click="save_conversion(lang.id_lenguaje)" data-placement="bottom"data-tt="tooltip" title="Save">
+																<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+															</a>
+															<a class="btn icon-btn btn-default"  ng-click="print()" data-placement="bottom"data-tt="tooltip" title="Undo">
+																<span class="glyphicon btn-glyphicon glyphicon-refresh img-circle" ></span>					
+															</a>
+													    </div> 
+
+										  			</th>
+										  			
+										  		</thead>
+										  			
+										  			<!-- item in <code>{{ types | json }}</code> -->
+													<tr  ng-repeat="type in types">
+											      		<td width="20%" >{{ type.nombre}}</td>						      		
+											      		<td width="15%" >{{ type.descripcion}}</td>
+											      		<td>
+
+											      			<div>
+																<a class="btn btn-sm" data-toggle="modal" data-target="#type-edit-modal" data-placement="bottom" data-tt="tooltip" title="Edit Type" ng-click="edit_type($index)" style="padding: 6px 2px;">
+																	<span class="glyphicon btn-glyphicon glyphicon-pencil" ></span>					
+																</a>
+																<a class="btn btn-sm" data-toggle="modal" data-target="#type-remove-modal" data-placement="bottom" data-tt="tooltip" title="Remove Type" ng-click="remove()" style="padding: 6px 2px;">
+																	<span class="glyphicon btn-glyphicon glyphicon-minus" ></span>					
+																</a>
+											      			</div>
+											      			
+														</td>
+											      		<td>
+											      			<select  ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_tipodato as types_cnv.nombre for types_cnv in types_types">
+											      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
+											      				<option value=''>Select</option>
+													      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
+													    	</select>	
+													    	{{Conversions[$index]}}
+													    	<!-- <tt>repeatSelect = {{type.id_tipodato}}</tt><br/> -->
+											      		</td>
+											      		<!-- <td width="15px">
+															<a class="btn icon-btn btn-default" href="#">
+															<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
+															</a>
+											      		</td> -->
+											      	</tr>
+										      	{% endverbatim %}	
+
+										      	<!-- <tfoot> -->
+									          		
+									  	  		<!-- </tfoot> -->
+									  	  	</tbody>
+
+										</table>
+
+
+
+							      </div>
+							    </div>
+							  </div>		
+
+
+				      		</div>
+					    </div>
+					  </div>
+
+				  </div>			  
+
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingTwo">
+				      <h4 class="panel-title">
+				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+				          Developers
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+				      <div class="panel-body">
+				        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry 
+				      </div>
+				    </div>
+				  </div>
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingThree">
+				      <h4 class="panel-title">
+				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+				          Generics
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+				      <div class="panel-body">
+				        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry 
+				      </div>
+				    </div>
+				  </div>
+
+
+				</div>
+
+
+
+				</div>   
+
+	
+	    </div>
+
+
+
+<!-- Modal Environments -->
+<div class="modal fade" id="type-add-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        {% verbatim %}
+		        <h4 class="modal-title">{{lang_selected}} - add type</h4>
+		        {% endverbatim %}
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   			<input type="hidden" ng-model="GencoTipodato.id_lenguaje" >
+			{{ form_add_type }}
+
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default" ng-click="save_type()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Environments -->
+<div class="modal fade" id="type-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        {% verbatim %}
+		        <h4 class="modal-title">{{lang_selected}} - edit type</h4>
+		        {% endverbatim %}
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   
+			{{ form_add_type }}
+
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default" ng-click="update_type()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Environments -->
+<div class="modal fade" id="lang-add-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Add Lang</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   
+			{{ form_add_lang }}
+
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default" ng-click="save_lang()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+          	
+
+</div>
+{% endblock %}
+
+
+
+{% block extrafooter %}
+ 
+  <script>
+        
+        $(function () {
+            $("#jstree").jstree({
+                "core" : {
+                "check_callback" : function (operation, node, node_parent, node_position, more) {
+			            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+			            // in case of 'rename_node' node_position is filled with the new node name			            
+			            console.log(operation);
+
+			            var validator;
+
+			            //console.log(typeof node_parent.data);	
+			            if(typeof node_parent.data == 'undefined'){
+			            	return false;
+			            }
+			           // console.log(node.data['renderas']);
+			           // console.log(node_parent.data['renderas']);			           
+			            validator = node_parent.data['renderas'] === 'component' ? true : false;	
+			            if(validator && operation == 'move_node'){
+			            	
+			            	validator = node.data['renderas'] === 'archive' ? true : false;	
+
+			            }	
+			            return validator;
+			            
+			        }
+            },
+            "plugins" : [  "contextmenu","dnd" ],
+            "contextmenu": {
+		        "items": function ($node) {
+		            return {
+		                "Create": {
+		                    "label": "Add Template",
+		                    "action": function (obj) {
+		                        // this.create(obj);
+		                        //alert('render');
+		                        getCode();
+		                    }
+		                },
+		                "Rename": {
+		                    "label": "Rename Template",
+		                    "action": function (data) {
+		                       // this.rename(obj);
+		                       	var inst = $.jstree.reference(data.reference),
+								obj = inst.get_node(data.reference);
+								inst.edit(obj);
+								console.log(data);
+		                    }
+		                },
+		                "Delete": {
+		                    "label": "Delete Template",
+		                    "action": function (obj) {
+		                        this.remove(obj);
+		                    }
+		                }
+		            };
+		        }
+		    }
+            });
+        });
+
+
+  $(function () {
+    // 6 create an instance when the DOM is ready
+    $('#jstree').jstree();
+    $('#jstree1').jstree();
+    $('#jstree2').jstree();
+    // 7 bind to events triggered on the tree
+    $('#jstree').on("changed.jstree", function (e, data) {
+      // console.log(data.selected);
+
+		// $.get( "http://localhost:8000/gencoui/code", function( data ) {
+		//   editor.setValue(data);
+		// });
+
+      //editor.setValue(data.selected.toString());
+    });
+    // 8 interact with the tree - either way is OK
+    // $('button').on('click', function () {
+    //   $('#jstree').jstree(true).select_node('child_node_1');
+    //   $('#jstree').jstree('select_node', 'child_node_1');
+    //   $.jstree.reference('#jstree').select_node('child_node_1');
+    // });
+
+  });
+
+
+
+
+	function getConversion(){
+		angular.element($("#ctrl_lang")).scope().print();
+		console.log('render');
+
+	};
+
+
+  </script>
+
+{% endblock %}
+

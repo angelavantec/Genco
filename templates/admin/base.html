@@ -1,0 +1,69 @@
+{% load i18n admin_static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %} >
+<head>
+<title>{% block title %}{% endblock %}</title>
+
+{% block defaultstyle %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.min.flatly.css' %}">
+    <!-- <link rel="stylesheet" href="https://cdn.rawgit.com/konpa/devicon/master/devicon.min.css"> -->
+
+    <!-- <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.css' %}"> -->
+    <!-- <link rel="stylesheet" href="{% static 'gencoui/css/bootflat/css/bootflat.min.css' %}">     -->
+    <!-- <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'> -->
+
+<style> 
+@font-face{
+    font-family:"Gotham Rounded";
+    /*src:url("http://www.myfontfree.com/data/502/g/gotham_rounded/GothamRoundedMedium_21022.ttf");*/
+    src:url("{% static 'gencoui/fonts/gotham_rounded/GothamRoundedBook_21018.ttf' %}");
+}
+
+body {
+   font-family: "Gotham Rounded";
+
+}
+</style> 
+
+{% endblock %}
+
+{% block defaultjs %}
+    <script src="{% static 'gencoui/js/jquery.js' %}"></script>
+    <script src="{% static 'gencoui/js/bootstrap.js' %}"></script>
+<!--     // <script src="{% static 'gencoui/css/bootflat/js/icheck.min.js' %}"></script>
+    // <script src="{% static 'gencoui/css/bootflat/js/jquery.fs.selecter.min.js' %}"></script>
+    // <script src="{% static 'gencoui/css/bootflat/js/jquery.fs.stepper.min.js' %}"></script> -->
+{% endblock %}
+
+{% block extrastyle %}{% endblock %}
+
+{% block extrajs %}{% endblock %}
+
+{% block extrahead %}{% endblock %}
+
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+{% load i18n %}
+
+<body >
+       
+
+
+        {% block content %}
+        {{ content }}
+        {% endblock %}
+
+    {% block footer %}<div id="footer"></div>{% endblock %}
+
+
+
+{% block extrafooter %}
+{% endblock %}
+
+</body>
+</html>

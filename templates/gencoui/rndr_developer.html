@@ -1,0 +1,411 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>Render Dashboard</title>
+	<!-- <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.min.flatly.css' %}"> -->
+	<link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.css' %}">
+	<!-- <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'> -->
+	<link href='https://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+	<style type="text/css">
+		body {
+	        /*font-family: 'Roboto', sans-serif;*/
+	        font-family: 'Muli', sans-serif;
+	        /*font-size: 48px;*/
+	      }
+
+		.rndr-button-container {
+			text-align:center;
+			padding-top: 30px; 
+		    padding-bottom: 30px;
+		}		
+
+		.btn-circle-lg {	
+			width: 70px;
+			height: 70px;
+		    padding: 10px 16px;
+		    border-radius: 35px;
+		    font-size: 12px;
+		    line-height: 1.33;
+		    text-align: center;  
+		    margin-right: 10px;
+		    margin-left: 10px;  
+		}
+
+		.btn-circle {	
+			width: 48px;
+			height: 48px;
+		    padding: 10px 10px;
+		    border-radius: 35px;
+		    font-size: 12px;
+		    line-height: 1.33;
+		    text-align: center;
+		}
+
+		.btn-circle-sm {	
+			width: 24px;
+			height: 24px;
+		    /*padding: 10px 10px;*/
+		    border-radius: 35px;
+		    font-size: 12px;
+		    line-height: 1.33;
+		    text-align: center;
+		}
+
+		.timeline-panel {
+			background-color: #ffffff;
+		    float: left;
+		    position: relative;
+		    width: 46%;
+		    padding: 20px;
+		    border: 1px solid #d4d4d4;
+		    border-radius: 2px;
+		    -webkit-box-shadow: 0 1px 6px rgba(0,0,0,0.175);
+		    box-shadow: 0 1px 6px rgba(0,0,0,0.175);
+		}
+
+		.timeline-panel:after {
+		    content: " ";
+		    display: inline-block;
+		    position: absolute;
+		    top: 27px;
+		    right: -14px;
+		    border-top: 14px solid transparent;
+		    border-right: 0 solid #fff;
+		    border-bottom: 14px solid transparent;
+		    border-left: 14px solid #fff;
+		}
+
+
+		.timeline-panel:before {
+		    content: " ";
+		    display: inline-block;
+		    position: absolute;
+		    top: 26px;
+		    right: -15px;
+		    border-top: 15px solid transparent;
+		    border-right: 0 solid #ccc;
+		    border-bottom: 15px solid transparent;
+		    border-left: 15px solid #ccc;
+		}
+
+		.rndr-head-container {
+		    /*min-height: 10em;
+		    display: table-cell;
+		    vertical-align: middle */
+		    height: 60px;
+			display: flex;
+		  	align-items: center
+		}
+
+		.btn-glyphicon {
+		    padding:8px;
+		    background:#ffffff;
+		    color:#777;
+		    /*margin-right:2px;*/
+		}
+
+		.icon-btn {
+		    padding: 1px 1px 2px 2px;
+		    border-radius:50px;
+		    padding-right: 2px;
+    		padding-bottom: 3px;
+		}
+
+
+		.btn-glyphicon-text {
+		    padding:8px;
+		    background:#ffffff;
+		    margin-right:4px;
+		}
+
+		.icon-btn-text {
+		    padding: 1px 15px 3px 2px;
+		    border-radius:50px;
+		}
+
+		.jumbotron {
+
+			background-color: transparent;
+			border-style: solid;
+			border-width: 1px;
+			border-color: #CCCCCC;
+			box-shadow: 5px 5px 5px #888888;
+			margin-bottom: 50px;
+
+		}
+
+		body{
+			/*background-color: #eee;*/
+		}
+
+	</style>
+</head>
+
+<body id="page-top" class="index" >
+
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+	<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <!-- <a class="navbar-brand" href="#">Rndr</a> -->
+
+		  	<div class="dropdown">
+			  	<button class="btn btn-default dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+			    R
+			  	</button>
+			  	<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				    <li><a href="#">Builds</a></li>
+				    <li><a href="#">Environment</a></li>
+				    <li><a href="#">Entities</a></li>
+				    <li role="separator" class="divider"></li>
+				    <li><a href="#">Langs</a></li>
+			  	</ul>
+			</div>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav navbar-right">
+<!-- 				<li>
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+				</li>
+				<li>                    
+					<p>Angel Barrios</p>                    
+				</li> -->
+				<li>
+					<div class="dropdown">
+					  	<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					  	<span class="caret"></span>
+					  	<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+					    Angel Barrios		    
+					  	</button>
+					  	<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						    <li><a href="#">Profile</a></li>						    
+						    <li role="separator" class="divider"></li>
+						    <li>
+						    	<div>
+						    		<label class="radio-inline">
+									  <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">Group A
+									</label>
+									<label class="radio-inline">
+									  <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">Group B
+									</label>									
+							    	</div>								
+						    </li>
+						    <li role="separator" class="divider"></li>
+						    <li><a href="#">Logout</a></li>  
+					  	</ul>
+					</div>	
+				</li>
+	  			<!-- <li>
+					<select class="form-control">
+						<option>Group A</option>
+						<option>Group B</option>
+					</select>
+				</li>    --> 
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</div><!-- /.container-fluid -->
+
+</nav>
+<div class="container-fluid">
+
+	<div class="jumbotron">
+		<div class="rndr-head-container">
+			<h2 style="display:inline;margin-top: 10px;margin-right:10px">Environment </h2>
+		  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
+		        <p><b>+</b></p>
+		    </button>	  		  		 -->
+
+		    <a class="btn icon-btn btn-default" href="#">
+					<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+			</a>
+		</div>
+    	<div class="rndr-button-container">
+    		<!-- <img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval"> -->
+    		<!-- <a class="btn icon-btn btn-primary" href="#">
+				<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+				Like
+			</a> -->
+		  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
+		  		<img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval">
+		  		ZK
+	        </button>
+	        <button type="button" class="btn btn-default btn-lg  btn-circle">	  		
+	        	GWT
+	        </button>
+	        <button type="button" class="btn btn-default btn-lg  btn-circle">
+	        	LAMP
+	        </button> -->
+		</div>   
+
+
+
+
+			<div role="tabpanel" >
+
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" style="left:8px;"><a href="#gwt" aria-controls="gwt" role="tab" data-toggle="tab" ><h3 style="display:inline;"><span class="label label-primary">GWT</span></h3></a></li>
+			    <li role="presentation"><a href="#zk" aria-controls="zk" role="tab" data-toggle="tab"><h3 style="display:inline;"><span class="label label-primary">ZK</span></h3></a></li>
+			  </ul>
+
+			  <!-- Tab panes -->
+			<div class="tab-content">
+			    <div role="tabpanel" class="tab-pane active" id="gwt">
+
+  					<div class="panel panel-default" style="border-top:transparent; border-radius:0px">
+				  		<!-- Default panel contents -->
+
+				  		<!-- <div class="panel-heading">			
+				  		</div> -->
+			  							
+						<div class="panel-body"> 
+							<div class="well">
+				  				
+								<button type="button" class="btn btn-default btn-lg  btn-circle icon-btn">
+									Dev
+				        		</button>
+				        		<button type="button" class="btn btn-default btn-lg  btn-circle">
+				        			Build
+				        		</button>
+				  			</div>
+							<!-- <p style="display:inline;">Langs</p> -->
+							<h4 style="display:inline;"><span class="label label-default">Langs</span></h4>
+				  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+				        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+				        	 --></button>
+
+				        	<a class="btn icon-btn btn-default" href="#">
+								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+							</a>
+
+							<table class="table table-bordered" style="margin-top: 20px;">
+							  	<!-- <thead>
+							    	<tr style="margin-top:10px">
+							      		<th></th>
+							    	</tr>
+							  	</thead> -->
+							  	<tbody>
+							    	<tr>
+							      		<td>Java</td>
+							      		<td><button type="button" class="btn btn-success btn-sm">Types</button></td>
+							    	</tr>
+							    	<tr>
+							      		<td>UI Binder</td>
+							      		<td><button type="button" class="btn btn-success btn-sm">Types</button></td>
+							    	</tr>
+						  	  	</tbody>
+							</table> 
+							<div style="text-align:center">
+								<ul class="pagination" >
+								  <li class="disabled"><a href="#">&laquo;</a></li>
+								  <li class="active"><a href="#">1</a></li>
+								  <li><a href="#">2</a></li>
+								  <li><a href="#">3</a></li>
+								  <li><a href="#">4</a></li>
+								  <li><a href="#">5</a></li>
+								  <li><a href="#">&raquo;</a></li>
+								</ul>
+							</div>	
+						</div>	
+
+					</div>		
+				</div>	
+				<div role="tabpanel" class="tab-pane" id="zk">		
+  					<div class="panel panel-default" style="border-top:transparent; border-radius:0px">
+				  		<!-- Default panel contents -->
+
+				  		<!-- <div class="panel-heading">			
+				  		</div> -->
+			  							
+						<div class="panel-body"> 
+							<div class="well">
+				  				
+								<button type="button" class="btn btn-default btn-lg  btn-circle icon-btn">
+									Dev
+				        		</button>
+				        		<button type="button" class="btn btn-default btn-lg  btn-circle">
+				        			Build
+				        		</button>
+				  			</div>
+							<!-- <p style="display:inline;">Langs</p> -->
+							<h4 style="display:inline;"><span class="label label-default">Langs</span></h4>
+				  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+				        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+				        	 --></button>
+
+				        	<a class="btn icon-btn btn-default" href="#">
+								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+							</a>
+
+							<table class="table table-bordered" style="margin-top: 20px;">
+							  	<!-- <thead>
+							    	<tr style="margin-top:10px">
+							      		<th></th>
+							    	</tr>
+							  	</thead> -->
+							  	<tbody>
+							    	<tr>
+							      		<td>Java</td>
+							      		<td><button type="button" class="btn btn-success btn-sm">Types</button></td>
+							    	</tr>
+							    	<tr>
+							      		<td>Zul</td>
+							      		<td><button type="button" class="btn btn-success btn-sm">Types</button></td>
+							    	</tr>
+						  	  	</tbody>
+							</table> 
+							<div style="text-align:center">
+								<ul class="pagination" >
+								  <li class="disabled"><a href="#">&laquo;</a></li>
+								  <li class="active"><a href="#">1</a></li>
+								  <li><a href="#">2</a></li>
+								  <li><a href="#">3</a></li>
+								  <li><a href="#">4</a></li>
+								  <li><a href="#">5</a></li>
+								  <li><a href="#">&raquo;</a></li>
+								</ul>
+							</div>	
+						</div>	
+
+					</div>
+
+				</div>
+
+			</div>
+	<!-- 		    <div role="tabpanel" class="tab-pane" id="profile">xx</div>
+			  </div> -->
+
+			</div>
+	    
+	</div>
+
+</div>
+
+<div class="container-fluid">
+
+</div>
+
+<!-- jQuery -->
+<script src="{% static 'gencoui/js/jquery.js' %}"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="{% static 'gencoui/js/bootstrap.js' %}"></script>
+
+</body>
+</html>

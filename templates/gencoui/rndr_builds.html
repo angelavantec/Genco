@@ -1,0 +1,475 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+{% block title %}Render Developer{% endblock %}
+
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_builds.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_editor.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_builds.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+
+		$('#example').popover('show');
+	</script>
+{% endblock %}
+
+{% block extrahead %}    
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+    <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                height: main1.outerHeight(),
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
+{% endblock %}
+
+
+
+{% block content %}
+<div id="ctrl_editor" ng-app="app_editor" data-ng-init="init()" ng-controller="ctrl_editor" >
+	<input hidden id="key_module" value="{{entorno.id_entorno}}"/>
+	<input hidden id="key_project" value="{{proyecto.id_proyecto}}"/>
+	<div class="container-fluid">
+		<div class="well well-sm" style="margin-top:70px;">
+			<img src="{% static 'gencoui/img/devicon/icons/'|add:entorno.icono %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px">
+			{{entorno.nombre}} - {{proyecto.nombre}}</img>
+		</div>
+	
+
+	    <!-- <div class="" height="90%"> -->
+			    
+	    		<div class="col-sm-4" style="margin-top:20px; border-style:solid; min-height:300px; border-width:1px; border-color:#ccc;">
+
+
+				    <div style="margin-top: 15px;">
+				    	
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Components </h4>
+	
+				    </div>	
+
+				    <div id="jstree">
+
+
+
+				    </div>
+				</div>  
+
+				<div class="col-sm-4" style="margin-top:20px; border-style:solid; min-height:300px; border-width:1px; border-color:#ccc; border-left: none; border-right:none">
+
+
+				    <div style="margin-top: 15px;">
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Folders </h4>
+				    	<a class="btn btn-success btn-xs" href="#" data-placement="bottom" data-tt="tooltip" title="Refresh the builds tree " ng-click="printTree()">
+							Build
+							<span class="glyphicon glyphicon-chevron-right" aria-hidden="true">				
+						</a>
+	
+				    </div>	
+
+				    <div id="jstreeFolders"></div>
+
+				</div>
+
+				<div class="col-sm-4" style="margin-top:20px; border-style:solid; min-height:300px; border-width:1px; border-color:#ccc">
+
+
+				    <div style="margin-top: 15px;">
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Build </h4>
+						<a class="btn btn-success btn-xs" data-placement="bottom" data-tt="tooltip" title="Download files" ng-click="printTree()">
+							Download
+							<span class="glyphicon glyphicon-cloud-download" aria-hidden="true">				
+						</a>
+				    </div>	
+
+				    <div id="jstreeBuilds"></div>
+
+				</div>   
+	    	
+		<!-- </div> -->
+
+	</div>
+
+
+
+    <!-- Modal Templates -->
+	<div class="modal fade" id="file-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+			     {% verbatim %}
+		        <h4 class="modal-title">{{component_selected.nombre}} - add File</h4>
+		        {% endverbatim %}
+			    </div>
+	          <!-- <div class="arrow-up"></div> -->
+	          	<div class="modal-body">
+	   				<form ng-submit="save_file()">
+				   			{{ form_create_file.nombre.label_tag }}
+							{{ form_create_file.nombre }}
+							{{ form_create_file.descripcion.label_tag }}
+							{{ form_create_file.descripcion }}
+							{{ form_create_file.upload.label_tag }}
+							{{ form_create_file.upload }}
+							<input type="file" file-model="myFile"/>
+    						<button ng-click="uploadFile()">upload me</button>
+						<button type="submit" hidden></button>
+					</form>
+
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="save_file()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+						</a>
+					</div>	
+					<div style="display:inline">	
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+
+    <!-- Modal Templates -->
+	<div class="modal fade" id="file-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+			     {% verbatim %}
+		        <h4 class="modal-title">{{component_selected.nombre}} - edit Template</h4>
+		        {% endverbatim %}
+			    </div>
+	          <!-- <div class="arrow-up"></div> -->
+	          	<div class="modal-body">
+	   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
+	   			{{ form_create_template.nombre.label_tag }}
+				{{ form_create_template.nombre }}
+				{{ form_create_template.descripcion.label_tag }}
+				{{ form_create_template.descripcion }}
+				{% verbatim %}
+				<label for="repeatSelectLang">Lenguaje: </label>
+				<select id="repeatSelectLang" ng-model="dataLang.repeatSelectLang" class="form-control">
+			      	<option ng-repeat="option in dataLang.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }} {{ option.version }}</option>
+			    </select>	
+				{% endverbatim %}
+				{{ form_create_template.id_lenguajeprocesador.label_tag }}
+				{{ form_create_template.id_lenguajeprocesador }}
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="update_template()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+						</a>
+					</div>	
+					<div style="display:inline">	
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+
+	    <!-- Modal Templates -->
+	<div class="modal fade" id="folder-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">{{entorno.nombre}} - add Component</h4>
+			    </div>	          
+	          	<div class="modal-body">				
+	          		<form ng-submit="save_directorio()">
+						{{ form_create_folder }}
+						<button type="submit" hidden></button>
+					</form>
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="save_directorio()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">	
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+
+	    <!-- Modal Templates -->
+	<div class="modal fade" id="folder-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">{{entorno.nombre}} - edit Component</h4>
+			    </div>
+	          <!-- <div class="arrow-up"></div> -->
+	          	<div class="modal-body">
+	   				<form ng-submit="update_directorio()">
+						{{ form_create_folder }}
+						<button type="submit" hidden></button>
+					</form>
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="update_directorio()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+
+
+	    <!-- Modal Templates -->
+	<div class="modal fade" id="folder-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog modal-sm">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Confirm</h4>
+			    </div>	     
+	          	<div class="modal-body">
+	          		{% verbatim %}
+	          		Do you really want to delete {{component_selected.nombre}} componenent?
+	          		{% endverbatim %}
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="delete_component()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+
+
+		    <!-- Modal Templates -->
+	<div class="modal fade" id="file-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog modal-sm">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Confirm</h4>
+			    </div>	     
+	          	<div class="modal-body">
+	          		{% verbatim %}
+	          		Do you really want to delete {{template_selected.nombre}} template?
+	          		{% endverbatim %}
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="delete_template()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+
+</div>
+
+{% endblock %}
+
+
+
+{% block extrafooter %}
+
+
+    <script src="{% static 'gencoui/ace/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    
+    <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/eclipse");
+    editor.getSession().setMode("ace/mode/python");
+    editor.$blockScrolling = Infinity;
+
+    var editor_preview = ace.edit("editor_preview");
+    editor_preview.getSession().setMode("ace/mode/html");
+    editor_preview.$blockScrolling = Infinity;
+
+    // var editor2 = ace.edit("editor2");
+    // //editor2.setTheme("ace/theme/default");
+    // editor2.getSession().setMode("ace/mode/java");
+    // editor2.$blockScrolling = Infinity;
+
+    // var editor3 = ace.edit("editor3");
+    // editor3.setTheme("ace/theme/default");
+    // editor3.getSession().setMode("ace/mode/java");
+    // editor3.$blockScrolling = Infinity;
+    </script>
+ 
+  <script>
+        
+        $(function () {
+
+
+			
+		 //      $.get( "http://localhost:8000/gencoui/tree/1", function( data ) {
+	
+			// console.log(data.dirs);
+	  //       $('#jstreeBuilds').jstree(true).settings.core.data = data.dirs;
+
+
+	        
+   //      	$('#jstreeBuilds').jstree(true).refresh();
+			// });	
+		    
+	    });
+
+
+	function getCode(){
+		$.get( "http://localhost:8000/gencoui/tree/1", function( data ) {
+		//editor.setValue(data);	
+			console.log(data);
+	        $('#jstreeBuilds').jstree(true).settings.core.data = data;
+        	$('#jstreeBuilds').jstree(true).refresh();
+		});	
+	};
+
+
+	function openFile(id_template){
+		angular.element($("#ctrl_editor")).scope().addTab(id_template);
+		angular.element($("#ctrl_editor")).scope().$apply();
+		console.log(id_template);
+
+	};
+
+
+  </script>
+
+{% endblock %}
+

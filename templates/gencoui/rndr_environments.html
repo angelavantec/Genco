@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+{% block title %}Render Developer{% endblock %}
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+{% include "gencoui/rndr_env_header.html" %}
+{% endblock %}
+
+{% block content %}
+{% include "gencoui/rndr_env.html" %}
+{% endblock %}

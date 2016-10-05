@@ -1,0 +1,77 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+{% block title %}Render Developer{% endblock %}
+
+{% block extrastyle %}
+  <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
+  <link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+  <style type="text/css">
+    body {
+        background-color: #ccc;
+    }
+  </style>
+{% endblock %}
+
+{% block extrajs %}
+  <script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+  <script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+  <script type="text/javascript">
+    $(function () {
+      $('[data-tt="tooltip"]').tooltip()
+    });
+
+    $('#example').popover('show');
+  </script>
+{% endblock %}
+
+{% block extrahead %}
+{% include "gencoui/rndr_env_header.html" %}
+{% endblock %}
+
+
+{% block content %}
+<div  id="ctrl_entities" style="background-color:#eee; width: 98%">
+
+<div class="row" style="padding-top: 85px;">
+  <div class="col-md-2"></div>
+  <div class="col-md-5">
+    <div class="panel panel-default">
+      <div class="panel-body">{% include "gencoui/rndr_builds_search.html" %}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default" style="border: none ">
+        <div class="panel-body" style="background-color: rgb(165,199,236); ">
+          <h2 style="color: #202077;">Langs</h2>
+          Panel content
+        </div>
+        <div class="panel-footer" style="background-color: white">Panel footer</div>
+    </div>    
+    <div class="panel panel-default" style="border: none ">
+        <div class="panel-body" style="background-color: rgb(250,221,127); ">
+          <h2 style="color: #202077;">Entities</h2>
+          Panel content
+        </div>
+        <div class="panel-footer" style="background-color: white">Panel footer</div>
+    </div>    
+  </div>
+  <div class="col-md-2"></div>
+</div>
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-5"><div class="panel panel-default"><div class="panel-body">{% include "gencoui/rndr_env.html" %}</div></div></div>
+  <div class="col-md-3">
+     <div class="panel panel-default" style="border: none ">
+        <div class="panel-body" style="background-color: rgb(159,222,203); ">
+          <h2 style="color: #202077;">Langs</h2>
+          Panel content
+        </div>
+        <div class="panel-footer" style="background-color: white">Panel footer</div>
+    </div>
+  </div>
+  <div class="col-md-2"></div>
+</div>
+
+</div>
+{% endblock %}

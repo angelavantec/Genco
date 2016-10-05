@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<svg width="134" height="134" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+ <g display="inline">
+  <title>Layer 1</title>
+  <path fill="#007fff" stroke="#00007f" stroke-width="5" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m2.5,11.5c0,-4.890411 4.109589,-9 9,-9l111.333328,0c4.890411,0 9,4.109589 9,9l0,111.333328c0,4.890411 -4.109589,9 -9,9l-111.333328,0c-4.890411,0 -9,-4.109589 -9,-9l0,-111.333328z" id="svg_4"/>
+  <text font-style="normal" font-weight="bold" stroke="#00007f" transform="matrix(2.7924366300962333,0,0,2.4358973503112793,-272.43804822833147,-414.9743342399597) " xml:space="preserve" text-anchor="middle" font-family="Monospace" font-size="24" id="svg_6" y="205.65789" x="121.612096" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" fill="#ffffff">R</text>
+ </g>
+</svg>

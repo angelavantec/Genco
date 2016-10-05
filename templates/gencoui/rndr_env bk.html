@@ -1,0 +1,328 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+
+{% block title %}Render Dashboard{% endblock %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_env.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_env.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+	</script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" ng-app="app_env" ng-controller="ctrl_env">
+			  	
+	<div class="jumbotron" >
+		<div class="rndr-head-container">
+			<div class="rndr-title">Environment</div>
+		  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
+		        <p><b>+</b></p>
+		    </button>	  		  		 -->
+ 
+		    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#env-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
+					<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+			</a>
+			<!-- <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button> -->
+		</div>
+    	<div class="rndr-button-container">
+    		<!-- <img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval"> -->
+    		<!-- <a class="btn icon-btn btn-primary" href="#">
+				<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+				Like
+			</a> -->
+		  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
+		  		<img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval">
+		  		ZK
+	        </button>
+	        <button type="button" class="btn btn-default btn-lg  btn-circle">	  		
+	        	GWT
+	        </button>
+	        <button type="button" class="btn btn-default btn-lg  btn-circle">
+	        	LAMP
+	        </button> -->
+		</div>   
+
+
+
+
+			<!-- <div role="tabpanel" > -->
+
+				<!-- Nav tabs -->
+				
+				<ul class="nav nav-tabs " role="tablist" >
+					{% verbatim %}
+					<li role="presentation" style="left:8px;" ng-repeat="env in envs" ng-class="{'active':selectedTab == $index}">
+						<a href="#env_panel" aria-controls="gwt" role="tab" ng-click="load_env(env.id_entorno)" data-toggle="tab">
+							<h3 style="display:inline;">{{env.nombre}}</h3>
+						</a>
+					</li>
+					{% endverbatim %}	
+				<!-- 			    <li role="presentation" style="left:8px;">
+					<a href="#env_panel" aria-controls="gwt" role="tab" ng-click="message(1)"data-toggle="tab" >
+						<h3 style="display:inline;"><span class="label label-success">GWT</span></h3>
+					</a>
+				</li>
+				<li role="presentation">
+					<a href="#env_panel" aria-controls="zk" role="tab" data-toggle="tab" ng-click="message(2)">
+						<h3 style="display:inline;" ><span class="label label-success" >ZK</span></h3>
+					</a>
+				</li> -->
+				</ul>
+				<!-- Tab panes -->
+			<!-- <div class="tab-content"> -->
+			    <!-- <div role="tabpanel" class="tab-pane active" id="env_panel"> -->
+
+  					<div class="panel panel-default" style="border-top: none;" ng-if="envs.length > 0">
+				  		<!-- Default panel contents -->
+
+				  		<!-- <div class="panel-heading">			
+				  		</div> -->
+			  							
+						<div class="panel-body"> 
+						
+							<div class="rndr_env_desc">
+								<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
+								<p style="font-size:14px" ng-bind="descripcion"></p>
+					  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+					        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+					        	 </button>-->
+					        	 <!-- <input type="text" ng-model="GencoEntorno.descripcion"/> -->
+					        	<div class="btn-group" role="group" aria-label="...">
+						        	<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#env-edit-modal" data-placement="bottom" data-tt="tooltip" title="Edit Environment" ng-click="edit()">
+										<span class="glyphicon glyphicon-pencil" ></span>					
+									</a>
+									<a class="btn btn-default btn-xs" data-toggle="modal" data-target="#env-remove-modal" data-placement="bottom" data-tt="tooltip" title="Remove Environment">
+										<span class="glyphicon glyphicon-minus" ></span>					
+									</a>
+								</div>	
+							</div>					
+
+							<div class="well" >
+								<table>
+					                <tr>
+					                    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';"  data-placement="bottom" data-tt="tooltip" title="Design Templates">
+					                    	<div style="text-align:center">
+					                    		<img src="{% static 'gencoui/img/desing.png' %}" width="48px">
+					                    	</div>
+					                    </td>
+					                    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';" data-placement="bottom" data-tt="tooltip" title="Build Source">
+					                    	<div style="text-align:center">
+					                    		<img src="{% static 'gencoui/img/build.png' %}" width="48px">
+					                    	</div>
+					                    </td>
+					                </tr>
+					            </table>
+
+				        		<!-- <button type="button" class="btn btn-lg  btn-circle">
+				        			Build
+				        		</button> -->
+				  			</div>
+				  			<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px;">
+								<!-- <p style="display:inline;">Langs</p> -->
+								<p style="display:inline;"><b>Langs</b></p>
+					  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+					        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+					        	 </button>-->
+
+					        	<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#lang-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Language" ng-click="all_lang_init()">
+									<span class="glyphicon btn-glyphicon glyphicon-check img-circle" ></span>					
+								</a>
+
+
+								<table class="table table-bordered" style="margin-top: 20px;">
+								  	<!-- <thead>
+								    	<tr style="margin-top:10px">
+								      		<th></th>
+								    	</tr>
+								  	</thead> -->
+								  	<tbody >
+								  		{% verbatim %}
+										<tr  ng-repeat="lang in langs">
+								      		<td>{{lang.lang.nombre}}</td>
+								      		<td  width="15px">
+								      			<a href="#" class="list-group-item list-group-item-success">Types</a>	
+								      		</td>
+								      		<!-- <td width="15px">
+												<a class="btn icon-btn btn-default" href="#">
+												<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
+												</a>
+								      		</td> -->
+								      	</tr>
+								      	{% endverbatim %}	
+							  	  	</tbody>
+								</table> 
+
+
+<!-- 
+								<div style="text-align:center">
+									<ul class="pagination" >
+									  <li class="disabled"><a href="#">&laquo;</a></li>
+									  <li class="active"><a href="#">1</a></li>
+									  <li><a href="#">2</a></li>
+									  <li><a href="#">3</a></li>
+									  <li><a href="#">4</a></li>
+									  <li><a href="#">5</a></li>
+									  <li><a href="#">&raquo;</a></li>
+									</ul>
+								</div>	 -->
+							</div>						
+						</div>	
+
+					</div>		
+				<!-- </div>	 -->
+
+
+			<!-- </div> -->
+	<!-- 		    <div role="tabpanel" class="tab-pane" id="profile">xx</div>
+			  </div> -->
+
+			<!-- </div> -->
+
+					    
+	</div>
+
+<!-- Modal Environments -->
+<div class="modal fade" id="env-add-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Add Environment</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   
+			{{ form_add_env }}
+
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default" ng-click="save()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+          	
+
+<!-- Modal Environments -->
+<div class="modal fade" id="env-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Edit Environment</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   
+			{{ form_add_env }}
+
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default" ng-click="update()">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Environments -->
+<div class="modal fade" id="env-remove-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Edit Environment</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   
+			{{ form_add_env }}
+
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default" ng-click="update()">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal Environments -->
+<div class="modal fade" id="lang-add-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Add Language</h4>
+
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   			{% verbatim %}
+				<div class="checkbox" ng-repeat="lang in all_langs">
+					<label>
+						
+						<input type="checkbox" ng-model="lang_added[$index]">{{lang.nombre}}
+						
+					</label>
+					
+				</div>
+				
+			{% endverbatim %}
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default"  ng-click="" data-placement="bottom"data-tt="tooltip" title="Go to Languages">
+						<span class="glyphicon btn-glyphicon glyphicon-comment img-circle"></span>					
+				</a>
+          		<a class="btn icon-btn btn-default" ng-click="save_add_lang()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+
+{% endblock %}

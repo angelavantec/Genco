@@ -1,0 +1,162 @@
+{% load staticfiles %}
+
+<html lang="en" ng-app="MyApp">
+  <head>
+    <script src="{% static 'gencoui/bower_components/angular/angular.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'gencoui/bower_components/angular-material/angular-material.min.css' %}"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic"/>
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.css' %}" /> 
+    <meta name="viewport" content="initial-scale=1" />
+
+    <style type="text/css">
+.gridListdemoBasicUsage md-grid-list {
+  margin: 8px; }
+.gridListdemoBasicUsage .gray {
+  background: #f5f5f5; }
+.gridListdemoBasicUsage .green {
+  background: #b9f6ca; }
+.gridListdemoBasicUsage .yellow {
+  background: #ffff8d; }
+.gridListdemoBasicUsage .blue {
+  background: #84ffff; }
+.gridListdemoBasicUsage .purple {
+  background: #b388ff; }
+.gridListdemoBasicUsage .red {
+  background: #ff8a80; }
+.gridListdemoBasicUsage md-grid-tile {
+  transition: all 400ms ease-out 50ms; }
+
+    </style>
+    <script type="text/javascript" src="{% static 'gencoui/tinymce/tinymce.min.js' %}"></script>
+    <script type="text/javascript">
+tinymce.init({
+
+        theme_advanced_fonts : "Mothanna=mothannaregular, sans-serif;"+
+                "Nastaliq=irannastaliqregular, sans-serif;"+
+                "Samman=sammanregular",
+
+        selector: "textarea",
+        plugins: [
+                "advlist autolink autosave link image lists charmap print preview hr anchor pagebreak spellchecker",
+                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                "table contextmenu directionality emoticons template textcolor paste fullpage textcolor colorpicker textpattern"
+        ],
+
+        toolbar1: "newdocument fullpage | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+        toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | insertdatetime preview | forecolor backcolor",
+        toolbar3: "table | hr removeformat | subscript superscript | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
+
+        menubar: true,
+        toolbar_items_size: 'small',
+
+        style_formats: [
+                {title: 'Bold text', inline: 'b'},
+                {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+                {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+                {title: 'Example 1', inline: 'span', classes: 'example1'},
+                {title: 'Example 2', inline: 'span', classes: 'example2'},
+                {title: 'Table styles'},
+                {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+        ],
+
+        templates: [
+                {title: 'Test template 1', content: 'Test 1'},
+                {title: 'Test template 2', content: 'Test 2'}
+        ]
+
+
+});
+    </script>
+  </head>
+  <body>   
+
+<!--   <table>
+  <tr><th>row number</th></tr>
+  <tr ng-repeat="i in [0, 1, 2, 3, 4, 5, 6, 7]"><td>{% verbatim %}{{i+1}}{% endverbatim %}</td></tr>
+</table> --> 
+<div ng-controller="AppCtrl" class="gridListdemoBasicUsage" >
+
+  <md-grid-list md-cols-sm="1" md-cols-md="2" md-cols-gt-md="6" md-row-height-gt-md="1:1" md-row-height="2:2" md-gutter="12px" md-gutter-gt-sm="8px">
+    <md-grid-tile class="gray" md-rowspan="3" md-colspan="2" md-colspan-sm="1">
+       
+            <!--   <form method="post" height="100%">
+                  <textarea id="mytextarea"></textarea>
+              </form> -->
+              <!-- <input type="text" value="{{caja}}"></input> -->
+              <!-- <p>{{caja}}</p> -->
+        <!-- <input type="button" ng-click="itemClicked()" text="resize"></input> -->
+        {% verbatim %}  
+         <ul>
+          <li ng-repeat="phone in phones">
+            <span>{{phone.name}}</span>
+            <p>{{phone.snippet}}</p>
+          </li>
+        </ul>
+        {% endverbatim %}
+      <md-grid-tile-footer>
+        <h3>#1: (3r x 2c)</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile class="green">
+      <md-grid-tile-footer>
+        <h3>#2: (1r x 1c)</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile class="yellow">
+      <md-grid-tile-footer>
+        <h3>#3: (1r x 1c)</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile class="blue"
+        md-rowspan="2">
+      <md-grid-tile-footer>
+        <h3>#4: (2r x 1c)</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile class="red"
+        md-rowspan="1" md-colspan="1" md-colspan-sm="1">
+      <md-grid-tile-footer>
+        <h3>#5: (2r x 2c)</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+    <md-grid-tile class="green"
+        md-rowspan="2" >
+      <md-grid-tile-footer>
+        <h3>#6: (2r x 1c)</h3>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+  </md-grid-list>
+
+</div>
+
+    <!-- Angular Material Dependencies -->
+    <script src="{% static 'gencoui/bower_components/angular-animate/angular-animate.min.js' %}"></script>
+    <script src="{% static 'gencoui/bower_components/angular-aria/angular-aria.min.js' %}"></script>
+
+    <script src="{% static 'gencoui/bower_components/angular-material/angular-material.min.js' %}"></script>
+
+    <script type="text/javascript">
+      // angular.module('gridListDemo1', ['ngMaterial'])
+      // .controller('AppCtrl', function($scope) {});
+       var app = angular.module('MyApp', ['ngMaterial']);
+
+      app.controller('AppCtrl', function($scope) {
+ $scope.phones = [
+    {'name': 'Nexus S',
+     'snippet': 'Fast just got faster with Nexus S.'},
+    {'name': 'Motorola XOOM™ with Wi-Fi',
+     'snippet': 'The Next, Next Generation tablet.'},
+    {'name': 'MOTOROLA XOOM™',
+     'snippet': 'The Next, Next Generation tablet.'}
+  ];
+        $scope.itemClicked = function () {
+            $scope.caja = "click";
+            console.log('click');
+          };
+
+      });
+      //angular.module('MyApp').controller('AppCtrl', function($scope) {});
+    </script>
+
+</body>
+</html>

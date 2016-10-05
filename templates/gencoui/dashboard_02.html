@@ -1,0 +1,167 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>jsTree test</title>
+
+
+    <!-- 2 load the theme CSS file -->
+    <link rel="stylesheet" href="{% static 'gencoui/dist/themes/default/style.min.css' %}" />
+    <!--link rel="stylesheet" type="text/css" href="{% static 'gencoui/style.css' %}" /-->
+    
+
+	
+	<style type="text/css" media="screen">
+	    #editor { 
+	        position: absolute;
+	        top: 40px;
+	        right: 0;
+	        bottom: 0;
+	        left: 0;
+	        min-height: 400px;
+	    }
+	    #rendernav{
+	    	min-height: 400px;
+	    	background-color:#eee;	
+	    }
+	    #rendertoolbar{
+	    	background-color:#333;		
+	    }
+	    .rendertoolbar{
+	    	background-color:#333;			
+	    }
+		html, body 
+		    {
+		        height: 100%;
+		        width: 100%;
+		        margin: 0px;
+		        padding: 0px;
+		    }
+	</style>
+
+	<!-- 4 include the jQuery library -->
+    <script src="{% static 'gencoui/js/jquery.js' %}"></script>
+    <!-- 5 include the minified jstree source -->
+    <!-- <script src="{% static 'gencoui/dist/jstree.min.js' %}"></script> -->
+
+	<link rel="stylesheet" href="{% static 'gencoui/jqwidgets/jqx.base.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'gencoui/jqwidgets/renderblack.css' %}" type="text/css" />
+	<link rel="stylesheet" href="{% static 'gencoui/jqwidgets/renderdefault.css' %}" type="text/css" />	
+    <script type="text/javascript" src="{% static 'gencoui/jqwidgets/jqxcore.js' %}"></script>
+    <script type="text/javascript" src="{% static 'gencoui/jqwidgets/jqxsplitter.js' %}"></script>
+    <script type="text/javascript" src="{% static 'gencoui/jqwidgets/jqxtree.js' %}"></script>
+    <script type="text/javascript" src="{% static 'gencoui/tabs/jqxtabs.js' %}"></script>
+
+ 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#splitter').jqxSplitter({ theme: "renderblack", width: '100%', height: '100%', panels: [{ size: '30%', max: 1000, min: 50 }, { size: '70%', max: 2000 }] });
+             
+            $('#tree').jqxTree({ theme: "renderblack", 
+                dragStart: function (item) {
+                    if (item.label == "Community")
+                        return false;
+                }
+            });
+
+ 			$("#primaryButton").jqxButton({ template: "primary" });
+
+           //$('#treeA').css('visibility', 'visible'); 	
+        });
+
+              
+    </script>
+
+    <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.css' %}">
+
+</head>
+<body>
+
+
+	<div id="splitter">
+        <div style='float: left;'>
+	    <!-- <div id="rendernav"> -->
+		    <button type="button" class="btn btn-default btn-sm" aria-label="Left Align">
+		    <span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>
+		    </button>
+		<!--     <div id="jstree">
+			    <ul>
+			      <li id="component1" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Components1
+			        <ul>         
+			          <li id="archive1" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>OrmFile</li>
+			          <li id="archive2" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>DaoFile</li>
+			          <li id="archive3" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>CtrlFile</li>
+			        </ul>
+			      </li>
+			      <li id="component2" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Components2
+			      </li>
+			    </ul>
+		    </div> -->
+		    <div id='tree'>
+                <ul>
+                    <li id='home' item-selected='true'>Home</li>
+                    <li item-expanded='true'>Solutions
+                        <ul>
+                            <li>Education</li>
+                        </ul>
+                    </li>
+                    <li>Financial services</li>
+                    <li>Community</li>
+                </ul>
+            </div>		
+		</div>
+
+	    <div id="mirror">
+				<div>
+					<div id="rendertoolbar">
+						<button type="button" class="btn btn-default" aria-label="Left Align">
+					    	<span class="glyphicon glyphicon-save" aria-hidden="true"></span>
+					    	Save
+					    </button>
+						<button type="button" class="btn btn-primary" aria-label="Left Align">
+					    	<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+					    	Render
+					    </button>
+					</div>
+				</div>	
+				<div>	
+				  	<div  class="panel" style="background-color:#333">
+					
+			  				<div class="panel-body">
+							    <div id="editor">function foo(items) {
+							        var x = "All this is syntax highlighted";
+							        return x;
+							    }</div>
+							</div>	   
+				 	</div>
+				</div>
+		</div>			
+
+	</div>
+
+    <script src="{% static 'gencoui/ace/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script>
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.getSession().setMode("ace/mode/java");
+    editor.$blockScrolling = Infinity;
+    </script>
+ 
+  <script>
+
+	$('#tree').on('select', function (event) {
+        var args = event.args;
+        var item = $('#tree').jqxTree('getItem', args.element);
+        //$('#Events').jqxPanel('prepend', '<div style="margin-top: 5px;">Selected: ' + item.label + '</div>');
+         console.log(item.label);
+
+		$.get( "http://localhost:8000/gencoui/code", function( data ) {
+		  editor.setValue(data);
+		});
+
+    });
+
+  </script>
+</body>
+</html>

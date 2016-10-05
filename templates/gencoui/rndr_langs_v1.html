@@ -1,0 +1,430 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+<!-- {% block title %}Render Developer{% endblock %} -->
+
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
+{% endblock %}
+
+{% block extrahead %}
+
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+        <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                // height: main1.outerHeight(),
+		                height: '90%',
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
+{% endblock %}
+
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_lang.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+
+		$('#example').popover('show');
+	</script>
+{% endblock %}
+
+
+{% block content %}
+<div id="ctrl_lang" ng-app="app_lang" ng-controller="ctrl_lang">
+	    <div id="sidebar" >
+	    	<span id="position"></span>
+	    	<div id="dragbar"></div>			    
+
+	    		<div class="container-fluid">
+
+				    <div style="margin-bottom: 15px;">
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Generics </h4>
+					    <!-- <a class="btn icon-btn btn-default" href="#">
+								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+						</a>	 -->
+				    </div>				    
+
+				    <div id="jstree" style="padding-left: 8px;" class="well">
+					    <ul>
+					      <li id="component1" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Java
+					        <ul>         
+					          <li id="archive1" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}' ondblclick="getCode();">String</li>
+					          <li id="archive2" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>int</li>
+					          <li id="archive3" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>double</li>
+					        </ul>
+					      </li>
+					      <li id="component2" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Mysql
+					      </li>
+					    </ul>
+				    </div>
+
+				    <div style="margin-bottom: 15px;">
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Developers </h4>
+					    <!-- <a class="btn icon-btn btn-default" href="#">
+								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+						</a>	 -->
+				    </div>				    
+
+				    <div id="jstree1" style="padding-left: 8px;" class="well">
+					    <ul>
+					      <li id="component1" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >C++
+					        <ul>         
+					          <li id="archive1" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}' ondblclick="getCode();">char*</li>
+					          <li id="archive2" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>int</li>
+					          <li id="archive3" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>float</li>
+					        </ul>
+					      </li>
+					      <li id="component2" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Java
+					      </li>
+					    </ul>
+				    </div>
+
+
+				</div>   
+	    	
+		</div>
+
+	    <div id="main">
+
+	    	<!-- <div id="sidebar1">
+	    	<span id="position"></span>
+	    	<div id="dragbar1"></div>			     -->
+
+	    		<div class="container-fluid">
+
+
+
+				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingOne">
+				      <h4 class="panel-title">
+				        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+				          Own
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+				      <div class="panel-body">
+					<table class="table table-bordered" style="margin-top: 20px;">
+					  	<tbody >
+					  		{% verbatim %}
+					  		<thead>
+					  			<th><p ng-bind="lang_selected">{{}}</p></th>
+					  			<th>
+								    <select >
+								      	<option ng-repeat="lang in langs" value="{{lang.id_lenguaje}}">{{ lang.nombre }}</option>
+								    </select>
+					  			</th>
+					  			<th></th>
+					  		</thead>
+								<tr  ng-repeat="lang in langs">
+						      		<td></td>						      		
+						      		<td></td>
+						      		<td width="15px">
+										<a class="btn icon-btn btn-default" href="#">
+										<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
+										</a>
+						      		</td>
+						      	</tr>
+					      	{% endverbatim %}	
+
+					      	<tfoot>
+				          		<a class="btn icon-btn btn-default" ng-click="save()" data-placement="bottom"data-tt="tooltip" title="Save">
+									<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+								</a>
+								<a class="btn icon-btn btn-default"  ng-click="print()" data-placement="bottom"data-tt="tooltip" title="Undo">
+										<span class="glyphicon btn-glyphicon glyphicon-refresh img-circle" ></span>					
+								</a>
+				  	  		</tfoot>
+				  	  	</tbody>
+
+					</table> 
+				      </div>
+				    </div>
+				  </div>
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingTwo">
+				      <h4 class="panel-title">
+				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+				          Developers
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+				      <div class="panel-body">
+				        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+				      </div>
+				    </div>
+				  </div>
+				  <div class="panel panel-default">
+				    <div class="panel-heading" role="tab" id="headingThree">
+				      <h4 class="panel-title">
+				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+				          Generics
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+				      <div class="panel-body">
+				        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+				      </div>
+				    </div>
+				  </div>
+				</div>
+
+<!-- 				    <div style="margin-bottom: 15px;">
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Own </h4>
+					    <a class="btn icon-btn btn-default" href="#">
+								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+						</a>	
+				    </div>				    
+
+				    <div id="jstree2" style="padding-left: 8px;" class="well">
+					    <ul>
+					      <li id="component1" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' onclick="getConversion();">Javax
+					        <ul>         
+					          <li id="archive1" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}' ondblclick="getCode();">String</li>
+					          <li id="archive2" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>int</li>
+					          <li id="archive3" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>BigDecimal</li>
+					        </ul>
+					      </li>
+					      <li id="component2" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Mysql
+					      </li>
+					    </ul>
+				    </div>
+ -->
+
+
+				</div>   
+	    	
+			<!-- </div> -->
+
+<!-- 	    	<div id="main1" >
+
+				<div class="container-fluid">
+					<div style="margin-bottom: 15px;">
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Conversion </h4>
+				    </div>				    
+
+
+					<table class="table table-bordered" style="margin-top: 20px;">
+					  	<tbody >
+					  		{% verbatim %}
+					  		<thead>
+					  			<th><p ng-bind="lang_selected">{{}}</p></th>
+					  			<th>
+								    <select >
+								      	<option ng-repeat="lang in langs" value="{{lang.id_lenguaje}}">{{ lang.nombre }}</option>
+								    </select>
+					  			</th>
+					  			<th></th>
+					  		</thead>
+								<tr  ng-repeat="lang in langs">
+						      		<td></td>						      		
+						      		<td></td>
+						      		<td width="15px">
+										<a class="btn icon-btn btn-default" href="#">
+										<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
+										</a>
+						      		</td>
+						      	</tr>
+					      	{% endverbatim %}	
+
+					      	<tfoot>
+				          		<a class="btn icon-btn btn-default" ng-click="save()" data-placement="bottom"data-tt="tooltip" title="Save">
+									<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+								</a>
+								<a class="btn icon-btn btn-default"  ng-click="print()" data-placement="bottom"data-tt="tooltip" title="Undo">
+										<span class="glyphicon btn-glyphicon glyphicon-refresh img-circle" ></span>					
+								</a>
+				  	  		</tfoot>
+				  	  	</tbody>
+
+					</table> 
+
+				</div>   
+							
+		 	</div> -->
+	
+	    </div>
+
+</div>
+{% endblock %}
+
+
+
+{% block extrafooter %}
+ 
+  <script>
+        
+        $(function () {
+            $("#jstree").jstree({
+                "core" : {
+                "check_callback" : function (operation, node, node_parent, node_position, more) {
+			            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+			            // in case of 'rename_node' node_position is filled with the new node name			            
+			            var validator;
+
+			            //console.log(typeof node_parent.data);	
+			            if(typeof node_parent.data == 'undefined'){
+			            	return false;
+			            }
+			           // console.log(node.data['renderas']);
+			           // console.log(node_parent.data['renderas']);			           
+			            validator = node_parent.data['renderas'] === 'component' ? true : false;	
+			            if(validator && operation == 'move_node'){
+			            	
+			            	validator = node.data['renderas'] === 'archive' ? true : false;	
+
+			            }	
+			            return validator;
+			            
+			        }
+            },
+            "plugins" : [  "contextmenu","dnd" ],
+            "contextmenu": {
+		        "items": function ($node) {
+		            return {
+		                "Create": {
+		                    "label": "Add Template",
+		                    "action": function (obj) {
+		                        // this.create(obj);
+		                        //alert('render');
+		                        getCode();
+		                    }
+		                },
+		                "Rename": {
+		                    "label": "Rename Template",
+		                    "action": function (data) {
+		                       // this.rename(obj);
+		                       	var inst = $.jstree.reference(data.reference),
+								obj = inst.get_node(data.reference);
+								inst.edit(obj);
+								console.log(data);
+		                    }
+		                },
+		                "Delete": {
+		                    "label": "Delete Template",
+		                    "action": function (obj) {
+		                        this.remove(obj);
+		                    }
+		                }
+		            };
+		        }
+		    }
+            });
+        });
+
+
+  $(function () {
+    // 6 create an instance when the DOM is ready
+    $('#jstree').jstree();
+    $('#jstree1').jstree();
+    $('#jstree2').jstree();
+    // 7 bind to events triggered on the tree
+    $('#jstree').on("changed.jstree", function (e, data) {
+      console.log(data.selected);
+
+		// $.get( "http://localhost:8000/gencoui/code", function( data ) {
+		//   editor.setValue(data);
+		// });
+
+      //editor.setValue(data.selected.toString());
+    });
+    // 8 interact with the tree - either way is OK
+    $('button').on('click', function () {
+      $('#jstree').jstree(true).select_node('child_node_1');
+      $('#jstree').jstree('select_node', 'child_node_1');
+      $.jstree.reference('#jstree').select_node('child_node_1');
+    });
+
+  });
+
+
+
+
+	function getConversion(){
+		angular.element($("#ctrl_lang")).scope().print();
+		console.log('render');
+
+	};
+
+
+  </script>
+
+{% endblock %}
+

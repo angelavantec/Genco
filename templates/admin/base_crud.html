@@ -1,0 +1,77 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block extrahead %}
+	<!-- <link rel="stylesheet" href="{% static 'gencoui/dist/themes/default/style.min.css' %}" /> -->
+	<script src="{% static 'gencoui/dist/jstree.min.js' %}"></script>
+	<script>
+		$( document ).ready(function() {
+    		$('#jstree').jstree();    	
+		});
+	</script>
+    <link rel="stylesheet" href="{% static 'gencoui/bower_components/angular-material/angular-material.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.css' %}" /> 
+    <meta name="viewport" content="initial-scale=1" />
+    <style type="text/css">
+		.toolbardemoBasicUsage md-toolbar md-icon.md-default-theme {
+		  color: white; }
+    </style>
+
+{% endblock %}
+
+{% block branding %}
+<div ng-controller="AppCtrl">
+  <md-content>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" aria-label="Settings">
+          <md-icon md-svg-icon="img/icons/menu.svg"></md-icon>
+        </md-button>
+        <h2>
+          <span>Toolbar with Icon Buttons</span>
+        </h2>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="Favorite">
+          <md-icon md-svg-icon="img/icons/favorite.svg" style="color: greenyellow;"></md-icon>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="More">
+          <md-icon md-svg-icon="img/icons/more_vert.svg"></md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <br>
+    <md-toolbar class="md-tall md-accent">
+      <h2 class="md-toolbar-tools">
+        <span>Toolbar: tall (md-accent)</span>
+      </h2>
+    </md-toolbar>
+    <br>
+    <md-toolbar class="md-tall md-warn md-hue-3">
+      <span flex></span>
+      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
+        <span class="md-flex">Toolbar: tall with actions pin to the bottom (md-warn md-hue-3)</span>
+      </h2>
+    </md-toolbar>
+  </md-content>
+</div>
+
+    <script src="{% static 'gencoui/bower_components/angular/angular.min.js' %}"></script>
+    <script src="{% static 'gencoui/bower_components/angular-animate/angular-animate.min.js' %}"></script>
+    <script src="{% static 'gencoui/bower_components/angular-aria/angular-aria.min.js' %}"></script>
+
+    <script src="{% static 'gencoui/bower_components/angular-material/angular-material.min.js' %}"></script>
+
+	<script type="text/javascript">
+		angular.module('toolbarDemo1', ['ngMaterial'])
+		.controller('AppCtrl', function($scope) {
+		});
+	</script>
+{% endblock %}
+{% block sidebar %}
+{% endblock %}
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

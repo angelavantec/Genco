@@ -1,0 +1,106 @@
+<!-- {% extends "admin/base.html" %} -->
+<!-- {% block extrastyle %} -->
+{% load staticfiles %}
+<!-- <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.css' %}">  -->
+<!-- <link rel="stylesheet" href="{% static 'gencoui/css/bootstrap-theme.css' %}">  -->
+<link rel="stylesheet" href="{% static 'gencoui/css/bootstrap.min.flatly.css' %}">
+<style type="text/css">
+		#crud{						
+			left: 20px;	
+			//width: 600px;	
+			border: 10px solid white; 
+			border-radius: 5px; 
+			background-color: white; 
+			box-shadow: 3px 3px 10px grey; 
+			max-width:700px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		#crudLabel{
+			color: #777;			
+		}
+		body{
+			background-color: #eee;
+		}
+	</style>
+	<script src="{% static 'gencoui/js/jquery.js' %}"></script>
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+{% endblock %}	
+{% block content %}
+<div id="crud">
+<div id="crudLabel">
+	<h1>Group</h1>
+</div>
+
+<!-- <div  ng-app="submitExample" ng-controller="ExampleController"> -->
+	<form id="form-search" method="get" action=".">
+	<!-- <form ng-submit="submit()" ng-controller="ExampleController"> -->
+	    {{ form }}
+		
+		<!-- <paper-button tabindex="0" raised class="colorful custom"
+		onclick="document.getElementById('form-search').submit();"><iron-icon icon="check"></iron-icon>Search</paper-button> -->
+		 <input  type="submit" id="submit" value="Buscar" /></input>
+	</form>
+<!-- </div>	 -->
+<a href="/gencoui/groups/add">+Group</a>
+<table class="table table-condensed  table-striped table-bordered">
+{% for article in object_list %}
+    <tr>    	
+    	<td>{{ article.nombre }}</td>
+    	<td>{{ article.creado_por }}</td>
+    	<td>{{ article.fecha_creacion|date:"N j, Y, P" }}</td> 
+    </tr>		
+{% empty %}
+    <li>No Groups yet.</li>
+{% endfor %}
+</table>
+<div>
+
+
+<!-- Angular Material Dependencies -->
+<script src="{% static 'gencoui/bower_components/angular/angular.min.js' %}"></script>
+<script src="{% static 'gencoui/bower_components/angular-animate/angular-animate.min.js' %}"></script>
+<script src="{% static 'gencoui/bower_components/angular-aria/angular-aria.min.js' %}"></script>
+
+<script language="javascript" type="text/javascript">
+	
+	function popitup(url) {
+	    newwindow=window.open(url,'{{title}}','height=200,width=150');
+	    if (window.focus) {newwindow.focus()}
+	    return false;
+	}
+</script>
+
+<script>
+  angular.module('submitExample', [])
+    .controller('ExampleController', ['$scope', '$http', function($scope, $http) {
+      //$scope.list = [];
+      //$scope.text = 'hello';
+      $scope.submit = function() {
+        //if ($scope.text) {
+          //$scope.list.push(this.text);
+          //$scope.text = '';
+        //}
+        console.log('ng-submit');
+
+		$http.get('.').
+		  success(function(data, status, headers, config) {
+		    // this callback will be called asynchronously
+		    // when the response is available
+		    console.log(data);
+		  }).
+		  error(function(data, status, headers, config) {
+		    // called asynchronously if an error occurs
+		    // or server returns response with an error status.
+		    console.log('error');
+		  });
+
+
+      };
+    }]);
+</script>
+
+
+<a href="popupex.html" onclick="return popitup('/gencoui/groups/add')">+Group</a>
+
+{% endblock %}

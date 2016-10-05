@@ -1,0 +1,283 @@
+{% load staticfiles %}
+<html lang="en" ng-app="StarterApp">
+  <head>
+    <link rel="stylesheet" href="{% static 'gencoui/bower_components/angular-material/angular-material.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.css' %}" /> 
+    <meta name="viewport" content="initial-scale=1" />
+    <style type="text/css">
+      .md-toolbar-tools h1 {
+        font-size: inherit;
+        font-weight: inherit;
+        margin: inherit;
+      }
+
+      .icondemoSvgIconSets md-progress-circular {
+        margin-bottom: 20px; }
+      .icondemoSvgIconSets md-icon {
+        margin: 20px;
+        margin-top: 0;
+        width: 24px;
+        height: 24px; }
+      .icondemoSvgIconSets .demo-content {
+        min-height: 210px; }
+      .icondemoSvgIconSets .appSvgIconSets {
+        padding: 25px; }
+      .icondemoSvgIconSets .s48 {
+        width: 48px;
+        height: 48px; 
+      }
+    </style>
+    <script src="{% static 'gencoui/js/jquery.js' %}"></script>
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'gencoui/tinymce/tinymce.min.js' %}"></script>
+<script type="text/javascript">
+tinymce.init({
+
+        theme_advanced_fonts : "Mothanna=mothannaregular, sans-serif;"+
+                "Nastaliq=irannastaliqregular, sans-serif;"+
+                "Samman=sammanregular",
+
+        selector: "textarea",
+        plugins: [
+                "advlist autolink autosave link image lists charmap print preview hr anchor pagebreak spellchecker",
+                "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+                "table contextmenu directionality emoticons template textcolor paste fullpage textcolor colorpicker textpattern"
+        ],
+
+        toolbar1: "newdocument fullpage | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+        toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | insertdatetime preview | forecolor backcolor",
+        toolbar3: "table | hr removeformat | subscript superscript | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
+
+        menubar: true,
+        toolbar_items_size: 'small',
+
+        style_formats: [
+                {title: 'Bold text', inline: 'b'},
+                {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+                {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+                {title: 'Example 1', inline: 'span', classes: 'example1'},
+                {title: 'Example 2', inline: 'span', classes: 'example2'},
+                {title: 'Table styles'},
+                {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+        ],
+
+        templates: [
+                {title: 'Test template 1', content: 'Test 1'},
+                {title: 'Test template 2', content: 'Test 2'}
+        ]
+
+
+});
+</script>
+
+  </head>
+  <body layout="column" ng-controller="AppCtrl">
+    <md-toolbar layout="row">
+      <div class="md-toolbar-tools">
+        <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="md-icon-button">
+          <md-icon aria-label="Menu" >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
+               <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+               <g>
+          <path fill="#007fff" stroke="#00007f" stroke-width="5" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m2.5,11.5c0,-4.890411 4.109589,-9 9,-9l111.333328,0c4.890411,0 9,4.109589 9,9l0,111.333328c0,4.890411 -4.109589,9 -9,9l-111.333328,0c-4.890411,0 -9,-4.109589 -9,-9l0,-111.333328z" id="svg_4"/>
+  <text font-style="normal" font-weight="bold" stroke="#00007f" transform="matrix(2.7924366300962333,0,0,2.4358973503112793,-272.43804822833147,-414.9743342399597) " xml:space="preserve" text-anchor="middle" font-family="Monospace" font-size="24" id="svg_6" y="205.65789" x="121.612096" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" fill="#ffffff">R</text>        
+               </g>
+              </svg>
+          </md-icon>
+        </md-button>
+        <h1>Render</h1>
+      </div>
+    </md-toolbar>
+    <div layout="row" flex>
+        <md-sidenav layout="column" class="md-sidenav-left" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+           <div id="jstree" style="padding-left: 8px;">
+              <ul>
+                <li id="component1" data-renderas='component' >Components1
+                  <ul>         
+                    <li id="archive1" data-renderas='archive' ondblclick="getCode();">OrmFile</li>
+                    <li id="archive2" data-renderas='archive' >DaoFile</li>
+                    <li id="archive3" data-renderas='archive' data-jstree='{"icon":"glyphicon glyphicon-file"}'>CtrlFile</li>
+                  </ul>
+                </li>
+                <li id="component2" data-renderas='component' data-jstree='{"icon":"glyphicon glyphicon-cog"}' >Components2
+                  <ul>
+                    <li id="archive4" data-renderas='archive' data-jstree='{"icon":"{% static 'gencoui/img/android.svg' %}"}'>
+                                
+                    </li>    
+                  </ul>
+                </li>
+              </ul>
+            </div>
+                     <p>Android</p>
+        </md-sidenav>
+        <div layout="column" flex id="content">
+            <md-content layout="column" flex class="md-padding">
+              <!-- <md-icon md-svg-icon="social:people" aria-label="Cake Icon">Android</md-icon> -->
+<!--               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 228 228">
+               <g>
+                <path fill="#007fff" stroke="#00007f" stroke-width="5" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" d="m2.5,11.5c0,-4.890411 4.109589,-9 9,-9l111.333328,0c4.890411,0 9,4.109589 9,9l0,111.333328c0,4.890411 -4.109589,9 -9,9l-111.333328,0c-4.890411,0 -9,-4.109589 -9,-9l0,-111.333328z" id="svg_4"/>      
+                <text font-style="normal" font-weight="bold" stroke="#00007f" transform="matrix(2.7924366300962333,0,0,2.4358973503112793,-272.43804822833147,-414.9743342399597) " xml:space="preserve" text-anchor="middle" font-family="Monospace" font-size="24" id="svg_6" y="205.65789" x="121.612096" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" fill="#ffffff">R</text>               
+               </g>
+              </svg> -->
+              <h1></h1>
+              <form method="post">
+                  <textarea id="mytextarea"></textarea>
+              </form>
+            </md-content>
+            <p>Android</p>
+            <div  layout="row" layout-wrap>  
+              <md-button class="md-primary md-raised" ng-click="showAdvanced($event)" flex flex-md="100">
+                Custom Dialog                
+              </md-button>
+            </div>
+          <div ng-if="alert">
+              <br/>
+              <b layout="row" layout-align="center center" class="md-padding">
+              {{ verbatim }}  {{alert}}  {{ endverbatim }}
+              </b>
+            </div>
+        </div>
+    </div>
+    <!-- Angular Material Dependencies -->
+    <script src="{% static 'gencoui/bower_components/angular/angular.min.js' %}"></script>
+    <script src="{% static 'gencoui/bower_components/angular-animate/angular-animate.min.js' %}"></script>
+    <script src="{% static 'gencoui/bower_components/angular-aria/angular-aria.min.js' %}"></script>
+
+    <script src="{% static 'gencoui/bower_components/angular-material/angular-material.min.js' %}"></script>
+
+    <script type="text/javascript">
+    $(function () {
+      // 6 create an instance when the DOM is ready
+      //$.jstree.defaults.core.themes.responsive = true;
+      $("#jstree").jstree({
+                "core" : {
+                "check_callback" : function (operation, node, node_parent, node_position, more) {
+                  // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                  // in case of 'rename_node' node_position is filled with the new node name                  
+                  var validator;
+
+                  //console.log(typeof node_parent.data); 
+                  if(typeof node_parent.data == 'undefined'){
+                    return false;
+                  }
+                 // console.log(node.data['renderas']);
+                 // console.log(node_parent.data['renderas']);                 
+                  validator = node_parent.data['renderas'] === 'component' ? true : false;  
+                  if(validator && operation == 'move_node'){
+                    
+                    validator = node.data['renderas'] === 'archive' ? true : false; 
+
+                  } 
+                  return validator;
+                  
+              }
+            },
+            "plugins" : [ "dnd" ]
+            });
+
+    });
+    </script>
+
+    <script type="text/javascript">      
+
+      var app = angular.module('StarterApp', ['ngMaterial']);
+
+      app.controller('AppCtrl', ['$scope', '$mdSidenav', '$mdDialog', function($scope, $mdSidenav, $mdDialog){
+
+        $scope.alert = '';
+
+        $scope.toggleSidenav = function(menuId) {
+          $mdSidenav(menuId).toggle();
+        };       
+
+      $scope.showAdvanced = function(ev) {
+        console.log('advance');
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: '/gencoui/groups/add',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+        })
+        .then(function(answer) {
+          $scope.alert = 'You said the information was "' + answer + '".';
+        }, function() {
+          $scope.alert = 'You cancelled the dialog.';
+        });
+
+        // $mdDialog.show(
+        // $mdDialog.alert()
+        // .parent(angular.element(document.body))
+        // .title('This is an alert title')
+        // .content('You can specify some description text in here.')
+        // .ariaLabel('Alert Dialog Demo')
+        // .ok('Got it!')
+        // .targetEvent(ev)
+        // );
+      };
+
+      }]);
+      
+      app.config(['$httpProvider', function($httpProvider) {
+          $httpProvider.defaults.headers.common['X-CSRFToken'] = 'LhZ8s4b18x4Baa1LwTwvfnwZ21h1bT1q';          
+         //$httpProvider.defaults.headers.common['Content-Type'] = 'application/json';   
+          $httpProvider.defaults.headers.common['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';   
+      }]);
+
+      //$http.defaults.headers.common.Authorization = 'Basic YmVlcDpib29w'
+
+      function DialogController($scope, $mdDialog, $http, $httpParamSerializer) {
+              
+        $scope.submit = function(form) {
+        //if ($scope.text) {
+          //$scope.list.push(this.text);
+          //$scope.text = '';
+        //}
+        //var formData = new FormData(document.getElementById('myForm'));
+        var formData = document.getElementById('myForm');
+        console.log(document.getElementById('myForm'));
+        console.log($httpParamSerializer(document.getElementById('myForm')));
+        console.log($('myForm').serializeArray());        
+
+        console.log('ng-submit');
+
+        //$http.post('groups/?format=api',form ).
+        //$http.post('groups/add', { nombre : 'abc', descripcion : 'abc' } ).
+          $http({
+              method: 'POST',
+              url: 'groups/add',
+              data: $.param({'nombre': 'key', 'descripcion':'key'}),
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+          }).
+          success(function(data, status, headers, config) {
+            // this callback will be called asynchronously
+            // when the response is available
+            console.log(data);
+          }).
+          error(function(data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+            console.log('error');
+          });
+        };
+
+        $scope.hide = function() {
+          $mdDialog.hide();
+        };
+        $scope.cancel = function() {
+          $mdDialog.cancel();
+        };
+        $scope.answer = function(answer) {
+          $mdDialog.hide(answer);
+        };
+      }
+
+      app.config(function($mdIconProvider) {
+      $mdIconProvider
+        .iconSet('social', "{% static 'gencoui/img/icons/sets/social-icons.svg' %}", 24)
+        .defaultIconSet("{% static 'gencoui/img/icons/sets/core-icons.svg' %}", 24);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,336 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+
+{% block title %}Render Dashboard{% endblock %}
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+	<div class="jumbotron">
+	  	<div class="rndr-title">Builds</div>	  		  	
+	  	<div class="form-group">		  	
+		 	<div class="input-group">		    
+			    <input type="text" class="form-control">
+			    <span class="input-group-btn">
+			      <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+			    </span>
+		  </div>
+		</div>
+
+		<div class="panel panel-default">
+  		<!-- Default panel contents -->
+
+  		<div class="panel-heading">
+  			<!-- <img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval"></i> -->
+  			<i class="glyphicon glyphicon-oil"></i> Repositories
+  		</div>
+			<table class="table table-striped table-hover ">
+			  <!-- <thead>
+			    <tr>
+			      <th>#</th>
+			      <th>Column heading</th>
+			      <th>Column heading</th>
+			      <th>Column heading</th>
+			    </tr>
+			  </thead> -->
+			  <tbody>
+			    <tr>
+			      <td>1</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			    </tr>
+			    <tr>
+			      <td>2</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			    </tr>
+		  	  </tbody>
+			</table> 
+			<div style="text-align:center">
+				<ul class="pagination" >
+				  <li class="disabled"><a href="#">&laquo;</a></li>
+				  <li class="active"><a href="#">1</a></li>
+				  <li><a href="#">2</a></li>
+				  <li><a href="#">3</a></li>
+				  <li><a href="#">4</a></li>
+				  <li><a href="#">5</a></li>
+				  <li><a href="#">&raquo;</a></li>
+				</ul>
+			</div>	
+		</div>	
+
+		
+	</div>
+
+
+	<div class="jumbotron">
+		<div class="rndr-head-container">
+			<div class="rndr-title">Environment</div>
+		  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
+		        <p><b>+</b></p>
+		    </button>	  		  		 -->
+
+		    <a class="btn icon-btn btn-default" href="#">
+					<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+			</a>
+		</div>
+    	<div class="rndr-button-container">
+    		<!-- <img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval"> -->
+    		<!-- <a class="btn icon-btn btn-primary" href="#">
+				<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+				Like
+			</a> -->
+		  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
+		  		<img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval">
+		  		ZK
+	        </button>
+	        <button type="button" class="btn btn-default btn-lg  btn-circle">	  		
+	        	GWT
+	        </button>
+	        <button type="button" class="btn btn-default btn-lg  btn-circle">
+	        	LAMP
+	        </button> -->
+		</div>   
+
+
+
+
+			<div role="tabpanel" >
+
+			  <!-- Nav tabs -->
+			  <ul class="nav nav-tabs" role="tablist">
+			    <li role="presentation" style="left:8px;"><a href="#gwt" aria-controls="gwt" role="tab" data-toggle="tab" ><h3 style="display:inline;"><span class="label label-success">GWT</span></h3></a></li>
+			    <li role="presentation"><a href="#zk" aria-controls="zk" role="tab" data-toggle="tab"><h3 style="display:inline;"><span class="label label-success">ZK</span></h3></a></li>
+			  </ul>
+
+			  <!-- Tab panes -->
+			<div class="tab-content">
+			    <div role="tabpanel" class="tab-pane active" id="gwt">
+
+  					<div class="panel panel-default" style="border-top:transparent; border-radius:0px">
+				  		<!-- Default panel contents -->
+
+				  		<!-- <div class="panel-heading">			
+				  		</div> -->
+			  							
+						<div class="panel-body"> 
+							<div class="rndr_env_desc">
+								<image src="https://avatars3.githubusercontent.com/u/4151804?v=3&s=400" width="32px" height="32px"></image>
+								<p style="display:inline;font-size:14px">Google Web Toolkit to RIA applications</p>
+					  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+					        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+					        	 </button>-->
+
+					        	<a class="btn icon-btn btn-default" href="#">
+									<span class="glyphicon btn-glyphicon glyphicon-pencil img-circle" ></span>					
+								</a>
+							</div>					
+
+							<div class="well">
+				  				
+								<button type="button" class="btn btn-default btn-lg  btn-circle icon-btn">
+									Dev
+				        		</button>
+				        		<button type="button" class="btn btn-default btn-lg  btn-circle">
+				        			Build
+				        		</button>
+				  			</div>
+				  			<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px;">
+								<!-- <p style="display:inline;">Langs</p> -->
+								<p style="display:inline;"><b>Langs</b></p>
+					  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+					        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+					        	 </button>-->
+
+					        	<a class="btn icon-btn btn-default" href="#">
+									<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+								</a>
+
+								<table class="table table-bordered" style="margin-top: 20px;">
+								  	<!-- <thead>
+								    	<tr style="margin-top:10px">
+								      		<th></th>
+								    	</tr>
+								  	</thead> -->
+								  	<tbody>
+								    	<tr>
+								      		<td>Java</td>
+								      		<td  width="15px">
+								      			<a href="#" class="list-group-item list-group-item-success">Types</a>
+								      		</td>
+								    	</tr>
+								    	<tr>
+								      		<td>UI Binder</td>
+								      		<td>
+								      			<a href="#" class="list-group-item list-group-item-success">Types</a>
+								      		</td>
+								    	</tr>
+							  	  	</tbody>
+								</table> 
+								<div style="text-align:center">
+									<ul class="pagination" >
+									  <li class="disabled"><a href="#">&laquo;</a></li>
+									  <li class="active"><a href="#">1</a></li>
+									  <li><a href="#">2</a></li>
+									  <li><a href="#">3</a></li>
+									  <li><a href="#">4</a></li>
+									  <li><a href="#">5</a></li>
+									  <li><a href="#">&raquo;</a></li>
+									</ul>
+								</div>	
+							</div>	
+						</div>	
+
+					</div>		
+				</div>	
+				<div role="tabpanel" class="tab-pane" id="zk">		
+  					<div class="panel panel-default" style="border-top:transparent; border-radius:0px">
+				  		<!-- Default panel contents -->
+
+				  		<!-- <div class="panel-heading">			
+				  		</div> -->
+			  							
+						<div class="panel-body"> 
+							<div class="well">
+				  				
+								<button type="button" class="btn btn-default btn-lg  btn-circle icon-btn">
+									Dev
+				        		</button>
+				        		<button type="button" class="btn btn-default btn-lg  btn-circle">
+				        			Build
+				        		</button>
+				  			</div>
+				  			<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px;">
+								<!-- <p style="display:inline;">Langs</p> -->
+								<h4 style="display:inline;"><span class="label label-default">Langs</span></h4>
+					  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+					        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+					        	 --></button>
+
+					        	<a class="btn icon-btn btn-default" href="#">
+									<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+								</a>
+
+								<table class="table table-bordered" style="margin-top: 20px;">
+								  	<!-- <thead>
+								    	<tr style="margin-top:10px">
+								      		<th></th>
+								    	</tr>
+								  	</thead> -->
+								  	<tbody>
+								    	<tr>
+								      		<td>Java</td>
+								      		<td><button type="button" class="btn btn-success btn-sm">Types</button></td>
+								    	</tr>
+								    	<tr>
+								      		<td>Zul</td>
+								      		<td><button type="button" class="btn btn-success btn-sm">Types</button></td>
+								    	</tr>
+							  	  	</tbody>
+								</table> 
+								<div style="text-align:center">
+									<ul class="pagination" >
+									  <li class="disabled"><a href="#">&laquo;</a></li>
+									  <li class="active"><a href="#">1</a></li>
+									  <li><a href="#">2</a></li>
+									  <li><a href="#">3</a></li>
+									  <li><a href="#">4</a></li>
+									  <li><a href="#">5</a></li>
+									  <li><a href="#">&raquo;</a></li>
+									</ul>
+								</div>	
+				  			</div>
+
+						</div>	
+
+					</div>
+
+				</div>
+
+			</div>
+	<!-- 		    <div role="tabpanel" class="tab-pane" id="profile">xx</div>
+			  </div> -->
+
+			</div>
+
+					    
+	</div>
+
+	<div class="jumbotron">
+		<div class="rndr-head-container">
+			<div class="rndr-title">Entities</div>
+			<!-- <h2 style="display:inline;margin-top: 10px;margin-right:10px"><b>Entities</b></h2> -->
+		    <a class="btn icon-btn btn-default" href="#">
+				<span class="glyphicon btn-glyphicon glyphicon-plus img-circle"></span>					
+			</a>	  		  		
+		</div>	  	
+	  	<div class="form-group">		  	
+		 	<div class="input-group">		    
+			    <input type="text" class="form-control">
+			    <span class="input-group-btn">
+			      <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-search"></i></button>
+			    </span>
+		  </div>
+		</div>
+
+		<div class="panel panel-default">
+  		<!-- Default panel contents -->
+
+  		<div class="panel-heading">
+  			<!-- <img src="{% static 'gencoui/img/ic_save_24px.svg' %}" alt="Kiwi standing on oval"></i> -->
+  			<i class="glyphicon glyphicon-oil"></i> Repositories
+  		</div>
+			<table class="table table-striped table-hover ">
+			  <!-- <thead>
+			    <tr>
+			      <th>#</th>
+			      <th>Column heading</th>
+			      <th>Column heading</th>
+			      <th>Column heading</th>
+			    </tr>
+			  </thead> -->
+			  <tbody>
+			    <tr>
+			      <td>1</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			    </tr>
+			    <tr>
+			      <td>2</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			      <td>Column content</td>
+			    </tr>
+		  	  </tbody>
+			</table> 
+			<div style="text-align:center">
+				<ul class="pagination" >
+				  <li class="disabled"><a href="#">&laquo;</a></li>
+				  <li class="active"><a href="#">1</a></li>
+				  <li><a href="#">2</a></li>
+				  <li><a href="#">3</a></li>
+				  <li><a href="#">4</a></li>
+				  <li><a href="#">5</a></li>
+				  <li><a href="#">&raquo;</a></li>
+				</ul>
+			</div>	
+		</div>	
+
+		
+	</div>
+
+</div>
+
+<div class="container-fluid">
+
+</div>
+
+
+
+{% endblock %}
