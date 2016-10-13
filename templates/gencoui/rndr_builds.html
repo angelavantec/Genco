@@ -24,84 +24,11 @@
 
 		$('#example').popover('show');
 	</script>
+
 {% endblock %}
 
 {% block extrahead %}    
     <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
-    <script>
-    
-		$(document).ready(function () {
-		    var i = 0;
-		    var dragging = false;
-		    var dragging1 = false;
-		    $('#dragbar').mousedown(function (e) {
-		        e.preventDefault();
-		        dragging = true;
-		        var main = $('#main');
-		        var sidebar = $('#sidebar');
-		        var ghostbar = $('<div>', {
-		            id: 'ghostbar',
-		            css: {
-		                height: sidebar.outerHeight(),
-		                top: main.offset().top,
-		                left: main.offset().left
-		            }
-		        }).appendTo('body');
-		        $(document).mousemove(function (e) {
-		            ghostbar.css("left", e.pageX + 5);
-		        });
-		    });
-
-		    $('#dragbar1').mousedown(function (e) {
-		        e.preventDefault();
-		        dragging1 = true;
-		        var main1 = $('#main1');
-		        var sidebar = $('#sidebar'); 
-		        console.log('first ' + sidebar.width());		     
-		        var ghostbar1 = $('<div>', {
-		            id: 'ghostbar1',
-		            css: {
-		                height: main1.outerHeight(),
-		                top: main1.offset().top,
-		                left: main1.offset().left
-		            }
-		        }).appendTo('body');
-		        console.log(e);
-		        console.log(e.pageX);
-		        $(document).mousemove(function (e) {
-		        	console.log(e.pageX);		     
-		            ghostbar1.css("left", e.pageX + 5);
-		        });
-
-		        
-		    });
-
-
-		    $(document).mouseup(function (e) {
-		        if (dragging) {
-		            $('#sidebar').css("width", e.pageX + 2);
-		            $('#main').css("left", e.pageX + 2);
-		            $('#ghostbar').remove();
-		            $(document).unbind('mousemove');
-		            dragging = false;
-		        }
-
-		        if (dragging1) {
-		        	var sidebar = $('#sidebar'); 
-		        	console.log('width ' + sidebar.width());
-		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
-		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
-		            $('#ghostbar1').remove();
-		            $(document).unbind('mousemove');
-		            dragging1 = false;
-		        }
-		    });
-		
-		   
-		});
-
-    </script>
-
 {% endblock %}
 
 
@@ -175,7 +102,7 @@
     <!-- Modal Templates -->
 	<div class="modal fade" id="file-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
-	    <div class="modal-dialog">
+	    <div class="modal-dialog  modal-lg">
 
 	        <div class="modal-content">
 		        <div class="modal-header">
@@ -191,11 +118,13 @@
 							{{ form_create_file.nombre }}
 							{{ form_create_file.descripcion.label_tag }}
 							{{ form_create_file.descripcion }}
-							{{ form_create_file.upload.label_tag }}
-							{{ form_create_file.upload }}
-							<input type="file" file-model="myFile"/>
-    						<button ng-click="uploadFile()">upload me</button>
-						<button type="submit" hidden></button>
+							<input type="file" file-model="myFile" id="fileInput" label/>
+    						<!-- <button ng-click="uploadFile()">upload me</button> -->
+    						<span></span>
+    						<button type="submit" hidden></button>
+							<pre id="fileDisplayArea"></pre>
+    						<div id="editor" name="" class="editor"></div>
+							
 					</form>
 
 	          	</div>
@@ -220,34 +149,31 @@
     <!-- Modal Templates -->
 	<div class="modal fade" id="file-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
-	    <div class="modal-dialog">
+	    <div class="modal-dialog modal-lg">
 
 	        <div class="modal-content">
 		        <div class="modal-header">
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
 			     {% verbatim %}
-		        <h4 class="modal-title">{{component_selected.nombre}} - edit Template</h4>
+		        <h4 class="modal-title">{{component_selected.nombre}} - edit File</h4>
 		        {% endverbatim %}
 			    </div>
 	          <!-- <div class="arrow-up"></div> -->
 	          	<div class="modal-body">
-	   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
-	   			{{ form_create_template.nombre.label_tag }}
-				{{ form_create_template.nombre }}
-				{{ form_create_template.descripcion.label_tag }}
-				{{ form_create_template.descripcion }}
-				{% verbatim %}
-				<label for="repeatSelectLang">Lenguaje: </label>
-				<select id="repeatSelectLang" ng-model="dataLang.repeatSelectLang" class="form-control">
-			      	<option ng-repeat="option in dataLang.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }} {{ option.version }}</option>
-			    </select>	
-				{% endverbatim %}
-				{{ form_create_template.id_lenguajeprocesador.label_tag }}
-				{{ form_create_template.id_lenguajeprocesador }}
+	   				<form ng-submit="update_file()">
+				   			{{ form_create_file.nombre.label_tag }}
+							{{ form_create_file.nombre }}
+							{{ form_create_file.descripcion.label_tag }}
+							{{ form_create_file.descripcion }}
+    						<span></span>
+    						<button type="submit" hidden></button>							
+    						<div id="editor2" name="" class="editor"></div>
+							
+					</form>
 	          	</div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="update_template()" data-placement="bottom"data-tt="tooltip" title="Save">
+		          		<a class="btn icon-btn btn-default" ng-click="update_file()" data-placement="bottom"data-tt="tooltip" title="Save">
 							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 						</a>
 					</div>	
@@ -400,6 +326,40 @@
 	</div>
 
 
+	<div class="modal fade" id="template-entities-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog modal-sm">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Select Entities</h4>
+			    </div>	     
+	          	<div class="modal-body">
+	   				<form ng-submit="save_template_entity()">
+	   						
+						
+						<button type="submit" hidden></button>
+					</form>
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="save_template_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+
 </div>
 
 {% endblock %}
@@ -417,14 +377,11 @@
     editor.getSession().setMode("ace/mode/python");
     editor.$blockScrolling = Infinity;
 
-    var editor_preview = ace.edit("editor_preview");
-    editor_preview.getSession().setMode("ace/mode/html");
-    editor_preview.$blockScrolling = Infinity;
 
-    // var editor2 = ace.edit("editor2");
-    // //editor2.setTheme("ace/theme/default");
-    // editor2.getSession().setMode("ace/mode/java");
-    // editor2.$blockScrolling = Infinity;
+    var editor2 = ace.edit("editor2");
+    editor2.setTheme("ace/theme/monokai");
+    editor2.getSession().setMode("ace/mode/java");
+    editor2.$blockScrolling = Infinity;
 
     // var editor3 = ace.edit("editor3");
     // editor3.setTheme("ace/theme/default");

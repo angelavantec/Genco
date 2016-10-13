@@ -37,7 +37,7 @@ $scope.dataLang = {
     availableOptions: $scope.langs,
 };
 
-
+setListenterContent();
 
 $("#jstreeFolders").jstree({
     "core" : {
@@ -95,7 +95,7 @@ $("#jstreeFolders").jstree({
 
                     console.log($node.li_attr['data-renderas'] );
 
-                    if($node.li_attr['data-renderas'] === 'archive')
+                    if($node.li_attr['data-renderas'] === 'template')
                         return {
 
                             "Rename": {
@@ -108,18 +108,19 @@ $("#jstreeFolders").jstree({
                                     obj = inst.get_node(data.reference);
                                     //inst.edit(obj);
                                     
-                                    $scope.component_selected.nombre = obj.text;
-                                    $scope.component_selected.id = obj.id;
-                                    console.log($scope.component_selected);
-                                    $scope.load_component(obj.id);
+                                    //$scope.component_selected.nombre = obj.text;
+                                    //$scope.component_selected.id = obj.id;
+                                    //console.log($scope.component_selected);
+                                    $scope.load_file(obj.id);
+                                    $('#template-entities-modal').modal('show');
                                     //Hago que la interfaz refresque el titulo con el valor de component_selected
-                                    angular.element($("#ctrl_editor")).scope().$apply();
-                                    $('#component-edit-modal').modal('show');
+                                    //angular.element($("#ctrl_editor")).scope().$apply();
+                                    //$('#component-edit-modal').modal('show');
         
                                 }
                             },
                             "Delete": {
-                                "label": "Delete File",
+                                "label": "Detach Template",
                                 "action": function (data) {
                                    // this.rename(obj);
                                     console.log(data);
@@ -173,6 +174,7 @@ $("#jstreeFolders").jstree({
                                         var inst = $.jstree.reference(data.reference),
                                         obj = inst.get_node(data.reference);
                                         $scope.node_selected = data;
+                                        console.log(data);
                                         $scope.new_file(obj.id);
                                     }
                                 }
@@ -191,8 +193,20 @@ $("#jstreeFolders").jstree({
                                             var inst = $.jstree.reference(data.reference),
                                             obj = inst.get_node(data.reference);
                                             $scope.node_selected = data;
-                                            $scope.load_directorio(obj.id)
-                                            $('#folder-edit-modal').modal('show');
+
+                                            //para los archivos y templates el id viene en este atributo
+                                            var renderId = obj.li_attr['data-renderid'];
+                                            //aqui viene definido el tipo de nodo pintado (file, folder, template)
+                                            var renderAs = obj.li_attr['data-renderas'];
+                                            
+                                            if(renderAs === 'folder'){
+                                                $scope.load_directorio(obj.id);
+                                                $('#folder-edit-modal').modal('show');
+                                            }else{
+                                                $scope.load_file(renderId);
+                                                $('#file-edit-modal').modal('show');
+                                            }
+                                            
                                             // tree.edit($node);
                                     },   
                             }
@@ -580,8 +594,15 @@ console.log($scope.components);
         $scope.load_directorio = function(id_folder){
 
             console.log(id_folder);
-            var data = directorio.get({id_directorio:id_folder});
-            $scope.GencoDirectorios = data;
+            var data = directorio.get({id_directorio:id_folder}, 
+                                        function(success){
+                                            $scope.GencoDirectorios = data;                                
+                                        }, 
+                                        function(error){
+                                            console.log(error);    
+                                        }
+                );
+            
         }
 
 
@@ -591,15 +612,17 @@ console.log($scope.components);
                 console.log(success);
 
                 //$scope.addTreeNode($scope.node_selected, nodeDef);
-                $('#jstreeFolders').jstree(true).rename_node($scope.node_selected, success.nombre);
+                //$('#jstreeFolders').jstree(true).rename_node($scope.node_selected, success.nombre);
+                $scope.renameTreeNode($scope.node_selected, success.nombre);
                 // $("#jstreeFolders").jstree('rename_node', $scope.node_selected , success.nombre );
+                $('#folder-edit-modal').modal('hide');
             },function(error){
                 
                 console.log(error);
                 //$('#jstreeFolders').jstree(true).delete_node(node); 
             });
             //$scope.GencoDirectorios = new directorio();
-            $('#folder-edit-modal').modal('hide');
+            
         } 
 
         /*
@@ -614,6 +637,17 @@ console.log($scope.components);
             })
         }
 
+        $scope.renameTreeNode = function(data, newText){
+            var inst = $.jstree.reference(data.reference),
+            obj = inst.get_node(data.reference);
+            console.log(data);
+            console.log('rename');
+            console.log(newText);
+            console.log(obj);
+             $('#jstreeFolders').jstree('set_text', obj, newText);
+
+        }
+
 
 
         $scope.new_file = function(id_padre){
@@ -626,14 +660,51 @@ console.log($scope.components);
         $scope.save_file = function(){
             console.log('save file');
             console.log($scope.GencoArchivos);
-            console.log($scope.GencoArchivos.upload);
-            console.log(document.getElementById("id_upload").value);
+            //console.log($scope.GencoArchivos.upload);
+            //console.log(document.getElementById("id_upload").value);
 
 
             var file = $scope.myFile;
             console.log('file is ' );
             console.dir(file);
-            console.log(fileUpload.uploadFileToUrl(file, $scope.GencoArchivos));
+            //console.log(file.name);
+            
+            var myFoo = new File([editor.getValue()], "foo.log");
+            //var fooStream = new FileOutputStream(myFoo, false); // true to append
+                                                                 // false to overwrite.
+            console.log(myFoo);
+            //var myBytes = "New Contents\n".getBytes();
+            //fooStream.write(myBytes);
+            //fooStream.close();
+
+
+
+
+
+
+
+            // console.log(fileUpload.uploadFileToUrl(file, $scope.GencoArchivos));
+            //new Promise(function(resolve, reject) { 
+                console.log($scope.node_selected.parent);
+                console.log($scope.node_selected);
+                var inst = $.jstree.reference($scope.node_selected.reference),
+                obj = inst.get_node($scope.node_selected.reference);
+                console.log('////////////////////////////');
+                console.log(obj.id);
+                console.log(obj);
+
+            var respuesta = fileUpload.saveFileToUrl(myFoo, $scope.GencoArchivos, obj, $scope.node_selected, $scope.new_directorioelemento);
+                            // $scope.new_directorioelemento(id_directorio, id_plantilla, id_archivo, node, nodeDef);
+                            // data = $scope.node_selected;
+                            // $scope.new_directorioelemento(data.parent, null, null, data.node, null);
+            //});
+                console.log('respuesta ' + respuesta);
+            // })
+            // .then (function(result) {
+            //    console.log(result);
+            //    console.log('fin promise');
+            // })
+
 
             // $scope.GencoArchivos.$save(function(success){
             //     console.log(success);
@@ -674,6 +745,51 @@ console.log($scope.components);
             // $('#file-create-modal').modal('hide');
         } 
 
+       $scope.update_file = function(){
+            console.log('update file');
+            console.log($scope.GencoArchivos);
+
+
+            var file = $scope.myFile;
+            console.log('file is ' );
+            console.dir(file);
+
+            
+            var myFoo = new File([editor2.getValue()], "foo.log");
+
+            console.log(myFoo);
+
+                console.log($scope.node_selected.parent);
+                console.log($scope.node_selected);
+                var inst = $.jstree.reference($scope.node_selected.reference),
+                obj = inst.get_node($scope.node_selected.reference);
+
+            var respuesta = fileUpload.updateFileToUrl(myFoo, $scope.GencoArchivos, obj, $scope.node_selected, $scope.renameTreeNode);
+
+            console.log('respuesta ' + respuesta);
+            $('#file-edit-modal').modal('hide');
+        } 
+
+
+        $scope.load_file = function(id_file){
+
+            console.log('data passssss');
+
+            archivo.get({id:id_file}, 
+                                    function(success){
+                                        $scope.GencoArchivos = success;
+                                        $http.get($scope.GencoArchivos.upload).success(function(data) {
+                                            editor2.setValue(data);
+                                        }).error(function(data){
+                                            console.log(error);
+                                        });
+                                                                      
+                                    }, 
+                                    function(error){
+                                        console.log(error);    
+                                    });
+
+        }
 
 
 
@@ -880,7 +996,35 @@ console.log($scope.components);
         }
 
 
+
+
         $scope.load_components();
+
+
+        function setListenterContent() {
+                var fileInput = document.getElementById('fileInput');
+                var fileDisplayArea = document.getElementById('fileDisplayArea');
+                //var editor = document.getElementById('editor');
+
+                fileInput.addEventListener('change', function(e) {
+                    var file = fileInput.files[0];
+                    var textType = /text.*/;
+
+                    if (file.type.match(textType)) {
+                        var reader = new FileReader();
+
+                        reader.onload = function(e) {
+                            //fileDisplayArea.innerText = reader.result;
+                            editor.setValue(reader.result);
+                        }
+
+                        reader.readAsText(file);    
+                    } else {
+                        fileDisplayArea.innerText = "File not supported!"
+                    }
+                });
+        }
+
 
   });
 

@@ -6,6 +6,15 @@
 	        /*font-size: 48px;*/
 	      }
 
+	    label {
+	    	font-size: 12px;
+	    }
+
+	    .form-control {
+	    	height: 35px;
+			padding: 5px 10px;	    	
+	    }
+
 		.rndr-button-container {
 			text-align:center;
 			//padding-top: 30px; 
@@ -13,7 +22,7 @@
 		}		
 
 		.rndr_env_desc{
-			padding-bottom: 15px;
+			padding-bottom: 15px;	
 		}
 
 		.rndr-title{

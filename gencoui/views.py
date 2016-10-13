@@ -328,7 +328,7 @@ def get_form(request, id_form=None):
     return render(request,template_name,{'form':switcher.get(id_form)})
 
 
-def get_module(request, id_module=None, key_module=None, key_project=None):
+def get_module(request, id_module=None, key_env=None, key_project=None):
 
     # switcher = {
     #     'env': 'gencoui/rndr_env.html',
@@ -340,8 +340,8 @@ def get_module(request, id_module=None, key_module=None, key_project=None):
         context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}    
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
-        obj = get_object_or_404(GencoEntorno,id_entorno=key_module)
-        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user.username, 'key_module':key_module, 'entorno': obj}    
+        obj = get_object_or_404(GencoEntorno,id_entorno=key_env)
+        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user.username, 'key_module':key_env, 'entorno': obj}    
         return render(request,'gencoui/rndr_editor.html',context)
     elif id_module == 'entities':
         context = {'form_add_repository': GencoRepositorioForm, 
@@ -354,9 +354,9 @@ def get_module(request, id_module=None, key_module=None, key_project=None):
         context = {'form_add_lang': GencoLenguajesForm, 'form_add_type': GencoTipodatoForm,'user': request.user.username}    
         return render(request,'gencoui/rndr_langs.html',context)
     elif id_module == 'builds':
-        env = get_object_or_404(GencoEntorno,id_entorno=key_module)
+        env = get_object_or_404(GencoEntorno,id_entorno=key_env)
         prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
-        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'user': request.user.username, 'key_module':key_module, 'entorno': env, 'proyecto': prj}    
+        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_plantilla_entidad': GencoPlantillaEntidadForm, 'user': request.user.username, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
         context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}    
@@ -656,9 +656,10 @@ def readFile(fileName, context):
         # use chunks to iterate over the file in chunks.
         # this is helpful when file is large enough.
         # '10' represents the size of each chunk
-        for chunk in file.chunks(10):
+        print 'inicio'
+        for chunk in file.chunks(1024):
             context['fileContent'] += chunk
-        
+        print 'fin'
         # make sure to close the file before exit
         file.close()
 
@@ -670,7 +671,7 @@ def writeFile(content, fileName, context):
         # create Django File object using python's file object
         file = File(fileHandler['handler'])
         # write content into the file
-        file.write(content)
+        file.write(content.encode('UTF-8'))
         # flush content so that file will be modified.
         file.flush()
         # close file
@@ -703,7 +704,7 @@ class dir_template_tree(APIView):
             else:
                 id_padre = i.id_padre_id
 
-            dirs.append({'id': i.id_directorio, 'parent': id_padre, 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"component",'data-renderid': i.id_directorio, 'data-rendername':i.nombre}})
+            dirs.append({'id': i.id_directorio, 'parent': id_padre, 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': i.id_directorio, 'data-rendername':i.nombre}})
        
 
         for i  in e:
@@ -715,9 +716,9 @@ class dir_template_tree(APIView):
                 # templates = {}
                 # childrens = {}
             if i.id_plantilla > 0:    
-                dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"archive", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre}})
+                dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre}})
             else:
-                dirs.append( {'id': 'f'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_archivo.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"archive", 'data-renderid': i.id_archivo_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_archivo.nombre}})
+                dirs.append( {'id': 'f'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_archivo.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': i.id_archivo_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_archivo.nombre}})
         print dirs    
 
         return JsonResponse({'dirs':dirs}) 

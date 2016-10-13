@@ -148,6 +148,14 @@ class GencoArchivosForm(ModelForm):
         genco_init(GencoArchivosForm, self, *args, **kwargs)
 
 
+class GencoPlantillaEntidadForm(ModelForm):
+    class Meta:
+        model = GencoPlantillaEntidad
+        exclude = ['id_plantillaentidad', 'creado_por', 'fecha_creacion']
+
+    def __init__(self, *args, **kwargs):    
+        genco_init(GencoPlantillaEntidadForm, self, *args, **kwargs)
+
 def genco_init(mpodelform, self, *args, **kwargs):
 	super(mpodelform, self).__init__(*args, **kwargs)
 	for field in self.fields:

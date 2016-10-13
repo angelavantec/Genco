@@ -72,23 +72,72 @@ return $resource('http://127.0.0.1:8000/gencoui/archivo/:id\\/',{id:'@id'},{
         return $window.confirm(message);
     }
 }).service('fileUpload', ['$http', function ($http) {
-    this.uploadFileToUrl = function(file, gencoArchivos){
+    this.saveFileToUrl = function(file, gencoArchivos, obj, data, callback){
         console.log('form data');
         var fd = new FormData();
         fd.append('upload', file);
         fd.append('nombre', gencoArchivos.nombre);
         fd.append('descripcion', gencoArchivos.descripcion);
         uploadUrl = "http://localhost:8000/gencoui/archivo/";
-        $http.post(uploadUrl, fd, {
-            transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
-        })
-        .success(function(){
-        })
-        .error(function(){
-        });
 
+
+            $http.post(uploadUrl, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            })
+            .success(function(success){
+
+            var newNode = {
+                                'id': 'f'+success.id_archivo, 
+                                'parent': data.id, 
+                                'text': success.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 
+                                'li_attr':{
+                                            'data-renderas':"file", 
+                                            'data-renderid': success.id_archivo,
+                                            'data-renderiddirtemplate': 'f', 
+                                            'data-rendername': success.nombre
+                                        }
+                            }
+
+
+                callback(obj.id, null, success.id_archivo, data, newNode);
         
+            })
+            .error(function(error){
+                //callback();
+               // return false;
+    
+            });
+  
+
+
+    }
+
+    this.updateFileToUrl = function(file, gencoArchivos, obj, data, callback){
+        console.log('form data');
+        var fd = new FormData();
+        fd.append('upload', file);
+        fd.append('nombre', gencoArchivos.nombre);
+        fd.append('descripcion', gencoArchivos.descripcion);
+        uploadUrl = "http://localhost:8000/gencoui/archivo/" + gencoArchivos.id_archivo + "/";
+
+
+            $http.put(uploadUrl, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            })
+            .success(function(success){
+                console.log('ok:');
+                console.log(success);
+                callback(data, success.nombre + '<sub style="color:#CCCCCC">file</sub>');
+        
+            })
+            .error(function(error){
+                console.log(error);
+            });
+  
+
+
     }
 }]);
 ;

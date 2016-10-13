@@ -1,3 +1,6 @@
 env/
 static/gencoui/img/devicon/
 
+
+user_templates/
+*.tmpl
