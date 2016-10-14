@@ -356,7 +356,10 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
     elif id_module == 'builds':
         env = get_object_or_404(GencoEntorno,id_entorno=key_env)
         prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
-        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_plantilla_entidad': GencoPlantillaEntidadForm, 'user': request.user.username, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
+        
+
+        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_plantilla_entidad': GencoPlantillaEntidadForm, 
+                    'user': request.user.username, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
         context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}    

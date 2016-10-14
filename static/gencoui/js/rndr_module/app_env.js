@@ -90,9 +90,10 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
         //total = $scope.lang_added.length;
         proccess = [];
 
-        //console.log($scope.conversionsObj);
-        //console.log($scope.types);
-
+        /**@Generics
+        * lang_added es el arrglo que se pinta y que corresponde al mismo array all_langs. Se usa lang_added para determinar cual esta seleccionado y con el index de los
+        * seleccionados vamos al array base(all_langs[])
+        **/
         angular.forEach($scope.lang_added, function(value, key){
 
             if(value){

@@ -17,6 +17,8 @@
 	<script src="{% static 'gencoui/js/rndr_module/service_editor.js' %}"></script>
 	<script src="{% static 'gencoui/js/rndr_module/service_builds.js' %}"></script>
 	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_entities.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_repository.js' %}"></script>
 	<script type="text/javascript">
 		$(function () {
 		  $('[data-tt="tooltip"]').tooltip()
@@ -41,6 +43,14 @@
 		<div class="well well-sm" style="margin-top:70px;">
 			<img src="{% static 'gencoui/img/devicon/icons/'|add:entorno.icono %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px">
 			{{entorno.nombre}} - {{proyecto.nombre}}</img>
+			<div style="position: absolute;right: 30px; display:inline">
+				{% verbatim %}
+				<label>connected to </label>
+				<span class="label label-default" ng-click="change_repository()" data-placement="bottom" data-tt="tooltip" title="Change Repository">{{repository_selected.data.nombre}}</span>
+				
+				<span  ng-if="repository_selected.data == null" class="label label-default" ng-click="change_repository()" data-placement="bottom" data-tt="tooltip" title="Select Repository">Select Repository</span>
+				{% endverbatim %}
+			</div>			
 		</div>
 	
 
@@ -326,6 +336,47 @@
 	</div>
 
 
+
+
+
+	<div class="modal fade" id="repository-change-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog modal-sm">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Select Repository</h4>
+			    </div>	     
+	          	<div class="modal-body">
+	   				<form ng-submit="save_add_repository()">
+						{% verbatim %}
+							
+								<label ng-repeat="repository in repositories">
+									
+									<input type="radio" name="repoSet" ng-model="repository_selected.data" ng-value="{{repository}}">{{repository.nombre}}
+									
+								</label>							
+								
+						<button type="submit" hidden></button>
+					</form>
+
+						{% endverbatim %}
+
+
+	          	</div>
+	          	<div class="modal-footer">
+			<!-- 		<div style="display:inline">
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Close">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a> -->
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
 	<div class="modal fade" id="template-entities-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
 	    <div class="modal-dialog modal-sm">
@@ -337,7 +388,7 @@
 			    </div>	     
 	          	<div class="modal-body">
 	   				<form ng-submit="save_template_entity()">
-	   						
+
 						
 						<button type="submit" hidden></button>
 					</form>

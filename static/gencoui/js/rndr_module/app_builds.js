@@ -1,6 +1,6 @@
-angular.module('app_editor', ['ngResource','editor.services','lang.services','builds.services'])
+angular.module('app_editor', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, directorio, archivo, fileUpload) {
+.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, directorio, archivo, fileUpload, repository, entity_repo) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -23,13 +23,23 @@ $scope.template_selected = {
     nombre: null,
 };
 
+$scope.repository_selected = {
+    data: null,
+};;
+
 $scope.GencoPlantillas;
 $scope.GencoComponentes;
 $scope.GencoDirectorios = new directorio();
 $scope.GencoArchivos = new archivo();
+$scope.repositories = [];
+
+
 
 $scope.langs = [];
 $scope.langs=lang.query();
+
+$scope.all_repository=repository.query();
+$scope.GencoRepositorioEntidad;
 
 
 $scope.dataLang = {
@@ -111,8 +121,8 @@ $("#jstreeFolders").jstree({
                                     //$scope.component_selected.nombre = obj.text;
                                     //$scope.component_selected.id = obj.id;
                                     //console.log($scope.component_selected);
-                                    $scope.load_file(obj.id);
-                                    $('#template-entities-modal').modal('show');
+                                    $scope.template_entities_load(obj.id);
+                                    
                                     //Hago que la interfaz refresque el titulo con el valor de component_selected
                                     //angular.element($("#ctrl_editor")).scope().$apply();
                                     //$('#component-edit-modal').modal('show');
@@ -791,6 +801,38 @@ console.log($scope.components);
 
         }
 
+        $scope.change_repository = function(){
+            repository.query(
+                            function(success){
+                                $scope.repositories = success;
+                                $('#repository-change-modal').modal('show');
+                            }, 
+                            function(error){
+                                console.log(error);    
+            });
+        }
+
+
+
+
+
+        $scope.template_entities_load = function(id_file){
+            console.log('obtener entidades');
+            $scope.GencoRepositorioEntidad = entity_repo.query({id_repositorio: $scope.repository_selected.data.id})
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
         $scope.update_component = function(){
@@ -798,7 +840,7 @@ console.log($scope.components);
             $scope.GencoComponentes.$update(function(){
             $scope.load_components(); 
             $('#component-edit-modal').modal('hide');
-        });
+            });
             
         } 
 
