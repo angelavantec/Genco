@@ -1,6 +1,6 @@
 angular.module('app_editor', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, directorio, archivo, fileUpload, repository, entity_repo) {
+.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, directorio, archivo, fileUpload, repository, entity_repo, entitydef) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -25,7 +25,14 @@ $scope.template_selected = {
 
 $scope.repository_selected = {
     data: null,
-};;
+};
+
+$scope.entity_selected = {
+    data: null,
+};
+$scope.entities_selects = '';
+
+$scope.entity_added;
 
 $scope.GencoPlantillas;
 $scope.GencoComponentes;
@@ -39,8 +46,18 @@ $scope.langs = [];
 $scope.langs=lang.query();
 
 $scope.all_repository=repository.query();
+$scope.all_entities=[];
 $scope.GencoRepositorioEntidad;
 
+
+$scope.GencoEntidadDefinicion = new entitydef();
+$scope.GencoEntidadFields = [];
+
+$scope.all_references=[];
+
+
+
+$scope.globalMessage = 'NA';
 
 $scope.dataLang = {
     repeatSelectLang: null,
@@ -121,7 +138,18 @@ $("#jstreeFolders").jstree({
                                     //$scope.component_selected.nombre = obj.text;
                                     //$scope.component_selected.id = obj.id;
                                     //console.log($scope.component_selected);
+                                    if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
+                                        $scope.globalMessage = "No repository selected";
+                                        angular.element($("#ctrl_editor")).scope().$apply();
+                                        console.log($scope.globalMessage);
+                                        $('#info-modal').modal('show');      
+                                        return;                                  
+                                    }
+                                    
+                                    
                                     $scope.template_entities_load(obj.id);
+
+
                                     
                                     //Hago que la interfaz refresque el titulo con el valor de component_selected
                                     //angular.element($("#ctrl_editor")).scope().$apply();
@@ -814,15 +842,165 @@ console.log($scope.components);
 
 
 
-
+        $scope.all_entity_init = function(){
+            //Hacemos que al cargar se inicialicen con false
+            //aca agregar el valor que se registro previamente 
+            console.log($scope.all_entities.map(function(x){return false;}));
+            $scope.entity_added=$scope.all_entities.map(function(x){return false;});
+            $scope.all_references=$scope.all_entities.map(function(x){return null;});
+        }
 
         $scope.template_entities_load = function(id_file){
             console.log('obtener entidades');
-            $scope.GencoRepositorioEntidad = entity_repo.query({id_repositorio: $scope.repository_selected.data.id})
+            console.log($scope.repository_selected)
+
+            entity_repo.query({id_repositorio: $scope.repository_selected.data.id_repositorio}, 
+                function(success){
+                    //angular.element($("#ctrl_editor")).scope().$apply();
+                    if(!$scope.$$phase) {
+                          $scope.$apply();
+                    }
+                    $scope.all_entities = success;
+                    $scope.all_entity_init();
+                    console.log(success);
+                    $('#template-entities-modal').modal('show');
+
+                },
+                function(error){
+                    console.log(error);
+                })
 
 
         }
 
+
+
+        $scope.get_template_entity =  function(index){
+
+            //index = 0;
+            proccess = [];
+
+            /**@Generics
+            * lang_added es el arrglo que se pinta y que corresponde al mismo array all_langs. Se usa lang_added para determinar cual esta seleccionado y con el index de los
+            * seleccionados vamos al array base(all_langs[])
+            **/
+            $scope.entities_selects = '[';
+            angular.forEach($scope.entity_added, function(value, key){
+                console.log(key);
+                if(value){
+                    $scope.entities_selects += $scope.all_entities[key].nombre + ',';
+                } 
+            });
+            $scope.entities_selects += ']';
+
+            //$scope.entities_selects = '[';
+           // angular.forEach($scope.entity_added, function(value, key){
+
+                //if(value){
+                //    console.log($scope.all_entities[key]);
+                    //$scope.entities_selects += $scope.all_entities[index].nombre + ',';
+                    console.log($scope.entity_added[index]);
+                    if($scope.entity_added[index]){
+                        //$scope.all_references[index] = $scope.load_entity($scope.all_entities[index].id_entidad);    
+                        entitydef.query({id_entidad:$scope.all_entities[index].id_entidad}, function(success){
+                            // proccess.pop();
+                            $scope.all_references[index] =  success;
+                            console.log(success);
+                            //$scope.GencoEntidadFields =success;
+                        },function(error){
+                            // proccess.pop();
+                            console.log(error);
+                        });
+
+                    }else{
+                        $scope.all_references[index]=[];
+                    }
+                    
+
+                    console.log($scope.all_references[index]);
+
+                //}  
+                   
+
+              //  index++;
+
+            //})
+            //$scope.entities_selects += ']';
+        }
+
+
+        $scope.load_entity = function(id_entity){
+            // $scope.entity_selected.id = id_entity;
+
+            // $scope.GencoEntidadDefinicion = new entitydef();
+            // $scope.pk_fields = [];
+            // $scope.GencoEntidadDefinicion.id_entidad = id_entity;
+            // var data = entity.get({id_entidad:id_entity});
+            // $scope.GencoEntidad = data;
+            // data.$promise.then(function(data){
+                
+                entitydef.query({id_entidad:id_entity}, function(success){
+                    // proccess.pop();
+                    return success;
+                    //$scope.GencoEntidadFields =success;
+                },function(error){
+                    // proccess.pop();
+                    console.log(error);
+                });
+
+            // });
+
+        } 
+
+
+         $scope.save_template_entity =  function(){
+
+            index = 0;
+            proccess = [];
+
+            angular.forEach($scope.entity_added, function(value, key){
+
+                if(value){
+                    console.log($scope.all_entities[key]);
+                    // proccess.push(1);
+                    // conv = new env_lang({id_entorno: $scope.GencoEntorno.id_entorno, id_lenguaje: $scope.all_langs[key].id_lenguaje});
+                    // console.log(conv);
+                    // conv.$save(
+                    //     function(success){
+                    //     console.log('OK');
+                    //     console.log(success.data); //wait_conversion();
+                    //     proccess.pop();
+                    //     add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);
+                    //     },function(error){
+                    //     console.log('ERR');
+                    //     console.log(error.data); 
+                    //     proccess.pop();
+                    //     add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);  
+                    // }); 
+                }else{
+              
+                    // proccess.push(1);
+                    // conv = new env_lang({id_entorno: $scope.GencoEntorno.id_entorno, id_lenguaje: $scope.all_langs[key].id_lenguaje});
+                    // conv.$delete(
+                    //     function(success){
+                    //         console.log('OK');
+                    //         console.log(success); //wait_conversion();
+                    //         proccess.pop();
+                    //         add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);
+                    //     },function(error){
+                    //         console.log('ERR');
+                    //         console.log(error);  
+                    //         proccess.pop();  
+                    //         add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);
+                    // });
+                }    
+                   
+
+                index++;
+
+            })
+
+         }
 
 
 

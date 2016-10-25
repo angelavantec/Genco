@@ -39,6 +39,11 @@ $scope.dataLang = {
     availableOptions: $scope.langs,
 };
 
+$scope.tabs = [];
+        // $scope.isTabSelected=false;
+$scope.current_template;
+$scope.current_pos=0;
+
 // $scope.dataLangProc = {
 //     repeatSelectLangProc: null,
 //     availableOptions: $scope.langs,
@@ -61,6 +66,49 @@ console.log($scope.dataLang);
 //         id_entorno: 1
 //     }
 // ];
+
+
+$(function () {
+
+        $(document)
+
+            .on('dnd_stop.vakata', function (e, data) {
+                var t = $(data.event.target);
+                console.log('yyyyyyyyyyyyyyyyyyyy');
+                console.log(data.data);
+                console.log(t);
+
+
+                //var inst = $.jstree.reference(data.reference),
+                //obj = inst.get_node(data.reference);
+                console.log(data.data.obj[0].id);
+                //console.log(data.data.obj[0].parent);
+
+// var lnLevel = 2;
+// var loParent = $("#" + data.data.obj[0].id);
+//             var lsParents =  data.data.obj[0].innerText + ' >';
+//             for (var ln = 0; ln <= lnLevel -1 ; ln++) {
+//                 var loParent = loParent.parent().parent();
+//                 if (loParent.children()[1] != undefined) {
+//                     lsParents += loParent.children()[1].text + " > ";
+//                 }
+//             }
+//             if (lsParents.length > 0) {
+//                 lsParents = lsParents.substring(0, lsParents.length - 1);
+//             }
+
+//             console.log(lsParents)
+
+console.log($scope.component_selected);
+
+                if(t[0].closest('.ace_content')) {
+                    console.log('append');
+                    $scope.insertKey(data.data.obj[0].id, data.data.obj[0].innerText);
+                }   
+
+            });
+  });
+
 
 $scope.load_components = function(){
     $scope.components = [];
@@ -312,9 +360,7 @@ console.log($scope.components);
         //     content:'This is a default tab on load'
         // }]
         
-        $scope.tabs = [];
-        // $scope.isTabSelected=false;
-        $scope.current_template;
+        
 
 
 
@@ -336,7 +382,7 @@ console.log($scope.components);
                             
 
                         //console.log(node_parent.li_attr['data-renderas']); 
-                        console.log(node_parent);
+                        //console.log(node_parent);
                         var renderas = node_parent.li_attr['data-renderas'];
                         //console.log(renderas);
                         //console.log(node_parent);
@@ -357,7 +403,18 @@ console.log($scope.components);
                         
                     }
             },
-            "plugins" : [  "contextmenu","dnd", "sort" ],
+             "dnd" : {
+                "drop_target" : "#main",
+                "drop_finish" : function (data) {
+                    console.log('start --------------------');
+                    //if(data.o.attr("rel") === "ds") {
+                      //update chart with new data here?
+                      //using data.o.attr("id")
+                    //}
+                }
+            },
+            "crrm" : { move : { check_move : function (m) { return false; } } },
+            "plugins" : [  "contextmenu","dnd", "sort","crrm" ],
             "contextmenu": {
                 "items": function ($node) {
 
@@ -502,6 +559,12 @@ console.log($scope.components);
                 $scope.addTab(id.toString(), node.text());
                }
                
+            });
+
+            $('#jstree').on('select_node.jstree', function (e, data) {
+                    var loMainSelected = data;
+                    console.log(loMainSelected.node.parents);
+                    $scope.component_selected = loMainSelected.node.parents;
             });
 
 
@@ -672,7 +735,7 @@ console.log($scope.components);
 
             if(pos>=0){
                 $scope.selectedTab=pos;
-                $scope.selectTab(id_template, pos);
+                $scope.selectTab(id_template, pos, true);
                 return;
             }
                 
@@ -720,7 +783,7 @@ console.log($scope.components);
                                     $scope.tabs.push({id_plantilla:id_template, nombre: data.templateName ,content: data.fileContent});
                                     console.log('select');
                                     $scope.selectedTab = $scope.tabs.length - 1; //set the newly added tab active. 
-                                    $scope.selectTab(id_template, $scope.selectedTab);
+                                    $scope.selectTab(id_template, $scope.selectedTab, false);
                                 },function(error){
                                     console.log('ERR');
                                     console.log(error);  
@@ -756,20 +819,28 @@ console.log($scope.components);
         $scope.selectedTab = 0; //set selected tab to the 1st by default.
         
         /** Function to set selectedTab **/
-        $scope.selectTab = function(id_template, pos){
+        $scope.selectTab = function(id_template, pos, flgUpd){
             console.log("id " + id_template);
             console.log($scope.templates);
             //$scope.selectedTab = index;
             //pos = $scope.tabs.map(function(x) {return x.id_plantilla.toString()}).indexOf(id_template);
             // editor.setValue($scope.tabs[pos] + " index -> " + $scope.templates[pos].nombre);
             console.log('alfa - ' + pos);
-            console.log('beta - ' + $scope.$index);
+            //console.log('beta - ' + $scope.$index);
             
+
+            //@Generics actualizo el contenido en memoria en caso de que haya sido modificado 
+            if(flgUpd){
+                $scope.tabs[$scope.current_pos].content = editor.getValue();     
+            }
+            
+
             //console.log($scope.tabs[pos].content);
             editor.setValue($scope.tabs[pos].content);
             editor.setTheme("ace/theme/eclipse");
             editor.getSession().setMode("ace/mode/python");
             $scope.current_template = id_template;
+            $scope.current_pos = pos;
 
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -879,6 +950,30 @@ console.log($scope.components);
 
         };
 
+
+        $scope.insertKey = function(nodeId, nodeName) {
+            // var content = editor.getValue();
+            // editor_preview.setValue('');
+
+
+            var session = editor.session
+            session.insert(
+               editor.selection.getCursor()
+            , '[@binder]' + nodeName + ' ' + guid() + '[binder@] ')
+        }   
+
+        function guid() {
+            function s4() {
+                return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+            }
+            
+            // return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            // s4() + '-' + s4() + s4() + s4();
+
+            return s4() + s4() + '-' + s4() + '-' + s4()
+        } 
 
         function getCookie(cname) {
             var name = cname + "=";

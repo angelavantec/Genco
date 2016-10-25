@@ -23,6 +23,62 @@
 
 		$('#example').popover('show');
 	</script>
+
+
+	<script>
+//     $(function () {
+// //         $('#tree').jstree({
+// //         	'core' : {
+// //     'data' : [
+// //        { "id" : "ajson1", "parent" : "#", "text" : "Simple root node" },
+// //        { "id" : "ajson2", "parent" : "#", "text" : "Root node 2" },
+// //        { "id" : "ajson3", "parent" : "ajson2", "text" : "Child 1" },
+// //        { "id" : "ajson4", "parent" : "ajson2", "text" : "Child 2" },
+// //     ]
+// // } ,
+// //             'plugins': [ 'dnd' ]
+// //         });
+
+//         // $('.drag')
+//         //     .on('mousedown', function (e) {
+//         //         return $.vakata.dnd.start(e, { 'jstree' : true, 'obj' : $(this), 'nodes' : [{ id : true, text: $(this).text() }] }, '<div id="jstree-dnd" class="jstree-default"><i class="jstree-icon jstree-er"></i>' + $(this).text() + '</div>');
+//         //     });
+//         $(document)
+//             // .on('dnd_move.vakata', function (e, data) {
+//             //     var t = $(data.event.target);
+//             //     console.log('tttttttttttttttttttttt');
+//             //     if(!t.closest('.jstree').length) {
+//             //         if(t.closest('.drop').length) {
+//             //             data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
+//             //         }
+//             //         else {
+//             //             data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
+//             //         }
+//             //     }
+//             // })
+//             .on('dnd_stop.vakata', function (e, data) {
+//                 var t = $(data.event.target);
+//                 console.log('yyyyyyyyyyyyyyyyyyyy');
+//                 console.log(t);
+
+
+//                 if(t[0].closest('.ace_content')) {
+//                 	console.log('append');
+//                 	insertKey();
+//                 }	
+//                 // if(!t.closest('.jstree').length) {
+//                 //     if(t.closest('.drop').length) {
+//                 //         $(data.element).clone().appendTo(t.closest('.drop'));
+//                 //         console.log(data);
+//                 //         // node data: 
+//                 //         // if(data.data.jstree && data.data.origin) { console.log(data.data.origin.get_node(data.element); }
+//                 //     }
+//                 // }
+//             });
+//   });
+</script>
+
+
 {% endblock %}
 
 {% block extrahead %}    
@@ -133,6 +189,7 @@
   
 			<!-- 		<button ng-click="pushtree()">push</button>		 -->
 				    <div id="jstree">
+				    	
 <!--ORIG  -->
 
 		<!-- 			    <ul>
@@ -180,6 +237,7 @@
 		</div>
 
 	    <div id="main">
+	    	<div id="tree">
 
 	    	<div class="modal-header" style="margin-top:70px;">
 	    		Options
@@ -199,7 +257,7 @@
 		<div role="tabpanel" >
 			{% verbatim %}
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" ng-repeat="tab in tabs" ng-click="selectTab(tab.id_plantilla, $index)" ng-class="{active: tab.id_plantilla==current_template}">
+                <li role="presentation" ng-repeat="tab in tabs" ng-click="selectTab(tab.id_plantilla, $index, true)" ng-class="{active: tab.id_plantilla==current_template}">
                     <a data-target="#tab" aria-controls="home" role="tab" data-toggle="tab">{{tab.nombre}} <span ng-click="deleteTab($index)" class="glyphicon glyphicon-remove"></span></a>
                 </li>
 <!--                 <li role="presentation" >

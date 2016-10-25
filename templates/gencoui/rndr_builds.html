@@ -370,7 +370,7 @@
 						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Close">
 								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 						</a> -->
-					</div>	
+					<!-- </div>	 -->
 	          	</div>
 
 	        </div>
@@ -379,7 +379,7 @@
 
 	<div class="modal fade" id="template-entities-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
-	    <div class="modal-dialog modal-sm">
+	    <div class="modal-dialog">
 
 	        <div class="modal-content">
 		        <div class="modal-header">
@@ -388,14 +388,70 @@
 			    </div>	     
 	          	<div class="modal-body">
 	   				<form ng-submit="save_template_entity()">
+	   					{% verbatim %}
+
+						<!-- 	<label ng-repeat="entity in all_entities">
+								<input type="radio" name="repoSet" ng-model="entity_selected.data" ng-value="{{entity}}">{{entity.nombre}}
+							</label> -->
+
+							<div class="checkbox" ng-repeat="entity in all_entities">
+								<label>
+									<input type="checkbox" ng-model="entity_added[$index]" >{{entity.id_entidad}} {{entity.nombre}}
+								</label>
+								<a class="btn btn-default btn-xs" ng-click="get_template_entity($index)">select</a>
+
+								<div  ng-repeat="field in all_references[$index] | filter: greaterThan('entidad_ref', 0) ">
+									
+									
+									<p>{{field.entidad.nombre}}</p>
+														      		
+						      	</div>
+								
+							</div>
+							<div>
+								{{entities_selects}}
+								
+							</div>	
 
 						
+						{% endverbatim %}
 						<button type="submit" hidden></button>
 					</form>
 	          	</div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">
 		          		<a class="btn icon-btn btn-default" ng-click="save_template_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
+
+	<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog modal-sm">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Confirm</h4>
+			    </div>	     
+	          	<div class="modal-body">
+	          		{% verbatim %}
+	          		{{globalMessage}}
+	          		{% endverbatim %}
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="delete_template()" data-placement="bottom"data-tt="tooltip" title="Save">
 							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
 						</a>
 					</div>

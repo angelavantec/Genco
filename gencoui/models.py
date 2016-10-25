@@ -368,7 +368,9 @@ class GencoParametros(models.Model):
 class GencoPlantillaEntidad(models.Model):
     id_entidad = models.ForeignKey(GencoEntidad, models.DO_NOTHING, db_column='id_entidad')
     id_plantilla = models.ForeignKey('GencoPlantillas', models.DO_NOTHING, db_column='id_plantilla')
-
+    tags = models.CharField(max_length=512)
+    creado_por = models.CharField(max_length=30)
+    fecha_creacion = models.DateTimeField()
     class Meta:
         managed = False
         db_table = 'genco_plantilla_entidad'
@@ -383,6 +385,7 @@ class GencoPlantillas(models.Model):
     id_lenguajeprocesador = models.ForeignKey(AdminLenguajeProcesador, models.DO_NOTHING, db_column='id_lenguajeprocesador')
     id_componente = models.ForeignKey(GencoComponentes, models.DO_NOTHING, db_column='id_componente')
     archivo = models.CharField(max_length=100, blank=True, null=True)
+    upload = models.FileField(upload_to='user_templates')
     creado_por = models.CharField(max_length=30)
     fecha_creacion = models.DateTimeField()
     modificado_por = models.CharField(max_length=30, blank=True, null=True)
