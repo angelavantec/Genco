@@ -20,6 +20,7 @@ router.register(r'plantillas', GencoPlantillasViewSet)
 router.register(r'repositorio', GencoRepositorioViewSet)
 router.register(r'entidad', GencoEntidadViewSet)
 router.register(r'entidaddef', GencoEntidadDefinicionViewSet)
+router.register(r'plantillaentidad', GencoPlantillaEntidadViewSet)
 # router.register(r'archivo', AdminArchivoPlantillaViewSet)
 
 urlpatterns = patterns('',	
@@ -47,4 +48,5 @@ urlpatterns = patterns('',
 	url(r'^tmpl/(?P<id_plantilla>\d+)$', tmpl.as_view()),
 	url(r'^tmpl_preview/(?P<id_plantilla>\d+)$', tmpl_preview.as_view()),
 	url(r'^tree/(?P<id_proyecto>\d+)$', dir_template_tree.as_view()),
+	url(r'^repotree/(?P<id_repositorio>\d+)$', repository_tree.as_view()),
 )

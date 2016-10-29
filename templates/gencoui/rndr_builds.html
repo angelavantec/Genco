@@ -379,7 +379,7 @@
 
 	<div class="modal fade" id="template-entities-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
-	    <div class="modal-dialog">
+	    <div class="modal-dialog modal-lg">
 
 	        <div class="modal-content">
 		        <div class="modal-header">
@@ -387,18 +387,56 @@
 		        	<h4 class="modal-title">Select Entities</h4>
 			    </div>	     
 	          	<div class="modal-body">
-	   				<form ng-submit="save_template_entity()">
+	   				<!-- <form ng-submit="save_template_entity()"> -->
 	   					{% verbatim %}
+	   					<table  width="100%">
+	   						<tr>
+	   							<td style="padding-right: 10px;" valign="top">
+	   							
+	   									<div class="list-group">							  
+									  		<div class="list-group-item" ng-repeat="entity in all_entities" ng-dblclick="get_template_entity($index)">
+									  			<p class="list-group-item-text">{{entity.nombre}}</p>
+									  		</div>
+										</div>
+	   					   								
+								</td>
+								<td style="padding-left: 10px;" valign="top">
+									<div class="list-group"> 		
+										<div class="list-group-item" ng-repeat="entity in all_entities" ng-dblclick="get_template_entity($index)" >
+											<h4 class="list-group-item-heading">{{entity.nombre}}</h4>
+								  			<table style="margin-left:10px">
+								  				<tr >
+								  					<td>H21313dddf
+								  						<select>
+								  							<option>1</option>
+								  						</select>
+								  					</td>
+								  				</tr>
+								  				<tr >
+								  					<td>GER23423DW
+								  						<select>
+								  							<option>1</option>
+								  						</select>
+								  					</td>
+								  				</tr>
+								  			</table>
+								  		</div>	
 
-						<!-- 	<label ng-repeat="entity in all_entities">
-								<input type="radio" name="repoSet" ng-model="entity_selected.data" ng-value="{{entity}}">{{entity.nombre}}
-							</label> -->
+		  								
+									</div>
+									<div>
+											{{entities_selects}}
+										
+									</div>
+								</td>
+	   						</tr>
+	   					</table>
 
-							<div class="checkbox" ng-repeat="entity in all_entities">
+							<!-- <div class="checkbox" ng-repeat="entity in all_entities">
 								<label>
 									<input type="checkbox" ng-model="entity_added[$index]" >{{entity.id_entidad}} {{entity.nombre}}
 								</label>
-								<a class="btn btn-default btn-xs" ng-click="get_template_entity($index)">select</a>
+								{{entity.nombre}}<a class="btn btn-default btn-xs" ng-click="get_template_entity($index)">select</a>
 
 								<div  ng-repeat="field in all_references[$index] | filter: greaterThan('entidad_ref', 0) ">
 									
@@ -407,16 +445,14 @@
 														      		
 						      	</div>
 								
-							</div>
-							<div>
-								{{entities_selects}}
-								
-							</div>	
+							</div> -->
+
+
 
 						
 						{% endverbatim %}
-						<button type="submit" hidden></button>
-					</form>
+<!-- 						<button type="submit" hidden></button>
+					</form> -->
 	          	</div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">

@@ -1,6 +1,6 @@
 angular.module('app_editor', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, directorio, archivo, fileUpload, repository, entity_repo, entitydef) {
+.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, repotree, directorio, archivo, fileUpload, repository, entity_repo, entitydef) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -321,7 +321,7 @@ $("#jstreeFolders").jstree({
 
 
 
-tree.update({id:1}, function(success){
+tree.get({id:1}, function(success){
                         
                         console.log('success');    
                         $('#jstreeBuilds').jstree();
@@ -336,8 +336,6 @@ tree.update({id:1}, function(success){
                         console.log('ERR');
                         console.log(error);  
                     });
-
-
 
 //  $('#jstreeFolders').jstree(true).settings.core.data = [
 //             {'id' : 'root',

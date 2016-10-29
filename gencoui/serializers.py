@@ -217,6 +217,14 @@ class GencoArchivosSerializer(serializers.ModelSerializer):
         model = GencoArchivos
         read_only_fields = ('creado_por','fecha_creacion','modificado_por','fecha_modificacion',)   
 
+
+
+class GencoPlantillaEntidadSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GencoPlantillaEntidad
+        read_only_fields = ('creado_por','fecha_creacion',) 
+
 # class AdminArchivoPlantillaSerializer(serializers.ModelSerializer):  
 
 #     class Meta:        

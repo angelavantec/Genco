@@ -366,9 +366,10 @@ class GencoParametros(models.Model):
 
 
 class GencoPlantillaEntidad(models.Model):
+    id_plantillaentidad = models.AutoField(primary_key=True)
     id_entidad = models.ForeignKey(GencoEntidad, models.DO_NOTHING, db_column='id_entidad')
     id_plantilla = models.ForeignKey('GencoPlantillas', models.DO_NOTHING, db_column='id_plantilla')
-    tags = models.CharField(max_length=512)
+    tags = models.CharField(max_length=1024)
     creado_por = models.CharField(max_length=30)
     fecha_creacion = models.DateTimeField()
     class Meta:
@@ -386,6 +387,7 @@ class GencoPlantillas(models.Model):
     id_componente = models.ForeignKey(GencoComponentes, models.DO_NOTHING, db_column='id_componente')
     archivo = models.CharField(max_length=100, blank=True, null=True)
     upload = models.FileField(upload_to='user_templates')
+    tags = models.CharField(max_length=512)
     creado_por = models.CharField(max_length=30)
     fecha_creacion = models.DateTimeField()
     modificado_por = models.CharField(max_length=30, blank=True, null=True)
@@ -396,6 +398,8 @@ class GencoPlantillas(models.Model):
         db_table = 'genco_plantillas'
         unique_together = (('nombre', 'id_componente'),)
 
+    def __unicode__(self):
+        return '%s' % (self.nombre) 
 
 class GencoProyectoRepositorio(models.Model):
     id_repositorio = models.ForeignKey('GencoRepositorio', models.DO_NOTHING, db_column='id_repositorio')

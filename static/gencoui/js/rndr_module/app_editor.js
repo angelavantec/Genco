@@ -71,18 +71,44 @@ console.log($scope.dataLang);
 $(function () {
 
         $(document)
+            .on('dnd_move.vakata', function (e, data) {
+                var t = $(data.event.target);
+                var isRenderas = data.data.obj[0].getAttribute('data-renderas');                
 
+                if(!t.closest('.jstree').length) {
+                    if(t.closest('.ace_content').length) {
+                        if(isRenderas == undefined || isRenderas == null || isRenderas == 'component'){
+                            data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
+                        }else{
+                            data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');    
+                        }                        
+                    }
+                    else {
+                        data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
+                    }
+                }
+            })
             .on('dnd_stop.vakata', function (e, data) {
                 var t = $(data.event.target);
                 console.log('yyyyyyyyyyyyyyyyyyyy');
-                console.log(data.data);
+                console.log(data.data.obj[0].getAttribute('data-renderas'));
+                $(this).attr("data-id");
                 console.log(t);
 
+                var isRenderas = data.data.obj[0].getAttribute('data-renderas');
+                if(isRenderas == undefined || isRenderas == null || isRenderas == 'component'){
+                    return;
+                }
+
+                console.log('2.......');
 
                 //var inst = $.jstree.reference(data.reference),
                 //obj = inst.get_node(data.reference);
                 console.log(data.data.obj[0].id);
-                //console.log(data.data.obj[0].parent);
+                var node = $('#jstree').jstree(true).get_node(data.data.obj[0].id);
+                var nodeParent = $('#jstree').jstree(true).get_node(node.parents[0]);
+                console.log(node);
+                console.log(nodeParent);
 
 // var lnLevel = 2;
 // var loParent = $("#" + data.data.obj[0].id);
@@ -99,11 +125,9 @@ $(function () {
 
 //             console.log(lsParents)
 
-console.log($scope.component_selected);
-
                 if(t[0].closest('.ace_content')) {
                     console.log('append');
-                    $scope.insertKey(data.data.obj[0].id, data.data.obj[0].innerText);
+                    $scope.insertKey(node, nodeParent);
                 }   
 
             });
@@ -403,16 +427,6 @@ console.log($scope.components);
                         
                     }
             },
-             "dnd" : {
-                "drop_target" : "#main",
-                "drop_finish" : function (data) {
-                    console.log('start --------------------');
-                    //if(data.o.attr("rel") === "ds") {
-                      //update chart with new data here?
-                      //using data.o.attr("id")
-                    //}
-                }
-            },
             "crrm" : { move : { check_move : function (m) { return false; } } },
             "plugins" : [  "contextmenu","dnd", "sort","crrm" ],
             "contextmenu": {
@@ -561,10 +575,11 @@ console.log($scope.components);
                
             });
 
-            $('#jstree').on('select_node.jstree', function (e, data) {
-                    var loMainSelected = data;
-                    console.log(loMainSelected.node.parents);
-                    $scope.component_selected = loMainSelected.node.parents;
+            $('#jstree').on('click.jstree', function (e, data) {
+                console.log(data);
+                   // var loMainSelected = data;
+                   // console.log(loMainSelected.node.parents);
+                    //$scope.component_selected = loMainSelected.node.parents;
             });
 
 
@@ -951,7 +966,7 @@ console.log($scope.components);
         };
 
 
-        $scope.insertKey = function(nodeId, nodeName) {
+        $scope.insertKey = function(node, nodeParent) {
             // var content = editor.getValue();
             // editor_preview.setValue('');
 
@@ -959,7 +974,7 @@ console.log($scope.components);
             var session = editor.session
             session.insert(
                editor.selection.getCursor()
-            , '[@binder]' + nodeName + ' ' + guid() + '[binder@] ')
+            , '[@ ' + nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'] + ' ' + guid() + ' @] ')
         }   
 
         function guid() {

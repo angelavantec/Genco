@@ -36,6 +36,9 @@ from Cheetah.Template import Template
 
 from django.shortcuts import get_object_or_404
 
+from genco_utils import *
+
+
 def current_datetime(request):
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
@@ -315,6 +318,20 @@ class GencoEntidadDefinicionViewSet(viewsets.ModelViewSet):
 #     serializer_class = AdminArchivoPlantillaSerializer
 
 
+class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = GencoPlantillaEntidad.objects.all()
+    serializer_class = GencoPlantillaEntidadSerializer
+    filter_backends = (filters.DjangoFilterBackend,)    
+    filter_class = GencoPlantillaEntidadFilter
+    filter_fields = ('id_plantilla')
+
+    def perform_create(self, serializer):
+        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())  
+
+
 def get_form(request, id_form=None):
     template_name = 'gencoui/rndr_form_generic.html'
     print id_form
@@ -402,7 +419,18 @@ class tmpl(APIView):
         #     # filename = filename.join(id_plantilla,'_rndr.tmpl'])
         #     # print id_plantilla
         #     # print filename
-        writeFile(content, filename + '_rndr.tmpl', context)    
+        writeFile(content, filename + '_rndr.tmpl', context)  
+
+
+        tags = getTagsTemplate(content,"")
+        # dic = {}
+        # dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 
+        # dic['UI/abm e460864b-bb5b-96b8'] = 2
+        # dic['DAL/dao e948b17d-68f4-658e'] = 3
+
+        GencoPlantillas.objects.filter(id_plantilla=id_plantilla).update(tags=tags)
+        # se = GencoEntidadDefinicion.o 
+
         return JsonResponse(context)
 
 
@@ -690,7 +718,7 @@ def deleteFile(fileName, context):
 
 class dir_template_tree(APIView):
     
-    def put(self, request, id_proyecto=None):
+    def get(self, request, id_proyecto=None):
         context = {'error':'none', 'fileContent':'none'}
         a = GencoDirectorioElementos
         e = a.objects.filter(id_directorio__id_proyecto=id_proyecto).order_by('id_directorio')
@@ -723,5 +751,28 @@ class dir_template_tree(APIView):
             else:
                 dirs.append( {'id': 'f'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_archivo.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': i.id_archivo_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_archivo.nombre}})
         print dirs    
+
+        return JsonResponse({'dirs':dirs})
+
+
+class repository_tree(APIView):
+    
+    def get(self, request, id_repositorio=None):
+        context = {'error':'none', 'fileContent':'none'}
+        gd = GencoEntidad
+        gdSet = gd.objects.filter(id_repositorio=id_repositorio).order_by('id_repositorio')
+
+        dirs = []
+        templates = {}
+        id_padre = ''
+
+        for i  in gdSet:         
+            # if i.entidad is None:
+            id_padre = '#'
+            # else:
+            #     id_padre = i.id_padre_id
+
+            dirs.append({'id': i.id_entidad, 'parent': id_padre, 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': i.id_entidad, 'data-rendername':i.nombre}})
+        
 
         return JsonResponse({'dirs':dirs}) 

@@ -64,3 +64,11 @@ class GencoDirectorioElementosFilter(filters.FilterSet):
     class Meta:
         model = GencoDirectorioElementos
         fields = ['id_directorio', 'id_plantilla']
+
+class GencoPlantillaEntidadFilter(filters.FilterSet):
+    # id_directorio = django_filters.CharFilter(name="id_directorio")
+    id_plantilla = django_filters.CharFilter(name="id_plantilla")
+
+    class Meta:
+        model = GencoPlantillaEntidad
+        fields = ['id_plantilla']        
