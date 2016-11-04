@@ -77,7 +77,7 @@
 
 				    <div style="margin-top: 15px;">
 				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Folders </h4>
-				    	<a class="btn btn-success btn-xs" href="#" data-placement="bottom" data-tt="tooltip" title="Refresh the builds tree " ng-click="printTree()">
+				    	<a class="btn btn-primary btn-xs" href="#" data-placement="bottom" data-tt="tooltip" title="Refresh the builds tree " ng-click="printTree()">
 							Build
 							<span class="glyphicon glyphicon-chevron-right" aria-hidden="true">				
 						</a>
@@ -93,7 +93,7 @@
 
 				    <div style="margin-top: 15px;">
 				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Build </h4>
-						<a class="btn btn-success btn-xs" data-placement="bottom" data-tt="tooltip" title="Download files" ng-click="printTree()">
+						<a class="btn btn-primary btn-xs" data-placement="bottom" data-tt="tooltip" title="Download files" ng-click="printTree()">
 							Download
 							<span class="glyphicon glyphicon-cloud-download" aria-hidden="true">				
 						</a>
@@ -391,43 +391,44 @@
 	   					{% verbatim %}
 	   					<table  width="100%">
 	   						<tr>
-	   							<td style="padding-right: 10px;" valign="top">
+	   							<td style="padding-right: 10px;" valign="top" width="50%">
 	   							
 	   									<div class="list-group">							  
-									  		<div class="list-group-item" ng-repeat="entity in all_entities" ng-dblclick="get_template_entity($index)">
+									  		<a class="list-group-item" style="text-decoration: none;" ng-repeat="entity in all_entities" ng-dblclick="add_entity($index)">
 									  			<p class="list-group-item-text">{{entity.nombre}}</p>
-									  		</div>
+									  		</a>
 										</div>
 	   					   								
 								</td>
 								<td style="padding-left: 10px;" valign="top">
 									<div class="list-group"> 		
-										<div class="list-group-item" ng-repeat="entity in all_entities" ng-dblclick="get_template_entity($index)" >
-											<h4 class="list-group-item-heading">{{entity.nombre}}</h4>
-								  			<table style="margin-left:10px">
-								  				<tr >
-								  					<td>H21313dddf
+										<div class="list-group-item" ng-repeat="entity in entities_added" >
+											<!-- <div class="modal-header">
+										    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>									        
+										    </div> -->
+											<h4 class="list-group-item-heading">{{entity.entity.nombre}}</h4>
+								  			<table style="margin-left:10px" width="100%">
+								  				<tr ng-repeat="tag in template_tags">
+								  					<td>{{tag}}
+								  					</td>	
+								  					<td>	
 								  						<select>
-								  							<option>1</option>
+								  							<option ng-repeat="scope in entity.scope | filter: greaterThan('entidad_ref', 0)">{{scope.entidad.nombre}}</option>
 								  						</select>
 								  					</td>
-								  				</tr>
-								  				<tr >
-								  					<td>GER23423DW
-								  						<select>
-								  							<option>1</option>
-								  						</select>
-								  					</td>
-								  				</tr>
+								  				</tr>								  			
 								  			</table>
+								  			<div class="modal-footer" style="padding-top: 10px; padding-bottom: 10px;">
+	          									<div style="display:inline">
+										  			<a class="btn btn-primary btn-xs" role="button" ng-click="save_entity_selecteds()">Save</a>
+										  			<a class="btn btn-warning btn-xs" role="button">Remove</a>	
+										  		</div>
+										  	</div>	
 								  		</div>	
 
 		  								
 									</div>
-									<div>
-											{{entities_selects}}
-										
-									</div>
+																	
 								</td>
 	   						</tr>
 	   					</table>

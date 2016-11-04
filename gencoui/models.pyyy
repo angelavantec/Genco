@@ -246,19 +246,6 @@ class GencoDirectorios(models.Model):
         db_table = 'genco_directorios'
 
 
-class GencoElementoEntidad(models.Model):
-    id_elementoentidad = models.AutoField(primary_key=True)
-    id_entidad = models.ForeignKey('GencoEntidad', models.DO_NOTHING, db_column='id_entidad')
-    id_direlemento = models.ForeignKey(GencoDirectorioElementos, models.DO_NOTHING, db_column='id_direlemento')
-    tags = models.CharField(max_length=1024, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
-    fecha_creacion = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'genco_elemento_entidad'
-
-
 class GencoEntidad(models.Model):
     id_entidad = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
@@ -378,6 +365,19 @@ class GencoParametros(models.Model):
         db_table = 'genco_parametros'
 
 
+class GencoPlantillaEntidad(models.Model):
+    id_plantillaentidad = models.AutoField(primary_key=True)
+    id_entidad = models.ForeignKey(GencoEntidad, models.DO_NOTHING, db_column='id_entidad')
+    id_plantilla = models.ForeignKey('GencoPlantillas', models.DO_NOTHING, db_column='id_plantilla')
+    tags = models.CharField(max_length=1024)
+    creado_por = models.CharField(max_length=30)
+    fecha_creacion = models.DateTimeField()
+    class Meta:
+        managed = False
+        db_table = 'genco_plantilla_entidad'
+        unique_together = (('id_entidad', 'id_plantilla'),)
+
+
 class GencoPlantillas(models.Model):
     id_plantilla = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -386,7 +386,8 @@ class GencoPlantillas(models.Model):
     id_lenguajeprocesador = models.ForeignKey(AdminLenguajeProcesador, models.DO_NOTHING, db_column='id_lenguajeprocesador')
     id_componente = models.ForeignKey(GencoComponentes, models.DO_NOTHING, db_column='id_componente')
     archivo = models.CharField(max_length=100, blank=True, null=True)
-    tags = models.CharField(max_length=512, blank=True, null=True)
+    upload = models.FileField(upload_to='user_templates')
+    tags = models.CharField(max_length=512)
     creado_por = models.CharField(max_length=30)
     fecha_creacion = models.DateTimeField()
     modificado_por = models.CharField(max_length=30, blank=True, null=True)
@@ -419,7 +420,7 @@ class GencoProyectos(models.Model):
     ref_archivo_constructor = models.CharField(max_length=100, blank=True, null=True)
     empaquetado = models.CharField(max_length=45, blank=True, null=True)
     url = models.CharField(max_length=100, blank=True, null=True)
-    version = models.CharField(max_length=45, blank=True, null=True)
+    version = models.CharField(max_length=45)
     id_alcance = models.ForeignKey(AdminProyectoAlcance, models.DO_NOTHING, db_column='id_alcance')
     creado_por = models.CharField(max_length=30)
     fecha_creacion = models.DateTimeField()

@@ -65,10 +65,10 @@ class GencoDirectorioElementosFilter(filters.FilterSet):
         model = GencoDirectorioElementos
         fields = ['id_directorio', 'id_plantilla']
 
-class GencoPlantillaEntidadFilter(filters.FilterSet):
+class GencoElementoEntidadFilter(filters.FilterSet):
     # id_directorio = django_filters.CharFilter(name="id_directorio")
     id_plantilla = django_filters.CharFilter(name="id_plantilla")
 
     class Meta:
-        model = GencoPlantillaEntidad
-        fields = ['id_plantilla']        
+        model = GencoElementoEntidad
+        fields = ['id_direlemento', 'id_entidad']        

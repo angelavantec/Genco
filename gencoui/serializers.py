@@ -219,10 +219,10 @@ class GencoArchivosSerializer(serializers.ModelSerializer):
 
 
 
-class GencoPlantillaEntidadSerializer(serializers.ModelSerializer):
+class GencoElementoEntidadSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = GencoPlantillaEntidad
+        model = GencoElementoEntidad
         read_only_fields = ('creado_por','fecha_creacion',) 
 
 # class AdminArchivoPlantillaSerializer(serializers.ModelSerializer):  

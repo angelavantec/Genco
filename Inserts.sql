@@ -1,8 +1,4 @@
-
-mysql> source C:\Users\Angel\Desktop\creaTab.sql
-
-insert into admin_lenguaje_procesador(nombre, version, componente_binario
-, estado, creado_por, fecha_creacion) values ('cheetha', 5, 'cheetha','alta','admin', now());
+insert into admin_lenguaje_procesador(nombre, version, componente_binario, estado, creado_por, fecha_creacion) values ('cheetha', 5, 'cheetha','alta','admin', now());
 
 insert into genco_grupo(nombre, creado_por, fecha_creacion) values('default', 'admin', now());
 

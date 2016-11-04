@@ -322,11 +322,11 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoPlantillaEntidad.objects.all()
-    serializer_class = GencoPlantillaEntidadSerializer
+    queryset = GencoElementoEntidad.objects.all()
+    serializer_class = GencoElementoEntidadSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
-    filter_class = GencoPlantillaEntidadFilter
-    filter_fields = ('id_plantilla')
+    filter_class = GencoElementoEntidadFilter
+    filter_fields = ('id_direlemento', 'id_entidad')
 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())  
@@ -375,7 +375,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
         
 
-        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_plantilla_entidad': GencoPlantillaEntidadForm, 
+        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 
                     'user': request.user.username, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
@@ -428,7 +428,7 @@ class tmpl(APIView):
         # dic['UI/abm e460864b-bb5b-96b8'] = 2
         # dic['DAL/dao e948b17d-68f4-658e'] = 3
 
-        GencoPlantillas.objects.filter(id_plantilla=id_plantilla).update(tags=tags)
+        GencoPlantillas.objects.filter(id_plantilla=id_plantilla).update(tags=json.dumps(tags))
         # se = GencoEntidadDefinicion.o 
 
         return JsonResponse(context)
@@ -755,12 +755,12 @@ class dir_template_tree(APIView):
         return JsonResponse({'dirs':dirs})
 
 
-class repository_tree(APIView):
+class template_entity(APIView):
     
-    def get(self, request, id_repositorio=None):
-        context = {'error':'none', 'fileContent':'none'}
-        gd = GencoEntidad
-        gdSet = gd.objects.filter(id_repositorio=id_repositorio).order_by('id_repositorio')
+    def get(self, request, id_proyecto=None, id_plantilla=None):
+    
+        gd = GencoPlantillaEntidad
+        gdSet = gd.objects.filter(id_proyecto=id_).order_by('id_entidad')
 
         dirs = []
         templates = {}

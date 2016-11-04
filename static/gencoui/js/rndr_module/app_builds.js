@@ -13,10 +13,6 @@ $scope.components = [];
 $scope.itr_plantillas=0;
 $scope.treeModel = [];
 $scope.nodeComponente=[];
-$scope.component_selected = {
-    id: null,
-    nombre: null,
-};
 
 $scope.template_selected = {
     id: null,
@@ -27,12 +23,16 @@ $scope.repository_selected = {
     data: null,
 };
 
-$scope.entity_selected = {
-    data: null,
+$scope.entity_added = {
+    entity: null,
+    scope: null,
 };
-$scope.entities_selects = '';
 
-$scope.entity_added;
+$scope.entities_added = [];
+$scope.template_tags=[];
+$scope.entity_scope=[];
+
+
 
 $scope.GencoPlantillas;
 $scope.GencoComponentes;
@@ -53,9 +53,6 @@ $scope.GencoRepositorioEntidad;
 $scope.GencoEntidadDefinicion = new entitydef();
 $scope.GencoEntidadFields = [];
 
-$scope.all_references=[];
-
-
 
 $scope.globalMessage = 'NA';
 
@@ -71,6 +68,9 @@ $("#jstreeFolders").jstree({
                 "check_callback" : function (operation, node, node_parent, node_position, more) {
                         // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
                         // in case of 'rename_node' node_position is filled with the new node name                      
+
+// return true;
+
                         if (more) {
                             if (more.is_multi) {
                                 more.origin.settings.dnd.always_copy = true;
@@ -85,14 +85,15 @@ $("#jstreeFolders").jstree({
                             return false;
                         }
                             
-                        //console.log(node_parent);
+                        console.log(node_parent);
                         var renderas = node_parent.li_attr['data-renderas'];
 
                         if(typeof renderas == 'undefined'){
                             return false;
                         }
                       
-                        validator = renderas === 'component' ? true : false;    
+                        validator = renderas === 'folder' ? true : false;  
+                        console.log(renderas);  
                         if(validator && operation == 'move_node'){
 
                             validator = node.li_attr['data-renderas'] === 'archive' ? true : false; 
@@ -133,21 +134,24 @@ $("#jstreeFolders").jstree({
                                     
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
+                                    var renderId = obj.li_attr['data-renderid'];
                                     //inst.edit(obj);
                                     
                                     //$scope.component_selected.nombre = obj.text;
                                     //$scope.component_selected.id = obj.id;
                                     //console.log($scope.component_selected);
                                     if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
-                                        $scope.globalMessage = "No repository selected";
-                                        angular.element($("#ctrl_editor")).scope().$apply();
-                                        console.log($scope.globalMessage);
-                                        $('#info-modal').modal('show');      
+                                        $scope.change_repository();
+                                        //$scope.globalMessage = "No repository selected";
+                                        //angular.element($("#ctrl_editor")).scope().$apply();
+                                       // console.log($scope.globalMessage);
+                                        //$('#info-modal').modal('show');      
+
                                         return;                                  
                                     }
                                     
                                     
-                                    $scope.template_entities_load(obj.id);
+                                    $scope.template_entities_load(renderId);
 
 
                                     
@@ -217,9 +221,14 @@ $("#jstreeFolders").jstree({
                                     }
                                 }
                             };
-                            if(this.get_type($node) === "file") {
+                            
+                            if($node.li_attr['data-renderas'] === 'file'){
                                 delete tmp.create;
                             }
+
+                            // if(this.get_type($node) === "file") {
+                            //     delete tmp.create;
+                            // }
 
                             tmp.rename = {
 
@@ -258,8 +267,22 @@ $("#jstreeFolders").jstree({
                                             var inst = $.jstree.reference(data.reference),
                                             obj = inst.get_node(data.reference);
                                             $scope.node_selected = data;        
-                                            $scope.delete_directorio(obj.id, obj);             
+                                            //$scope.delete_directorio(obj.id, obj);             
                                             // tree.edit($node);
+
+                                            //para los archivos y templates el id viene en este atributo
+                                            var renderId = obj.li_attr['data-renderid'];
+                                            //aqui viene definido el tipo de nodo pintado (file, folder, template)
+                                            var renderAs = obj.li_attr['data-renderas'];
+                                            
+                                            if(renderAs === 'folder'){
+                                                $scope.delete_directorio(renderId, obj);
+                                                //$('#folder-edit-modal').modal('show');
+                                            }else{
+                                                $scope.delete_file(renderId, obj);
+                                                // $('#file-edit-modal').modal('show');
+                                            }
+
                                     },   
                             }
 
@@ -437,7 +460,7 @@ function add_templates(proccess, componente, plantillas){
     if(plantillas != null){
 
         angular.forEach(plantillas, function(value, key){    
-            nodePlantillas.push({'parent': componente.id_componente, 'text':value.nombre + '<sub style="color:#CCCCCC">'  + value.lang.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':'archive', 'data-renderid': value.id_plantilla, 'data-rendername': value.nombre}});
+            nodePlantillas.push({'parent': componente.id_componente, 'text':value.nombre + '<sub style="color:#CCCCCC">'  + value.lang.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':'template', 'data-renderid': value.id_plantilla, 'data-rendername': value.nombre}});
         });
         $scope.nodeComponente.push({'id': componente.id_componente,'text':componente.nombre, 'icon':"glyphicon glyphicon-folder-open", 'children':nodePlantillas, 'li_attr':{'data-renderas':'component','data-renderid': componente.id_componente, 'data-rendername': componente.nombre}});
 
@@ -572,7 +595,7 @@ console.log($scope.components);
 
             });
             
-        } 
+        }
 
 
         $scope.new_directorio = function(id_proyecto, id_padre){
@@ -597,6 +620,8 @@ console.log($scope.components);
                                             'data-rendername':success.nombre
                                         }
                             }
+                console.log($scope.node_selected)
+                console.log(nodeDef);
                 $scope.addTreeNode($scope.node_selected, nodeDef);
             },function(error){
                 
@@ -666,6 +691,7 @@ console.log($scope.components);
                 manipular el arbol.
         */
         $scope.addTreeNode = function(data, newNode){
+            console.log('++++++++++++++++++++++++');
             var inst = $.jstree.reference(data.reference),
             obj = inst.get_node(data.reference);
             inst.create_node(obj, newNode, "last", function (new_node) {
@@ -827,6 +853,26 @@ console.log($scope.components);
 
         }
 
+
+        $scope.delete_file = function(id_file, node){
+
+            archivo.delete({id: id_file},function(success){
+                console.log('****************************************************');
+                console.log(node);           
+                
+                //delete from tree
+                $('#jstreeFolders').jstree(true).delete_node(node);
+
+                
+            },function(error){
+                
+                console.log(error);
+
+            });
+            
+        }
+
+
         $scope.change_repository = function(){
             repository.query(
                             function(success){
@@ -840,15 +886,18 @@ console.log($scope.components);
 
 
 
-        $scope.all_entity_init = function(){
-            //Hacemos que al cargar se inicialicen con false
-            //aca agregar el valor que se registro previamente 
-            console.log($scope.all_entities.map(function(x){return false;}));
-            $scope.entity_added=$scope.all_entities.map(function(x){return false;});
-            $scope.all_references=$scope.all_entities.map(function(x){return null;});
-        }
 
-        $scope.template_entities_load = function(id_file){
+        $scope.template_entities_load = function(id_plantilla){
+
+            plantillas.get({id: id_plantilla},function(success){
+                console.log(success);
+                $scope.template_tags = JSON.parse(success.tags);                
+                //$scope.reload_tree();
+                //$('#template-delete-modal').modal('hide');
+            },function(error){
+                console.log(error);
+            });
+
             console.log('obtener entidades');
             console.log($scope.repository_selected)
 
@@ -859,7 +908,7 @@ console.log($scope.components);
                           $scope.$apply();
                     }
                     $scope.all_entities = success;
-                    $scope.all_entity_init();
+    
                     console.log(success);
                     $('#template-entities-modal').modal('show');
 
@@ -873,132 +922,38 @@ console.log($scope.components);
 
 
 
-        $scope.get_template_entity =  function(index){
+        $scope.add_entity =  function(index){
+            // var id_entity = $scope.all_entities[index].id_entidad;
+            var entitySelected = $scope.all_entities[index];
+            var entityAdded = { entity:null, scope:null};
+            entityAdded.entity = entitySelected;
 
-            //index = 0;
-            proccess = [];
-
-            /**@Generics
-            * lang_added es el arrglo que se pinta y que corresponde al mismo array all_langs. Se usa lang_added para determinar cual esta seleccionado y con el index de los
-            * seleccionados vamos al array base(all_langs[])
-            **/
-            $scope.entities_selects = '[';
-            angular.forEach($scope.entity_added, function(value, key){
-                console.log(key);
-                if(value){
-                    $scope.entities_selects += $scope.all_entities[key].nombre + ',';
-                } 
-            });
-            $scope.entities_selects += ']';
-
-            //$scope.entities_selects = '[';
-           // angular.forEach($scope.entity_added, function(value, key){
-
-                //if(value){
-                //    console.log($scope.all_entities[key]);
-                    //$scope.entities_selects += $scope.all_entities[index].nombre + ',';
-                    console.log($scope.entity_added[index]);
-                    if($scope.entity_added[index]){
-                        //$scope.all_references[index] = $scope.load_entity($scope.all_entities[index].id_entidad);    
-                        entitydef.query({id_entidad:$scope.all_entities[index].id_entidad}, function(success){
-                            // proccess.pop();
-                            $scope.all_references[index] =  success;
-                            console.log(success);
-                            //$scope.GencoEntidadFields =success;
-                        },function(error){
-                            // proccess.pop();
-                            console.log(error);
-                        });
-
-                    }else{
-                        $scope.all_references[index]=[];
-                    }
-                    
-
-                    console.log($scope.all_references[index]);
-
-                //}  
-                   
-
-              //  index++;
-
-            //})
-            //$scope.entities_selects += ']';
-        }
-
-
-        $scope.load_entity = function(id_entity){
-            // $scope.entity_selected.id = id_entity;
-
-            // $scope.GencoEntidadDefinicion = new entitydef();
-            // $scope.pk_fields = [];
-            // $scope.GencoEntidadDefinicion.id_entidad = id_entity;
-            // var data = entity.get({id_entidad:id_entity});
-            // $scope.GencoEntidad = data;
-            // data.$promise.then(function(data){
-                
-                entitydef.query({id_entidad:id_entity}, function(success){
+            // $scope.entity_added
+            // $scope.entities_added.push($scope.all_entities[index]);
+            entitydef.query({id_entidad:entitySelected.id_entidad}, function(success){
                     // proccess.pop();
-                    return success;
+                    // $scope.entity_scope.push(success);
+                    entityAdded.scope = success;
+
+                    $scope.entities_added.push(entityAdded);
                     //$scope.GencoEntidadFields =success;
                 },function(error){
                     // proccess.pop();
                     console.log(error);
                 });
 
-            // });
+        }
 
+
+
+
+        $scope.save_entity_selecteds = function(id_entity){
+            
+            console.log($scope.entities_added);
         } 
 
 
-         $scope.save_template_entity =  function(){
 
-            index = 0;
-            proccess = [];
-
-            angular.forEach($scope.entity_added, function(value, key){
-
-                if(value){
-                    console.log($scope.all_entities[key]);
-                    // proccess.push(1);
-                    // conv = new env_lang({id_entorno: $scope.GencoEntorno.id_entorno, id_lenguaje: $scope.all_langs[key].id_lenguaje});
-                    // console.log(conv);
-                    // conv.$save(
-                    //     function(success){
-                    //     console.log('OK');
-                    //     console.log(success.data); //wait_conversion();
-                    //     proccess.pop();
-                    //     add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);
-                    //     },function(error){
-                    //     console.log('ERR');
-                    //     console.log(error.data); 
-                    //     proccess.pop();
-                    //     add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);  
-                    // }); 
-                }else{
-              
-                    // proccess.push(1);
-                    // conv = new env_lang({id_entorno: $scope.GencoEntorno.id_entorno, id_lenguaje: $scope.all_langs[key].id_lenguaje});
-                    // conv.$delete(
-                    //     function(success){
-                    //         console.log('OK');
-                    //         console.log(success); //wait_conversion();
-                    //         proccess.pop();
-                    //         add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);
-                    //     },function(error){
-                    //         console.log('ERR');
-                    //         console.log(error);  
-                    //         proccess.pop();  
-                    //         add_lang_validator(proccess, $scope.GencoEntorno.id_entorno, $scope.load_env);
-                    // });
-                }    
-                   
-
-                index++;
-
-            })
-
-         }
 
 
 
