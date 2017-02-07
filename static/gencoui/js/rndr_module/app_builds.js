@@ -1,6 +1,6 @@
 angular.module('app_editor', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, repotree, directorio, archivo, fileUpload, repository, entity_repo, entitydef) {
+.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_item_tree,repotree, directorio, archivo, fileUpload, repository, entity_repo, entitydef) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -23,7 +23,7 @@ $scope.repository_selected = {
     data: null,
 };
 
-$scope.entity_added = {
+$scope.entity_added = { 
     entity: null,
     scope: null,
 };
@@ -62,6 +62,7 @@ $scope.dataLang = {
 };
 
 setListenterContent();
+
 
 $("#jstreeFolders").jstree({
     "core" : {
@@ -141,7 +142,7 @@ $("#jstreeFolders").jstree({
                                     //$scope.component_selected.id = obj.id;
                                     //console.log($scope.component_selected);
                                     if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
-                                        $scope.change_repository();
+                                        $scope.alert_repository();
                                         //$scope.globalMessage = "No repository selected";
                                         //angular.element($("#ctrl_editor")).scope().$apply();
                                        // console.log($scope.globalMessage);
@@ -340,15 +341,32 @@ $("#jstreeFolders").jstree({
         $scope.new_directorioelemento(data.parent,  data.node.li_attr['data-renderid'], null, data.node, null);
 
         //$('#jstreeFolders').jstree(true).delete_node(data.node);
+    }).bind("dblclick.jstree", function(e) {
+
+        if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
+            $scope.alert_repository();  
+            return;                                  
+        }
+
+        var tree = $(this).jstree(); 
+        var node = tree.get_node(e.target); 
+        var nodePath = tree.get_path(node).join("/");
+        console.log(node);
+        var renderId = node.li_attr['data-renderid'];          
+        console.log(renderId);
+        $scope.template_entities_load(renderId);
+
     });
 
 
 
+
+/* Ya construidos los arboles cargo los items de directorio elemento*/
 tree.get({id:1}, function(success){
                         
                         console.log('success');    
                         $('#jstreeBuilds').jstree();
-                        $('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
+                        // $('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
                         $('#jstreeBuilds').jstree(true).refresh();
 
                         $('#jstreeFolders').jstree();
@@ -359,6 +377,21 @@ tree.get({id:1}, function(success){
                         console.log('ERR');
                         console.log(error);  
                     });
+
+
+/* Ya construidos los arboles cargo los items de elemento plantilla*/
+dir_item_tree.get({id:2}, function(success){
+                        
+                        console.log('success');    
+                        $('#jstreeBuilds').jstree();
+                        $('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
+                        $('#jstreeBuilds').jstree(true).refresh();
+                                                    
+                    },function(error){
+                        console.log('ERR');
+                        console.log(error);  
+                    });
+
 
 //  $('#jstreeFolders').jstree(true).settings.core.data = [
 //             {'id' : 'root',
@@ -873,17 +906,30 @@ console.log($scope.components);
         }
 
 
-        $scope.change_repository = function(){
+        $scope.load_repository = function(){
             repository.query(
                             function(success){
                                 $scope.repositories = success;
-                                $('#repository-change-modal').modal('show');
+                                //$('#repository-change-modal').modal('show');
                             }, 
                             function(error){
                                 console.log(error);    
             });
         }
 
+
+        $scope.alert_repository = function(){
+
+            $('#repository-alert-modal').modal('show');
+
+        }
+        
+
+
+        $scope.change_repository = function(repository){
+            console.log(repository.nombre);
+            $scope.repository_selected.data = repository; 
+        }
 
 
 
@@ -1172,7 +1218,7 @@ console.log($scope.components);
 
 
         $scope.load_components();
-
+        $scope.load_repository();
 
         function setListenterContent() {
                 var fileInput = document.getElementById('fileInput');

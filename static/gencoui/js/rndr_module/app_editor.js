@@ -974,7 +974,7 @@ console.log($scope.components);
             var session = editor.session
             session.insert(
                editor.selection.getCursor()
-            , '[@ ' + nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'] + ' ' + guid() + ' @] ')
+            , '[@ ' + nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'] + ' ' + node.li_attr['data-renderid'] + '-' + guid() + ' @] ')
         }   
 
         function guid() {
@@ -988,6 +988,7 @@ console.log($scope.components);
             // s4() + '-' + s4() + s4() + s4();
 
             return s4() + s4() + '-' + s4() + '-' + s4()
+            
         } 
 
         function getCookie(cname) {

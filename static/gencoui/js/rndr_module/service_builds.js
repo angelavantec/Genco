@@ -48,6 +48,17 @@ return $resource('http://localhost:8000/gencoui/tree/:id',{id:'@id'},{
     }, 
   });
 
+}).factory('dir_item_tree',function($resource){
+
+return $resource('http://localhost:8000/gencoui/dir_item_tree/:id',{id:'@id'},{
+    update: {
+            method: 'PUT'
+        },
+    query: {
+        isArray:true    
+    }, 
+  });
+
 }).factory('repotree',function($resource){
 
 return $resource('http://localhost:8000/gencoui/repotree/:id',{id:'@id'},{

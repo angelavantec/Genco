@@ -31,82 +31,187 @@
 
 {% block extrahead %}    
     <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+    <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                height: main1.outerHeight(),
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
 {% endblock %}
 
 
 
 {% block content %}
-<div id="ctrl_editor" ng-app="app_editor" data-ng-init="init()" ng-controller="ctrl_editor" >
-	<input hidden id="key_module" value="{{entorno.id_entorno}}"/>
-	<input hidden id="key_project" value="{{proyecto.id_proyecto}}"/>
-	<div class="container-fluid">
-		<div class="well well-sm" style="margin-top:70px;">
-			<img src="{% static 'gencoui/img/devicon/icons/'|add:entorno.icono %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px">
-			{{entorno.nombre}} - {{proyecto.nombre}}</img>
-			<div style="position: absolute;right: 30px; display:inline">
-				{% verbatim %}
-				<label>connected to </label>
-				<span class="label label-default" ng-click="change_repository()" data-placement="bottom" data-tt="tooltip" title="Change Repository">{{repository_selected.data.nombre}}</span>
-				
-				<span  ng-if="repository_selected.data == null" class="label label-default" ng-click="change_repository()" data-placement="bottom" data-tt="tooltip" title="Select Repository">Select Repository</span>
-				{% endverbatim %}
-			</div>			
-		</div>
-	
 
-	    <!-- <div class="" height="90%"> -->
-			    
-	    		<div class="col-sm-4" style="margin-top:20px; border-style:solid; min-height:300px; border-width:1px; border-color:#ccc;">
+<div id="ctrl_editor" ng-app="app_editor" data-ng-init="init()" ng-controller="ctrl_editor">
+	    <div id="sidebar" >
+	    	<span id="position"></span>
+	    	<div id="dragbar"></div>			    
 
+	    		<div class="container-fluid" style="margin-top:70px;">
+					    <div class="well well-sm">
+					    	
 
-				    <div style="margin-top: 15px;">
-				    	
+							<img src="{% static 'gencoui/img/devicon/icons/'|add:entorno.icono %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px">
+							{{entorno.nombre}}</img>
+							
+
+					    </div>
+
+				    <div style="margin-bottom: 15px;">
+				    	<input hidden id="key_module" value="{{entorno.id_entorno}}">
 				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Components </h4>
-	
+					    <!-- <a class="btn icon-btn btn-default btn-xs" href="#" data-placement="bottom" data-tt="tooltip" title="Create Component" ng-click="new_component()">
+								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+						</a> -->	
 				    </div>	
 
-				    <div id="jstree">
+				    <div id="jstree"></div>
 
+				</div>       
+	    	
+		</div>
 
+	    <div id="main">
+	    	<div id="tree" style="height:99%; ">
 
-				    </div>
-				</div>  
-
-				<div class="col-sm-4" style="margin-top:20px; border-style:solid; min-height:300px; border-width:1px; border-color:#ccc; border-left: none; border-right:none">
-
-
-				    <div style="margin-top: 15px;">
-				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Folders </h4>
-				    	<a class="btn btn-primary btn-xs" href="#" data-placement="bottom" data-tt="tooltip" title="Refresh the builds tree " ng-click="printTree()">
-							Build
-							<span class="glyphicon glyphicon-chevron-right" aria-hidden="true">				
+		    	<div class="modal-header" style="margin-top:70px;">
+		    		Options
+		    		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default btn-xs" ng-click="submit()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 						</a>
-	
-				    </div>	
+					</div>
+					<div style="position: absolute;right: 30px; display:inline">	
+						<div class="dropdown" style="display:inline">
+							{% verbatim %}
+							<button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+							 	</span>Repository 
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
+								
+								<li ng-repeat="repository in repositories">
+									
+									<a ng-click="change_repository(repository)">{{repository.nombre}}</a>
+									
+								</li>								
+							</ul>
+							{{repository_selected.data.nombre}}
+							{% endverbatim %}
+						</div>
+					</div>	
+	          	</div>
 
-				    <div id="jstreeFolders"></div>
+	          	<div class="row" style="height:99%;width:100%; margin-top:10px">
+				  	<div class="col-sm-4">
+						<div style="margin-top: 15px; margin-left: 15px">
+					    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Folders </h4>
 
+							<div id="jstreeFolders"></div>
+				    		
+		
+				    	</div>
+				  	</div>
+				 	<div class="col-sm-8" style="height:99%; background-color: #eee;border:solid 1px #ccc">
+
+				    	<div style="margin-top: 15px; margin-left: 15px">
+						    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Entities </h4>
+						    	<a class="btn icon-btn btn-default btn-xs" ng-click="add_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
+									<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+								</a>
+								
+
+
+
+
+
+
+
+
+
+
+
+
+
+					    		<div id="jstreeBuilds" ></div>
+			
+					    </div>	
+			  		</div>
 				</div>
 
-				<div class="col-sm-4" style="margin-top:20px; border-style:solid; min-height:300px; border-width:1px; border-color:#ccc">
-
-
-				    <div style="margin-top: 15px;">
-				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Build </h4>
-						<a class="btn btn-primary btn-xs" data-placement="bottom" data-tt="tooltip" title="Download files" ng-click="printTree()">
-							Download
-							<span class="glyphicon glyphicon-cloud-download" aria-hidden="true">				
-						</a>
-				    </div>	
-
-				    <div id="jstreeBuilds"></div>
-
-				</div>   
-	    	
-		<!-- </div> -->
-
-	</div>
-
+			    
+	
+    		</div>
+	    </div>
 
 
     <!-- Modal Templates -->
@@ -339,7 +444,7 @@
 
 
 
-	<div class="modal fade" id="repository-change-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal fade" id="repository-alert-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
 	    <div class="modal-dialog modal-sm">
 
@@ -349,28 +454,9 @@
 		        	<h4 class="modal-title">Select Repository</h4>
 			    </div>	     
 	          	<div class="modal-body">
-	   				<form ng-submit="save_add_repository()">
-						{% verbatim %}
-							
-								<label ng-repeat="repository in repositories">
-									
-									<input type="radio" name="repoSet" ng-model="repository_selected.data" ng-value="{{repository}}">{{repository.nombre}}
-									
-								</label>							
-								
-						<button type="submit" hidden></button>
-					</form>
-
-						{% endverbatim %}
-
-
+	   				Please, select a repository.
 	          	</div>
 	          	<div class="modal-footer">
-			<!-- 		<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Close">
-								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-						</a> -->
-					<!-- </div>	 -->
 	          	</div>
 
 	        </div>
@@ -386,89 +472,7 @@
 			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
 		        	<h4 class="modal-title">Select Entities</h4>
 			    </div>	     
-	          	<div class="modal-body">
-	   				<!-- <form ng-submit="save_template_entity()"> -->
-	   					{% verbatim %}
-	   					<table  width="100%">
-	   						<tr>
-	   							<td style="padding-right: 10px;" valign="top" width="50%">
-	   							
-	   									<div class="list-group">							  
-									  		<a class="list-group-item" style="text-decoration: none;" ng-repeat="entity in all_entities" ng-dblclick="add_entity($index)">
-									  			<p class="list-group-item-text">{{entity.nombre}}</p>
-									  		</a>
-										</div>
-	   					   								
-								</td>
-								<td style="padding-left: 10px;" valign="top">
-									<div class="list-group"> 		
-										<div class="list-group-item" ng-repeat="entity in entities_added" >
-											<!-- <div class="modal-header">
-										    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>									        
-										    </div> -->
-											<h4 class="list-group-item-heading">{{entity.entity.nombre}}</h4>
-								  			<table style="margin-left:10px" width="100%">
-								  				<tr ng-repeat="tag in template_tags">
-								  					<td>{{tag}}
-								  					</td>	
-								  					<td>	
-								  						<select>
-								  							<option ng-repeat="scope in entity.scope | filter: greaterThan('entidad_ref', 0)">{{scope.entidad.nombre}}</option>
-								  						</select>
-								  					</td>
-								  				</tr>								  			
-								  			</table>
-								  			<div class="modal-footer" style="padding-top: 10px; padding-bottom: 10px;">
-	          									<div style="display:inline">
-										  			<a class="btn btn-primary btn-xs" role="button" ng-click="save_entity_selecteds()">Save</a>
-										  			<a class="btn btn-warning btn-xs" role="button">Remove</a>	
-										  		</div>
-										  	</div>	
-								  		</div>	
 
-		  								
-									</div>
-																	
-								</td>
-	   						</tr>
-	   					</table>
-
-							<!-- <div class="checkbox" ng-repeat="entity in all_entities">
-								<label>
-									<input type="checkbox" ng-model="entity_added[$index]" >{{entity.id_entidad}} {{entity.nombre}}
-								</label>
-								{{entity.nombre}}<a class="btn btn-default btn-xs" ng-click="get_template_entity($index)">select</a>
-
-								<div  ng-repeat="field in all_references[$index] | filter: greaterThan('entidad_ref', 0) ">
-									
-									
-									<p>{{field.entidad.nombre}}</p>
-														      		
-						      	</div>
-								
-							</div> -->
-
-
-
-						
-						{% endverbatim %}
-<!-- 						<button type="submit" hidden></button>
-					</form> -->
-	          	</div>
-	          	<div class="modal-footer">
-	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="save_template_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
-							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
-						</a>
-					</div>
-					<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-						</a>
-					</div>	
-	          	</div>
-
-	        </div>
 	    </div>
 	</div>
 
@@ -502,10 +506,9 @@
 	        </div>
 	    </div>
 	</div>
-
+   
 
 </div>
-
 {% endblock %}
 
 

@@ -755,24 +755,58 @@ class dir_template_tree(APIView):
         return JsonResponse({'dirs':dirs})
 
 
-class template_entity(APIView):
+
+class dir_elemento_entidad_tree(APIView):
     
-    def get(self, request, id_proyecto=None, id_plantilla=None):
-    
-        gd = GencoPlantillaEntidad
-        gdSet = gd.objects.filter(id_proyecto=id_).order_by('id_entidad')
+    def get(self, request, id_direlemento=None):
+        context = {'error':'none'}
+        a = GencoElementoEntidad
+        e = a.objects.filter(id_direlemento=id_direlemento)
+
 
         dirs = []
         templates = {}
         id_padre = ''
 
-        for i  in gdSet:         
-            # if i.entidad is None:
-            id_padre = '#'
-            # else:
-            #     id_padre = i.id_padre_id
+        for i  in e:         
+            dirs.append({'id': i.id_direlemento.id_direlemento, 'parent': '#', 'text': i.id_entidad.nombre + i.id_direlemento.id_plantilla.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': i.id_direlemento.id_direlemento, 'data-rendername':i.id_entidad.nombre}})
+       
 
-            dirs.append({'id': i.id_entidad, 'parent': id_padre, 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': i.id_entidad, 'data-rendername':i.nombre}})
+        # for i  in e:
+        #     print i.id_directorio.nombre
+            
+
+        #     # if i.id_directorio.nombre != tmp_dir: 
+        #         # childrens[dir_label + "children"] = templates
+        #         # templates = {}
+        #         # childrens = {}
+        #     if i.id_plantilla > 0:    
+        #         dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre}})
+        #     else:
+        #         dirs.append( {'id': 'f'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_archivo.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': i.id_archivo_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_archivo.nombre}})
+        print dirs    
+
+        return JsonResponse({'dirs':dirs})
+
+
+# class template_entity(APIView):
+    
+#     def get(self, request, id_proyecto=None, id_plantilla=None):
+    
+#         gd = GencoPlantillaEntidad
+#         gdSet = gd.objects.filter(id_proyecto=id_).order_by('id_entidad')
+
+#         dirs = []
+#         templates = {}
+#         id_padre = ''
+
+#         for i  in gdSet:         
+#             # if i.entidad is None:
+#             id_padre = '#'
+#             # else:
+#             #     id_padre = i.id_padre_id
+
+#             dirs.append({'id': i.id_entidad, 'parent': id_padre, 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': i.id_entidad, 'data-rendername':i.nombre}})
         
 
-        return JsonResponse({'dirs':dirs}) 
+#         return JsonResponse({'dirs':dirs}) 
