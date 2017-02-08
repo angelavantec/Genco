@@ -48,6 +48,6 @@ urlpatterns = patterns('',
 	url(r'^tmpl/(?P<id_plantilla>\d+)$', tmpl.as_view()),
 	url(r'^tmpl_preview/(?P<id_plantilla>\d+)$', tmpl_preview.as_view()),
 	url(r'^tree/(?P<id_proyecto>\d+)$', dir_template_tree.as_view()),
-	url(r'^dir_item_tree/(?P<id_direlemento>\d+)$', dir_elemento_entidad_tree.as_view()),
+	url(r'^dir_item_tree/(?P<id_direlemento>\d+)/(?P<id_repositorio>\d+)$', dir_elemento_entidad_tree.as_view()),
 	# url(r'^template_entity/(?P<id_proyecto>\d+)$', template_entity.as_view()),
 )

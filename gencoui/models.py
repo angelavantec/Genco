@@ -229,6 +229,8 @@ class GencoDirectorioElementos(models.Model):
         managed = False
         db_table = 'genco_directorio_elementos'
 
+    def __unicode__(self):
+        return '%s' % (self.id_direlemento)    
 
 class GencoDirectorios(models.Model):
     id_directorio = models.AutoField(primary_key=True)
@@ -245,6 +247,8 @@ class GencoDirectorios(models.Model):
         managed = False
         db_table = 'genco_directorios'
 
+    def __unicode__(self):
+        return '%s' % (self.nombre)     
 
 class GencoElementoEntidad(models.Model):
     id_elementoentidad = models.AutoField(primary_key=True)

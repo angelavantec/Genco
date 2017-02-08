@@ -112,6 +112,9 @@
 {% block content %}
 
 <div id="ctrl_editor" ng-app="app_editor" data-ng-init="init()" ng-controller="ctrl_editor">
+	<input hidden id="key_module" value="{{entorno.id_entorno}}"/>
+	<input hidden id="key_project" value="{{proyecto.id_proyecto}}"/>
+	
 	    <div id="sidebar" >
 	    	<span id="position"></span>
 	    	<div id="dragbar"></div>			    
@@ -150,10 +153,11 @@
 							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 						</a>
 					</div>
-					<div style="position: absolute;right: 30px; display:inline">	
+					<div style="position: absolute;right: 70px; display:inline">	
 						<div class="dropdown" style="display:inline">
 							{% verbatim %}
-							<button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+							{{repository_selected.data.nombre}}
+							<button class="btn btn-warning dropdown-toggle btn-xs" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
 							 	</span>Repository 
 								<span class="caret"></span>
 							</button>
@@ -164,15 +168,14 @@
 									<a ng-click="change_repository(repository)">{{repository.nombre}}</a>
 									
 								</li>								
-							</ul>
-							{{repository_selected.data.nombre}}
+							</ul>							
 							{% endverbatim %}
 						</div>
 					</div>	
 	          	</div>
 
-	          	<div class="row" style="height:99%;width:100%; margin-top:10px">
-				  	<div class="col-sm-4">
+	          	<div class="row" style="height:80%;width:95%; margin-top:10px; overflow:auto">
+				  	<div class="col-sm-6">
 						<div style="margin-top: 15px; margin-left: 15px">
 					    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Folders </h4>
 
@@ -181,34 +184,73 @@
 		
 				    	</div>
 				  	</div>
-				 	<div class="col-sm-8" style="height:99%; background-color: #eee;border:solid 1px #ccc">
+				  	<div class="col-sm-6 .hidden-xs" style="height: 95%; background-color: #eee;border:solid 1px #ccc">
+						
+					    		{% verbatim %}
+					    		<h4 style="margin-top: 10px;" ng-if="direlemento_selected.id == null">Entities</h4>
+				    			<h4 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id != null">{{direlemento_selected.nombre_padre}}/{{direlemento_selected.nombre}}</h4>				    			
+				    			<span style="display:inline;" class="glyphicon glyphicon-link" ng-if="direlemento_selected.id != null"></span>
+				    			<!-- <select style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null">
+									<option>abc</option>
+									<option>zte</option>
+									<option>aan</option>
+									<option>zfr</option>
+									<option>zog</option>
+									<option>abc</option>
+									<option>zte</option>
+									<option>aan</option>
+									<option>zfr</option>
+									<option>zog</option>
+									<option>abc</option>
 
-				    	<div style="margin-top: 15px; margin-left: 15px">
-						    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Entities </h4>
-						    	<a class="btn icon-btn btn-default btn-xs" ng-click="add_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
-									<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
-								</a>
-								
+								</select> -->
+								<select style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null" ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_tipodato as types_cnv.nombre for types_cnv in types_types">
+											      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
+											      				<option value=''>Select</option>
+													      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
+								</select>	
+								{{Conversions[$index]}}
+								<a class="btn icon-btn btn-default btn-xs" ng-if="direlemento_selected.id != null" ng-click="new_elemento_entidad()" data-placement="bottom"data-tt="tooltip" title="Save">
+										<span class="glyphicon btn-glyphicon glyphicon-floppy-save img-circle" ></span>					
+								</a>			    	
+																						
+								<div class="row" style="margin-bottom: 20px;" hidden>
+									<div class="col-xs-12 col-sm-4"><h5 style="margin-top: 10px;margin-right:10px">Entities</h5></div>
+									<div class="col-xs-12 col-sm-6">
+										<select class="form-control" ng-if="direlemento_selected.id != null">
+											<option>abc</option>
+											<option>zte</option>
+											<option>aan</option>
+											<option>zfr</option>
+											<option>zog</option>									
+										</select>
+									</div>
+									<div class="col-xs-12 col-sm-2">
+										<a class="btn icon-btn btn-default btn-xs" ng-if="direlemento_selected.id != null" ng-click="add_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
+										<span class="glyphicon btn-glyphicon glyphicon-floppy-save img-circle" ></span>					
+										</a>
+									</div>
+								</div>
 
-
-
-
-
-
-
-
-
-
-
-
-
+								{% endverbatim %}
 					    		<div id="jstreeBuilds" ></div>
-			
-					    </div>	
-			  		</div>
+		
+				    	
+				  	</div>
+
 				</div>
 
-			    
+			    <div class="row" style="height:40%;width:95%;margin-left:15px;" hidden>
+
+				 	<div class="col-sm-12" style="height:99%; background-color: #eee;border:solid 1px #ccc">
+
+				 		<h4 style="margin-top: 15px;">Builds </h4>
+						<div id="jstreeFolders"></div>
+						    	
+			
+									   
+			  		</div>
+				</div>
 	
     		</div>
 	    </div>

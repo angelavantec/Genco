@@ -375,7 +375,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
         
 
-        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 
+        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_element_entity': GencoElementoEntidadForm,
                     'user': request.user.username, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
@@ -758,32 +758,26 @@ class dir_template_tree(APIView):
 
 class dir_elemento_entidad_tree(APIView):
     
-    def get(self, request, id_direlemento=None):
+    def get(self, request, id_direlemento=None, id_repositorio=None):
         context = {'error':'none'}
-        a = GencoElementoEntidad
-        e = a.objects.filter(id_direlemento=id_direlemento)
+        gencoElementoEntidad = GencoElementoEntidad
+        elementoEntidad = gencoElementoEntidad.objects.filter(id_direlemento=id_direlemento, id_entidad__id_repositorio=id_repositorio)
 
 
         dirs = []
-        templates = {}
+        tags = {}
         id_padre = ''
 
-        for i  in e:         
-            dirs.append({'id': i.id_direlemento.id_direlemento, 'parent': '#', 'text': i.id_entidad.nombre + i.id_direlemento.id_plantilla.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': i.id_direlemento.id_direlemento, 'data-rendername':i.id_entidad.nombre}})
-       
-
-        # for i  in e:
-        #     print i.id_directorio.nombre
+        for elemento  in elementoEntidad:         
+            dirs.append({'id': elemento.id_elementoentidad, 'parent': '#', 'text': elemento.id_direlemento.id_plantilla.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': elemento.id_direlemento.id_direlemento, 'data-rendername':elemento.id_entidad.nombre}})
             
+            print 'tags'
+            print elemento.tags
 
-        #     # if i.id_directorio.nombre != tmp_dir: 
-        #         # childrens[dir_label + "children"] = templates
-        #         # templates = {}
-        #         # childrens = {}
-        #     if i.id_plantilla > 0:    
-        #         dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre}})
-        #     else:
-        #         dirs.append( {'id': 'f'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_archivo.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': i.id_archivo_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_archivo.nombre}})
+            if elemento.tags:
+                tags = getIterableFromTags(elemento.tags)    
+                for key, value in tags.items():
+                    dirs.append( {'id': key, 'parent': elemento.id_elementoentidad, 'text': key + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': key, 'data-rendername': key}})        
         print dirs    
 
         return JsonResponse({'dirs':dirs})

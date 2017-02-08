@@ -220,6 +220,8 @@ class GencoArchivosSerializer(serializers.ModelSerializer):
 
 
 class GencoElementoEntidadSerializer(serializers.ModelSerializer):
+    # entidad = GencoEntidadSerializer(many=False, source="id_entidad", read_only=True)
+    # plantilla = GencoEntidadSerializer(many=False, source="id_direlemento__id_plantilla", read_only=True)
 
     class Meta:
         model = GencoElementoEntidad

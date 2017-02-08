@@ -50,7 +50,7 @@ return $resource('http://localhost:8000/gencoui/tree/:id',{id:'@id'},{
 
 }).factory('dir_item_tree',function($resource){
 
-return $resource('http://localhost:8000/gencoui/dir_item_tree/:id',{id:'@id'},{
+return $resource('http://localhost:8000/gencoui/dir_item_tree/:id_direlemento/:id_repositorio',{id_direlemento:'@id_direlemento',id_repositorio:'@id_repositorio'},{
     update: {
             method: 'PUT'
         },
@@ -86,6 +86,23 @@ return $resource('http://127.0.0.1:8000/gencoui/archivo/:id\\/',{id:'@id'},{
     query: {
         isArray:true    
     }, 
+
+  });
+
+}).factory('plantillaentidad',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@id'},{
+    update: {
+            method: 'PUT'
+        },
+    save: {
+        url: 'http://127.0.0.1:8000/gencoui/plantillaentidad\\/',
+        method: 'POST'
+    },    
+    query: {
+        url: 'http://127.0.0.1:8000/gencoui/plantillaentidad\\/',   
+        isArray:true    
+    },
 
   });
 

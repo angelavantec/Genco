@@ -24,12 +24,14 @@ def updateDictTags(list, dict):
 	for item in list:
 		exists = dict.get(item)
 		if exists == None:
+			# si el elemento no existe en el diccionario lo agregamos con un valor default -1 el cual no corresponde a ninguna entidad
 			dict[item] = -1
 
 	for key, value in dict.items():
 		try:
 			list.index(key)
-		except ValueError:	
+		except ValueError:
+			# si en el diccionario de origen no existe un item de la lista entonces se remueve del diccionario, esto es actualizar el diccionario 
 			del dict[key]
 
 	return dict		
@@ -39,23 +41,28 @@ def updateDictTags(list, dict):
 
 dic = {}
 
-# dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 
-# dic['UI/abm e460864b-bb5b-96b8'] = 2
-# dic['DAL/dao e948b17d-68f4-658e'] = 3
+dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 
+dic['UI/abm e460864b-bb5b-96b8'] = 2
+dic['DAL/dao e948b17d-68f4-658e'] = 3
 
-lista = getIterableFromTags("[u'UI/abm 636a3dbd-1d9e-8f78', u'UI/abm e460864b-bb5b-96b8']")
+# lista = getIterableFromTags("[u'UI/abm 636a3dbd-1d9e-8f78', u'UI/abm e460864b-bb5b-96b8']")
+# print updateDictTags(lista, dic)
 
 
-print updateDictTags(lista, dic)
+print getIterableFromTags('{"DAL/dao 1-f8855815-1381-2b03":"1", "DAL/dao 1-936091e3-aa77-7566":"1", "UI/abm 2-40cc9bc4-b9de-be66":"2"}')
+
+for key, value in dic.items():
+	print "llave %s  valor %s" % (key, value)
+
 
 # print dic
 
 # for key, value in dic.items():
-# 	# print "llave %s  valor %s" % (key, value)
-# 	try:
-# 		lista.index(key)
-# 	except ValueError:	
-# 		del dic[key]
+	# print "llave %s  valor %s" % (key, value)
+	# try:
+	# 	lista.index(key)
+	# except ValueError:	
+	# 	del dic[key]
 
 # print dic
 

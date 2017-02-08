@@ -147,6 +147,13 @@ class GencoArchivosForm(ModelForm):
     def __init__(self, *args, **kwargs):    
         genco_init(GencoArchivosForm, self, *args, **kwargs)
 
+class GencoElementoEntidadForm(ModelForm):
+    class Meta:
+        model = GencoElementoEntidad
+        exclude = ['id_elementoentidad', 'tags', 'creado_por', 'fecha_creacion']
+
+    def __init__(self, *args, **kwargs):    
+        genco_init(GencoElementoEntidadForm, self, *args, **kwargs)
 
 def genco_init(mpodelform, self, *args, **kwargs):
 	super(mpodelform, self).__init__(*args, **kwargs)

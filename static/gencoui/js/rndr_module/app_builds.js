@@ -1,11 +1,12 @@
 angular.module('app_editor', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_item_tree,repotree, directorio, archivo, fileUpload, repository, entity_repo, entitydef) {
+.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
 $scope.project_selected = $("#key_project").val();
 $scope.node_selected;
+$scope.node_item_selected;
 console.log($scope.environment_selected);
 $scope.components = [];
 
@@ -13,6 +14,12 @@ $scope.components = [];
 $scope.itr_plantillas=0;
 $scope.treeModel = [];
 $scope.nodeComponente=[];
+
+$scope.direlemento_selected = {
+    id: null,
+    nombre: null,
+    nombre_padre: null,
+};
 
 $scope.template_selected = {
     id: null,
@@ -28,6 +35,11 @@ $scope.entity_added = {
     scope: null,
 };
 
+
+/*combobox de entidades del repositorio*/
+$scope.types_types = [];
+$scope.Conversions = [];
+
 $scope.entities_added = [];
 $scope.template_tags=[];
 $scope.entity_scope=[];
@@ -38,6 +50,7 @@ $scope.GencoPlantillas;
 $scope.GencoComponentes;
 $scope.GencoDirectorios = new directorio();
 $scope.GencoArchivos = new archivo();
+$scope.GencoElementoEntidad = new plantillaentidad();
 $scope.repositories = [];
 
 
@@ -60,9 +73,6 @@ $scope.dataLang = {
     repeatSelectLang: null,
     availableOptions: $scope.langs,
 };
-
-setListenterContent();
-
 
 $("#jstreeFolders").jstree({
     "core" : {
@@ -350,24 +360,55 @@ $("#jstreeFolders").jstree({
 
         var tree = $(this).jstree(); 
         var node = tree.get_node(e.target); 
+        
+        if(node.li_attr['data-renderas'] != 'template'){
+            //$scope.direlemento_selected = {id:null, nombre:null};
+            //angular.element($("#ctrl_editor")).scope().$apply();
+            return;                                  
+        }
+
         var nodePath = tree.get_path(node).join("/");
-        console.log(node);
-        var renderId = node.li_attr['data-renderid'];          
-        console.log(renderId);
-        $scope.template_entities_load(renderId);
+        var renderId = node.li_attr['data-renderiddirtemplate'];          
+
+
+        var nodeParent = tree.get_node(node.parents[0]);
+        console.log(nodeParent);
+        console.log(nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'])
+        $scope.direlemento_selected = {id:renderId, nombre:node.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername']};
+        $scope.getItemTree(renderId, $scope.repository_selected.data.id_repositorio);
+
+    });
+
+
+    $('#jstreeBuilds').jstree().bind("dblclick.jstree", function(e) {
+
+        console.log('aaaaaaa');
+
+        // if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
+        //     $scope.alert_repository();  
+        //     return;                                  
+        // }
+
+        // var tree = $(this).jstree(); 
+        // var node = tree.get_node(e.target); 
+        // var nodePath = tree.get_path(node).join("/");
+        // console.log(node);
+        // var renderId = node.li_attr['data-renderid'];          
+        // console.log(renderId);
+        // $scope.template_entities_load(renderId);
 
     });
 
 
 
-
 /* Ya construidos los arboles cargo los items de directorio elemento*/
-tree.get({id:1}, function(success){
+$scope.getDirTree = function(){
+tree.get({id:$scope.project_selected}, function(success){
                         
                         console.log('success');    
-                        $('#jstreeBuilds').jstree();
-                        // $('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
-                        $('#jstreeBuilds').jstree(true).refresh();
+                        //$('#jstreeBuilds').jstree();
+                        //$('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
+                        //$('#jstreeBuilds').jstree(true).refresh();
 
                         $('#jstreeFolders').jstree();
                         $('#jstreeFolders').jstree(true).settings.core.data = success.dirs;
@@ -377,63 +418,27 @@ tree.get({id:1}, function(success){
                         console.log('ERR');
                         console.log(error);  
                     });
-
+}
 
 /* Ya construidos los arboles cargo los items de elemento plantilla*/
-dir_item_tree.get({id:2}, function(success){
+$scope.getItemTree = function(id_direlemento, id_repositorio){
+
+                    /* si no hay elemento seleccionado retornamos ya que no hay elemento_entidad que solicitar al api rest*/ 
+                    if(id_direlemento === null){
+                        return;
+                    }   
+                    dir_item_tree.get({id_direlemento:id_direlemento, id_repositorio:id_repositorio}, function(success){
                         
                         console.log('success');    
                         $('#jstreeBuilds').jstree();
                         $('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
-                        $('#jstreeBuilds').jstree(true).refresh();
-                                                    
+                        $('#jstreeBuilds').jstree(true).refresh();                        
+
                     },function(error){
                         console.log('ERR');
                         console.log(error);  
                     });
-
-
-//  $('#jstreeFolders').jstree(true).settings.core.data = [
-//             {'id' : 'root',
-//                 'text' : '/',
-//                 'icon' : 'glyphicon glyphicon-folder-open',
-//                 'li_attr':{'data-renderas':'component'}
-//             },
-//             // {
-//             //     'id' : 'node_2',
-//             //     'text' : 'Root node with options',
-//             //     'icon' : 'glyphicon glyphicon-folder-open',
-//             //     'state' : { 'opened' : false, 'selected' : true },
-//             //     'li_attr':{'data-renderas':'archive'},
-//             //     'children' : [ { 'text' : 'Child 1' }, 'Child 2']
-//             // },
-//             // {
-//             //     'id' : 'node_3',
-//             //     'text' : 'Root node with options',
-//             //     'icon' : 'glyphicon glyphicon-folder-open',
-//             //     'state' : { 'opened' : false, 'selected' : true },
-//             //     'children' : [ { 'text' : 'Child 1' }, 'Child 2']
-//             // }
-
-//          ];
-
-        
-// $('#jstreeFolders').jstree(true).refresh();
-
-
-// $('#jstreeBuilds').jstree();
-// $('#jstreeBuilds').jstree(true).settings.core.data = [
-//             {'id' : 'root',
-//                 'text' : '/',
-//                 'icon' : 'glyphicon glyphicon-folder-open',
-//                 'li_attr':{'data-renderas':'component'}
-//             },
-
-//          ];
-// $('#jstreeBuilds').jstree(true).refresh();
-
-
-console.log($scope.dataLang);
+}
 
 $scope.printTree = function(){
     console.log('arbol');
@@ -928,75 +933,123 @@ console.log($scope.components);
 
         $scope.change_repository = function(repository){
             console.log(repository.nombre);
-            $scope.repository_selected.data = repository; 
+            $scope.repository_selected.data = repository;
+            $scope.load_entities(repository.id_repositorio);            
+            $scope.getItemTree($scope.direlemento_selected.id, $scope.repository_selected.data.id_repositorio);
         }
 
 
+        $scope.new_elemento_entidad = function(id_direlemento, id_entidad){
 
-        $scope.template_entities_load = function(id_plantilla){
+            console.log('agregar');
+            console.log($scope.direlemento_selected.nombre);
+            // $scope.GencoElementoEntidad = new directorio();
+            // $scope.GencoElementoEntidad.id_direlemento = id_direlemento;
+            // $scope.GencoElementoEntidad.id_entidad = id_entidad;
+      
+        }
 
-            plantillas.get({id: id_plantilla},function(success){
-                console.log(success);
-                $scope.template_tags = JSON.parse(success.tags);                
-                //$scope.reload_tree();
-                //$('#template-delete-modal').modal('hide');
+        $scope.save_elemento_entidad = function(){
+            $scope.GencoElementoEntidad.$save(function(success){
+            console.log(success);
+            var nodeDef = {'id': success.id_elementoentidad, 
+                            'parent': '#', 
+                            'text': success.nombre, 
+                            'icon':"glyphicon glyphicon-folder-open", 
+                            'li_attr':{'data-renderas':"component",
+                                        'data-renderid': success.id_elementoentidad, 
+                                        'data-rendername':success.nombre
+                                    }
+                        }
+            console.log($scope.node_selected)
+            console.log(nodeDef);
+            $scope.addTreeNode($scope.node_selected, nodeDef);
             },function(error){
+                
                 console.log(error);
-            });
-
-            console.log('obtener entidades');
-            console.log($scope.repository_selected)
-
-            entity_repo.query({id_repositorio: $scope.repository_selected.data.id_repositorio}, 
-                function(success){
-                    //angular.element($("#ctrl_editor")).scope().$apply();
-                    if(!$scope.$$phase) {
-                          $scope.$apply();
-                    }
-                    $scope.all_entities = success;
-    
-                    console.log(success);
-                    $('#template-entities-modal').modal('show');
-
-                },
-                function(error){
-                    console.log(error);
-                })
-
-
+                //$('#jstreeFolders').jstree(true).delete_node(node); 
+            }); 
         }
 
 
+        $scope.load_entities = function(id_repositorio){
 
-        $scope.add_entity =  function(index){
-            // var id_entity = $scope.all_entities[index].id_entidad;
-            var entitySelected = $scope.all_entities[index];
-            var entityAdded = { entity:null, scope:null};
-            entityAdded.entity = entitySelected;
-
-            // $scope.entity_added
-            // $scope.entities_added.push($scope.all_entities[index]);
-            entitydef.query({id_entidad:entitySelected.id_entidad}, function(success){
-                    // proccess.pop();
-                    // $scope.entity_scope.push(success);
-                    entityAdded.scope = success;
-
-                    $scope.entities_added.push(entityAdded);
-                    //$scope.GencoEntidadFields =success;
-                },function(error){
-                    // proccess.pop();
-                    console.log(error);
-                });
-
-        }
-
-
-
-
-        $scope.save_entity_selecteds = function(id_entity){
+            $scope.types_types=entity_repo.query({id_repositorio:id_repositorio}, 
+                                        function(success){
+                                            //$scope.GencoDirectorios = data; 
+                                            console.log(success);                               
+                                        }, 
+                                        function(error){
+                                            console.log(error);    
+                                        }
+                );
             
-            console.log($scope.entities_added);
-        } 
+        }
+
+        // $scope.template_entities_load = function(id_plantilla){
+
+        //     plantillas.get({id: id_plantilla},function(success){
+        //         console.log(success);
+        //         $scope.template_tags = JSON.parse(success.tags);                
+        //         //$scope.reload_tree();
+        //         //$('#template-delete-modal').modal('hide');
+        //     },function(error){
+        //         console.log(error);
+        //     });
+
+        //     console.log('obtener entidades');
+        //     console.log($scope.repository_selected)
+
+        //     entity_repo.query({id_repositorio: $scope.repository_selected.data.id_repositorio}, 
+        //         function(success){
+        //             //angular.element($("#ctrl_editor")).scope().$apply();
+        //             if(!$scope.$$phase) {
+        //                   $scope.$apply();
+        //             }
+        //             $scope.all_entities = success;
+    
+        //             console.log(success);
+        //             $('#template-entities-modal').modal('show');
+
+        //         },
+        //         function(error){
+        //             console.log(error);
+        //         })
+
+
+        // }
+
+
+
+        // $scope.add_entity =  function(index){
+        //     // var id_entity = $scope.all_entities[index].id_entidad;
+        //     var entitySelected = $scope.all_entities[index];
+        //     var entityAdded = { entity:null, scope:null};
+        //     entityAdded.entity = entitySelected;
+
+        //     // $scope.entity_added
+        //     // $scope.entities_added.push($scope.all_entities[index]);
+        //     entitydef.query({id_entidad:entitySelected.id_entidad}, function(success){
+        //             // proccess.pop();
+        //             // $scope.entity_scope.push(success);
+        //             entityAdded.scope = success;
+
+        //             $scope.entities_added.push(entityAdded);
+        //             //$scope.GencoEntidadFields =success;
+        //         },function(error){
+        //             // proccess.pop();
+        //             console.log(error);
+        //         });
+
+        // }
+
+
+
+
+        // $scope.save_entity_selecteds = function(id_entity){
+            
+        //     console.log($scope.entities_added);
+        // } 
 
 
 
@@ -1215,10 +1268,12 @@ console.log($scope.components);
         }
 
 
-
-
+        /*Cargar valores inciales*/
+        setListenterContent();
         $scope.load_components();
         $scope.load_repository();
+        //$scope.getItemTree();
+        $scope.getDirTree();
 
         function setListenterContent() {
                 var fileInput = document.getElementById('fileInput');
@@ -1276,7 +1331,7 @@ angular.module('app_editor').directive('emitLastRepeaterElement', function($time
                 if(attr['renderas'] == 'component'){
                    console.log('termino component'); 
                 }
-              
+                
             }
         }
 
