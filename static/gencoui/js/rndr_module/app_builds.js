@@ -19,6 +19,7 @@ $scope.direlemento_selected = {
     id: null,
     nombre: null,
     nombre_padre: null,
+    tags: null,
 };
 
 $scope.template_selected = {
@@ -74,7 +75,10 @@ $scope.dataLang = {
     availableOptions: $scope.langs,
 };
 
-$("#jstreeFolders").jstree({
+
+    /*Instancia del arbol de la seccion de FOLDERS*/
+
+    $("#jstreeFolders").jstree({
     "core" : {
                 "check_callback" : function (operation, node, node_parent, node_position, more) {
                         // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
@@ -374,27 +378,92 @@ $("#jstreeFolders").jstree({
         var nodeParent = tree.get_node(node.parents[0]);
         console.log(nodeParent);
         console.log(nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'])
-        $scope.direlemento_selected = {id:renderId, nombre:node.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername']};
+        $scope.direlemento_selected = {id:renderId, nombre:node.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername'], tags:node.li_attr['data-tags'] };
         $scope.getItemTree(renderId, $scope.repository_selected.data.id_repositorio);
 
     });
 
+    /*Instancia del arbol de la seccion de ENTITIES*/
+    /*IMPORTANTE*/
+    /* Para que el arbol permita manipular(create, rename, delete) los nodos check_callback debe ser true*/
+    $('#jstreeBuilds').jstree({        
+        'core':{check_callback : true},
+        "plugins" : [ "contextmenu", "sort", "dnd" ],
+        "contextmenu": {
+                "items": function ($node) {
 
-    $('#jstreeBuilds').jstree().bind("dblclick.jstree", function(e) {
+                    console.log($node.li_attr['data-renderas'] );
 
-        console.log('aaaaaaa');
+                    if($node.li_attr['data-renderas'] === 'template')
+                        return {
+
+                            "Rename": {
+                                "label": "Change Entity",
+                                "action": function (data) {
+
+                                    var inst = $.jstree.reference(data.reference),
+                                    obj = inst.get_node(data.reference);
+                                    var renderId = obj.li_attr['data-renderid'];
+
+                                
+                                    
+                                    //cargar combobox entidades
+                                    //$scope.template_entities_load(renderId);
+        
+                                }
+                            },
+                            "Delete": {
+                                "label": "Detach Entity",
+                                "action": function (data) {
+                                    
+                                    var inst = $.jstree.reference(data.reference),
+                                    obj = inst.get_node(data.reference);
+
+                                    //borrar direlementoentidad   
+                                    //$scope.delete_directorioelemento(obj.li_attr['data-renderiddirtemplate'], obj);
+        
+                                }
+                            },
+
+                        };
+                    else{
+
+                        return {
+                            "Rename": {
+                                "label": "Change Entity",
+                                "action": function (data) {
+
+                                    var inst = $.jstree.reference(data.reference),
+                                    obj = inst.get_node(data.reference);
+                                    var renderId = obj.li_attr['data-renderid'];
+
+                                   
+                                    
+                                    //cargar combobox entidades
+                                    //$scope.template_entities_load(renderId);
+        
+                                }
+                            },
+                        
+   
+                        }
+                    }    
+
+                }
+        }
+    }).bind("dblclick.jstree", function(e) {
 
         // if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
         //     $scope.alert_repository();  
         //     return;                                  
         // }
 
-        // var tree = $(this).jstree(); 
-        // var node = tree.get_node(e.target); 
-        // var nodePath = tree.get_path(node).join("/");
-        // console.log(node);
-        // var renderId = node.li_attr['data-renderid'];          
-        // console.log(renderId);
+        var tree = $(this).jstree(); 
+        var node = tree.get_node(e.target); 
+        var nodePath = tree.get_path(node).join("/");
+        console.log(node);
+        var renderId = node.li_attr['data-renderid'];          
+        console.log(renderId);
         // $scope.template_entities_load(renderId);
 
     });
@@ -728,13 +797,18 @@ console.log($scope.components);
         * data: datos del nodo seleccionado que activa el menu, de esta se puede obtener el nodo seleccionado, y una instancia para 
                 manipular el arbol.
         */
-        $scope.addTreeNode = function(data, newNode){
-            console.log('++++++++++++++++++++++++');
-            var inst = $.jstree.reference(data.reference),
-            obj = inst.get_node(data.reference);
-            inst.create_node(obj, newNode, "last", function (new_node) {
-                console.log(new_node);
-            })
+        $scope.addTreeNode = function(data, newNode, jsTree){
+            console.log(jsTree);
+            if(jsTree!= null || jsTree != undefined){
+                jsTree.create_node(data.id,newNode);                
+            }else{
+                var inst = $.jstree.reference(data.reference),
+                obj = inst.get_node(data.reference);
+                inst.create_node(obj, newNode, "last", function (new_node) {
+                    console.log(new_node);
+                })    
+            }
+            
         }
 
         $scope.renameTreeNode = function(data, newText){
@@ -941,29 +1015,53 @@ console.log($scope.components);
 
         $scope.new_elemento_entidad = function(id_direlemento, id_entidad){
 
-            console.log('agregar');
             console.log($scope.direlemento_selected.nombre);
-            // $scope.GencoElementoEntidad = new directorio();
-            // $scope.GencoElementoEntidad.id_direlemento = id_direlemento;
-            // $scope.GencoElementoEntidad.id_entidad = id_entidad;
+            //$('#jstreeBuilds').jstree('create_node', $("#jstreeBuilds"), nodeDef, 'last', false, false);            
+            //$("#jstreeBuilds").jstree(true).select_node('#');
+            //var node = $('#jstreeBuilds').jstree(true).get_node('1')
+            //console.log(node)
+            //var parent = $('#jstreeBuilds').jstree('get_selected');
+            //$('#jstreeBuilds').jstree(true).create_node('#',nodeDef);
+
+
+            //console.log(parent);
+            //var newNode = { state: "open", data: "New nooooode!" };
+            //$('#jstreeBuilds').jstree("create_node", parent, "last", newNode, false, false);
+            // console.log(node);
+            // var inst = $('#jstreeBuilds').jstree.reference(node.reference),
+            // obj = inst.get_node(node.reference);
+            // $('#jstreeBuilds').jstree(true).create_node(obj, nodeDef, "last", function (new_node) {
+            //     console.log(node);
+            // })
+
+
+            //$('#jstreeBuilds').jstree('create_node', '#', nodeDef, 'last');
+            //console.log(nodo);            
+            $scope.GencoElementoEntidad = new plantillaentidad();
+            $scope.GencoElementoEntidad.id_direlemento = id_direlemento;
+            $scope.GencoElementoEntidad.id_entidad = id_entidad;
+            $scope.GencoElementoEntidad.tags = $scope.direlemento_selected.tags;
+            $scope.save_elemento_entidad();
       
         }
 
         $scope.save_elemento_entidad = function(){
             $scope.GencoElementoEntidad.$save(function(success){
             console.log(success);
+            var nodeName = $scope.direlemento_selected.nombre_padre+'/'+$scope.direlemento_selected.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + $("#cbxEntity option:selected").text(); + '</b>';
+
             var nodeDef = {'id': success.id_elementoentidad, 
                             'parent': '#', 
-                            'text': success.nombre, 
+                            'text': nodeName, 
                             'icon':"glyphicon glyphicon-folder-open", 
                             'li_attr':{'data-renderas':"component",
                                         'data-renderid': success.id_elementoentidad, 
-                                        'data-rendername':success.nombre
+                                        'data-rendername':$scope.direlemento_selected.nombre
                                     }
                         }
             console.log($scope.node_selected)
             console.log(nodeDef);
-            $scope.addTreeNode($scope.node_selected, nodeDef);
+            $scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node('#'), nodeDef, $('#jstreeBuilds').jstree(true));
             },function(error){
                 
                 console.log(error);

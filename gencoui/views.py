@@ -329,6 +329,11 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
     filter_fields = ('id_direlemento', 'id_entidad')
 
     def perform_create(self, serializer):
+        dict = {}
+        list = []
+        list = getIterableFromTags(serializer.validated_data['tags'])
+        dict = updateDictTags(list,dict)
+        serializer.validated_data['tags'] = dict;
         serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())  
 
 
@@ -747,7 +752,7 @@ class dir_template_tree(APIView):
                 # templates = {}
                 # childrens = {}
             if i.id_plantilla > 0:    
-                dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre}})
+                dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre, 'data-tags':i.id_plantilla.tags}})
             else:
                 dirs.append( {'id': 'f'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_archivo.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': i.id_archivo_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_archivo.nombre}})
         print dirs    
@@ -769,7 +774,7 @@ class dir_elemento_entidad_tree(APIView):
         id_padre = ''
 
         for elemento  in elementoEntidad:         
-            dirs.append({'id': elemento.id_elementoentidad, 'parent': '#', 'text': elemento.id_direlemento.id_plantilla.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': elemento.id_direlemento.id_direlemento, 'data-rendername':elemento.id_entidad.nombre}})
+            dirs.append({'id': elemento.id_elementoentidad, 'parent': '#', 'text': elemento.id_direlemento.id_plantilla.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"template",'data-renderid': elemento.id_elementoentidad, 'data-rendername':elemento.id_direlemento.id_plantilla.nombre}})
             
             print 'tags'
             print elemento.tags

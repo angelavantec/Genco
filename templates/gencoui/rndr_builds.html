@@ -157,11 +157,11 @@
 						<div class="dropdown" style="display:inline">
 							{% verbatim %}
 							{{repository_selected.data.nombre}}
-							<button class="btn btn-warning dropdown-toggle btn-xs" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" >
+							<button class="btn btn-warning dropdown-toggle btn-xs" type="button" id="dropdownRepo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-placement="top" data-tt="tooltip" title="Select a Repository">
 							 	</span>Repository 
 								<span class="caret"></span>
 							</button>
-							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1" >
+							<ul class="dropdown-menu" aria-labelledby="dropdownRepo" >
 								
 								<li ng-repeat="repository in repositories">
 									
@@ -204,13 +204,12 @@
 									<option>abc</option>
 
 								</select> -->
-								<select style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null" ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_tipodato as types_cnv.nombre for types_cnv in types_types">
+								<select id="cbxEntity" style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null" ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_entidad as types_cnv.nombre for types_cnv in types_types">
 											      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
 											      				<option value=''>Select</option>
 													      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
 								</select>	
-								{{Conversions[$index]}}
-								<a class="btn icon-btn btn-default btn-xs" ng-if="direlemento_selected.id != null" ng-click="new_elemento_entidad()" data-placement="bottom"data-tt="tooltip" title="Save">
+								<a class="btn icon-btn btn-default btn-xs" ng-if="direlemento_selected.id != null" ng-click="new_elemento_entidad(direlemento_selected.id, Conversions[$index])" data-placement="bottom"data-tt="tooltip" title="Save">
 										<span class="glyphicon btn-glyphicon glyphicon-floppy-save img-circle" ></span>					
 								</a>			    	
 																						
