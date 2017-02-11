@@ -91,7 +91,7 @@ return $resource('http://127.0.0.1:8000/gencoui/archivo/:id\\/',{id:'@id'},{
 
 }).factory('plantillaentidad',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@id'},{
+return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@id_direlemento'},{
     update: {
             method: 'PUT'
         },

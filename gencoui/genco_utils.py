@@ -37,8 +37,6 @@ def updateDictTags(list, dict):
 	return dict		
 
 
-
-
 dic = {}
 
 dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 

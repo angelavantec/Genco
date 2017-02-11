@@ -22,6 +22,14 @@ $scope.direlemento_selected = {
     tags: null,
 };
 
+$scope.elementoentidad_selected = {
+    id: null,
+    nombre: null,
+    nombre_padre: null,
+    tag: null,
+};
+
+
 $scope.template_selected = {
     id: null,
     nombre: null,
@@ -40,6 +48,7 @@ $scope.entity_added = {
 /*combobox de entidades del repositorio*/
 $scope.types_types = [];
 $scope.Conversions = [];
+$scope.EntityTags = [];
 
 $scope.entities_added = [];
 $scope.template_tags=[];
@@ -75,6 +84,10 @@ $scope.dataLang = {
     availableOptions: $scope.langs,
 };
 
+
+
+jsTreeFoldersInst = $('#jstreeFolders').jstree(true);
+jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
 
     /*Instancia del arbol de la seccion de FOLDERS*/
 
@@ -217,7 +230,7 @@ $scope.dataLang = {
                                             obj = inst.get_node(data.reference);
                                             //inst.create_node(obj, { type : "default" }, "last", function (new_node) {
                                             //setTimeout(function () { inst.edit(new_node); },0);
-                                            $scope.node_selected = data;
+                                            $scope.node_selected = obj; //data;
                                             $scope.new_directorio($scope.project_selected, obj.id);                                            
 
                                         //});
@@ -230,7 +243,7 @@ $scope.dataLang = {
                                     "action"            : function (data) {
                                         var inst = $.jstree.reference(data.reference),
                                         obj = inst.get_node(data.reference);
-                                        $scope.node_selected = data;
+                                        $scope.node_selected = obj; //data;
                                         console.log(data);
                                         $scope.new_file(obj.id);
                                     }
@@ -254,7 +267,7 @@ $scope.dataLang = {
 
                                             var inst = $.jstree.reference(data.reference),
                                             obj = inst.get_node(data.reference);
-                                            $scope.node_selected = data;
+                                            $scope.node_selected = obj; //data;
 
                                             //para los archivos y templates el id viene en este atributo
                                             var renderId = obj.li_attr['data-renderid'];
@@ -281,7 +294,7 @@ $scope.dataLang = {
                                             
                                             var inst = $.jstree.reference(data.reference),
                                             obj = inst.get_node(data.reference);
-                                            $scope.node_selected = data;        
+                                            $scope.node_selected = obj; //data;        
                                             //$scope.delete_directorio(obj.id, obj);             
                                             // tree.edit($node);
 
@@ -373,6 +386,7 @@ $scope.dataLang = {
 
         var nodePath = tree.get_path(node).join("/");
         var renderId = node.li_attr['data-renderiddirtemplate'];          
+        console.log(renderId);
 
 
         var nodeParent = tree.get_node(node.parents[0]);
@@ -403,12 +417,15 @@ $scope.dataLang = {
 
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
-                                    var renderId = obj.li_attr['data-renderid'];
-
-                                
+                                    var renderId = obj.li_attr['data-renderid'];                                    
+                                    $scope.elementoentidad_selected = {id:renderId, nombre:obj.li_attr['data-rendername']};    
+                                    $scope.node_item_selected = obj;                            
                                     
                                     //cargar combobox entidades
                                     //$scope.template_entities_load(renderId);
+                                    angular.element($("#ctrl_editor")).scope().$apply();
+                                    $('#template-entities-modal').modal('show');
+                                    
         
                                 }
                             },
@@ -435,12 +452,13 @@ $scope.dataLang = {
 
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
-                                    var renderId = obj.li_attr['data-renderid'];
 
-                                   
-                                    
-                                    //cargar combobox entidades
-                                    //$scope.template_entities_load(renderId);
+                                    var nodeParent = $('#jstreeBuilds').jstree(true).get_node(''+obj.parent)
+                                    var renderId = nodeParent.li_attr['data-renderid'];
+                                    $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
+                                    $scope.node_item_selected = obj;                            
+                                    angular.element($("#ctrl_editor")).scope().$apply();
+                                    $('#template-entities-modal').modal('show');
         
                                 }
                             },
@@ -453,19 +471,20 @@ $scope.dataLang = {
         }
     }).bind("dblclick.jstree", function(e) {
 
-        // if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
-        //     $scope.alert_repository();  
-        //     return;                                  
-        // }
-
         var tree = $(this).jstree(); 
-        var node = tree.get_node(e.target); 
-        var nodePath = tree.get_path(node).join("/");
-        console.log(node);
-        var renderId = node.li_attr['data-renderid'];          
-        console.log(renderId);
-        // $scope.template_entities_load(renderId);
+        var obj = tree.get_node(e.target); 
+        
 
+        if(obj.li_attr['data-renderas']=='template'){
+            return;
+        }
+            
+        var nodeParent = tree.get_node(''+obj.parent)
+        var renderId = nodeParent.li_attr['data-renderid'];
+        $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
+        $scope.node_item_selected = obj;                            
+        angular.element($("#ctrl_editor")).scope().$apply();
+        $('#template-entities-modal').modal('show');
     });
 
 
@@ -670,12 +689,18 @@ console.log($scope.components);
             console.log(directorioelemento);
             directorioelemento.$save(function(success){
                 console.log(success);
-                if(nodeDef != null || nodeDef != undefined){
-                    nodeDef.id = success.id_dirplantilla;
-                    nodeDef.parent = success.id_directorio;
-                    //nodeDef.li_attr.data-renderiddirtemplate = success.id_dirplantilla;
-                    $scope.addTreeNode(node, nodeDef);
-                }
+                
+                // if(nodeDef != null || nodeDef != undefined){
+                //     nodeDef.id = success.id_direlemento;
+                //     nodeDef.parent = success.id_directorio;
+                //     //nodeDef.li_attr.data-renderiddirtemplate = success.id_dirplantilla;
+                //     $scope.addTreeNode(node, nodeDef, jsTreeFoldersInst);
+                // }
+
+                node.li_attr['data-renderiddirtemplate'] = success.id_direlemento;
+                console.log(node.li_attr['data-renderiddirtemplate']);
+                //node.li_attr.data-renderiddirtemplate = success.id_dirplantilla;
+
             },function(error){
                 
                 console.log(error);
@@ -698,7 +723,8 @@ console.log($scope.components);
                 
             },function(error){
                 
-                console.log(error);
+                //console.log(error);
+                $scope.showMessage(error.data['detail']);
 
             });
             
@@ -729,7 +755,7 @@ console.log($scope.components);
                             }
                 console.log($scope.node_selected)
                 console.log(nodeDef);
-                $scope.addTreeNode($scope.node_selected, nodeDef);
+                $scope.addTreeNode($scope.node_selected, nodeDef, jsTreeFoldersInst);
             },function(error){
                 
                 console.log(error);
@@ -751,8 +777,8 @@ console.log($scope.components);
 
                 
             },function(error){
-                
-                console.log(error);
+                console.log(error.data);
+                $scope.showMessage(error.data['detail']);
 
             });
             
@@ -797,29 +823,31 @@ console.log($scope.components);
         * data: datos del nodo seleccionado que activa el menu, de esta se puede obtener el nodo seleccionado, y una instancia para 
                 manipular el arbol.
         */
-        $scope.addTreeNode = function(data, newNode, jsTree){
+        $scope.addTreeNode = function(node, newNode, jsTree){
             console.log(jsTree);
-            if(jsTree!= null || jsTree != undefined){
-                jsTree.create_node(data.id,newNode);                
-            }else{
-                var inst = $.jstree.reference(data.reference),
-                obj = inst.get_node(data.reference);
-                inst.create_node(obj, newNode, "last", function (new_node) {
-                    console.log(new_node);
-                })    
-            }
+            //if(jsTree!= null || jsTree != undefined){
+                jsTree.create_node(node.id,newNode);                
+           // }else{
+                //var inst = $.jstree.reference(data.reference),
+                //obj = inst.get_node(data.reference);
+                //inst.create_node(obj, newNode, "last", function (new_node) {
+                //    console.log(new_node);
+                //})
+
+          //  }
             
         }
 
-        $scope.renameTreeNode = function(data, newText){
-            var inst = $.jstree.reference(data.reference),
-            obj = inst.get_node(data.reference);
-            console.log(data);
-            console.log('rename');
-            console.log(newText);
-            console.log(obj);
-             $('#jstreeFolders').jstree('set_text', obj, newText);
+        $scope.renameTreeNode = function(node, newText){
 
+             //   var inst = $.jstree.reference(data.reference),
+             //   obj = inst.get_node(data.reference);
+                //console.log(data);
+                //console.log('rename');
+                //console.log(newText);
+                //console.log(obj);
+                $('#jstreeBuilds').jstree('set_text', node, newText);
+           
         }
 
 
@@ -859,10 +887,7 @@ console.log($scope.components);
 
             // console.log(fileUpload.uploadFileToUrl(file, $scope.GencoArchivos));
             //new Promise(function(resolve, reject) { 
-                console.log($scope.node_selected.parent);
-                console.log($scope.node_selected);
-                var inst = $.jstree.reference($scope.node_selected.reference),
-                obj = inst.get_node($scope.node_selected.reference);
+                obj = $scope.node_selected; //inst.get_node($scope.node_selected.reference);
                 console.log('////////////////////////////');
                 console.log(obj.id);
                 console.log(obj);
@@ -933,10 +958,8 @@ console.log($scope.components);
 
             console.log(myFoo);
 
-                console.log($scope.node_selected.parent);
                 console.log($scope.node_selected);
-                var inst = $.jstree.reference($scope.node_selected.reference),
-                obj = inst.get_node($scope.node_selected.reference);
+                obj = $scope.node_selected; //inst.get_node($scope.node_selected.reference);
 
             var respuesta = fileUpload.updateFileToUrl(myFoo, $scope.GencoArchivos, obj, $scope.node_selected, $scope.renameTreeNode);
 
@@ -1047,26 +1070,157 @@ console.log($scope.components);
 
         $scope.save_elemento_entidad = function(){
             $scope.GencoElementoEntidad.$save(function(success){
-            console.log(success);
-            var nodeName = $scope.direlemento_selected.nombre_padre+'/'+$scope.direlemento_selected.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + $("#cbxEntity option:selected").text(); + '</b>';
+                console.log(success);
+                var nodeName = $scope.direlemento_selected.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + $("#cbxEntity option:selected").text(); + '</b>';
 
-            var nodeDef = {'id': success.id_elementoentidad, 
-                            'parent': '#', 
-                            'text': nodeName, 
-                            'icon':"glyphicon glyphicon-folder-open", 
-                            'li_attr':{'data-renderas':"component",
-                                        'data-renderid': success.id_elementoentidad, 
-                                        'data-rendername':$scope.direlemento_selected.nombre
+                var nodeDef = {'id': success.id_elementoentidad, 
+                                'parent': '#', 
+                                'text': nodeName, 
+                                'icon':"glyphicon glyphicon-folder-open", 
+                                'li_attr':{'data-renderas':"component",
+                                            'data-renderid': success.id_elementoentidad, 
+                                            'data-rendername':$scope.direlemento_selected.nombre,
+                                            'data-renderentity': success.id_entidad
+                                        }
+                            }
+                $scope.addTreeNode(jsTreeBuildsInst.get_node('#'), nodeDef, jsTreeBuildsInst);
+                var nodeChild = {};
+                if (success.tags!= null || success.tags != undefined){
+                    //tags = getIterableFromTags(elemento.tags)  
+                    console.log( ''+success.tags)  
+                    var data = JSON.parse(''+success.tags);
+                    console.log(data);
+
+                    ///var obj = {a: 1, b: 2};
+                    //var data = {"UI/abm 2-076c017c-5fcc-218d": -1};
+                    for (var key in data) {
+                      if (data.hasOwnProperty(key)) {
+                        var val = data[key];
+                        nodeChild = {'id': key + success.id_elementoentidad, 
+                                    'parent': success.id_elementoentidad, 
+                                    'text': key + '<sub style="color:#CCCCCC">@</sub>' + '<b></b>', 
+                                    'icon':"glyphicon glyphicon-file", 
+                                    'li_attr':{'data-renderas':"file", 
+                                                'data-renderid': key, 
+                                                'data-rendername': key,
+                                                'data-renderentity': -1
+                                            }
                                     }
-                        }
-            console.log($scope.node_selected)
-            console.log(nodeDef);
-            $scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node('#'), nodeDef, $('#jstreeBuilds').jstree(true));
+                        $scope.addTreeNode(jsTreeBuildsInst.get_node(''+success.id_elementoentidad), nodeChild, jsTreeBuildsInst);
+                      }
+                    }
+                    // for (var key in data){
+                    //     console.log(key);
+                    //     //key will be -> 'id'
+                    //     //dictionary[key] -> 'value'
+                    //     // nodeChild = {'id': key + success.id_elementoentidad, 
+                    //     //             'parent': success.id_elementoentidad, 
+                    //     //             'text': key + '<sub style="color:#CCCCCC">@</sub>' + '<b></b>', 
+                    //     //             'icon':"glyphicon glyphicon-file", 
+                    //     //             'li_attr':{'data-renderas':"file", 
+                    //     //                         'data-renderid': key, 
+                    //     //                         'data-rendername': key}
+                    //     //             }
+                    //     // $scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node(''+success.id_elementoentidad), nodeChild, $('#jstreeBuilds').jstree(true));
+                    // }
+                        
+                }
+                 
+                
             },function(error){
                 
                 console.log(error);
                 //$('#jstreeFolders').jstree(true).delete_node(node); 
             }); 
+        }
+
+
+        $scope.update_elemento_entidad = function(id_direlemento, id_entidad){
+
+            //console.log($scope.elementoentidad_selected.id);
+            //node = $('#jstreeBuilds').jstree(true).get_node(''+$scope.elementoentidad_selected.id)
+            node = $scope.node_item_selected;
+
+            var id_elementoentidad = node.li_attr['data-renderid'];
+
+
+            console.log(node);
+            var obj={};
+            var nodeChild;
+            for(var i = 0; i < node.children_d.length; i++) {
+                nodeChild = $('#jstreeBuilds').jstree(true).get_node(''+node.children_d[i])
+                //console.log(nodeChild.li_attr['data-renderid'] + nodeChild.li_attr['data-renderentity']);
+                obj[nodeChild.li_attr['data-renderid']] = parseInt(nodeChild.li_attr['data-renderentity']);
+            }    
+            
+            //console.log(obj);
+            //console.log(JSON.stringify(obj));
+
+            $scope.GencoElementoEntidad = new plantillaentidad();
+            $scope.GencoElementoEntidad.id_direlemento = id_direlemento;
+            $scope.GencoElementoEntidad.id_entidad = id_entidad;
+            $scope.GencoElementoEntidad.id_elementoentidad = id_elementoentidad;
+            $scope.GencoElementoEntidad.tags = JSON.stringify(obj);
+
+            $scope.GencoElementoEntidad.$update(function(success){
+                //console.log(success);
+                var nodeName = $scope.direlemento_selected.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + $("#cbxEntityTag option:selected").text(); + '</b>';
+
+                //$scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node('#'), nodeDef, $('#jstreeBuilds').jstree(true));
+                //console.log('dfdfdfddddddddddd');
+                //console.log($("#cbxEntity option:selected").text());
+                $scope.renameTreeNode($scope.node_item_selected, nodeName);
+                $('#template-entities-modal').modal('hide');
+            },function(error){
+                
+                console.log(error);
+                //$('#jstreeFolders').jstree(true).delete_node(node); 
+            });
+
+
+        }
+
+
+        $scope.update_elemento_entidad_tag = function(id_direlemento, id_entidadTag){
+
+            nodeTag = $scope.node_item_selected;
+            var id_elementoentidad = $scope.elementoentidad_selected.id;
+
+
+            var nodeDirelemento = $('#jstreeBuilds').jstree(true).get_node(''+nodeTag.parent);
+            var id_entidad = nodeDirelemento.li_attr['data-renderentity'];
+
+            var obj={};
+            var nodeChild;
+            for(var i = 0; i < nodeDirelemento.children_d.length; i++) {
+                nodeChild = $('#jstreeBuilds').jstree(true).get_node(''+nodeDirelemento.children_d[i]);
+                if($scope.elementoentidad_selected.tag == nodeChild.li_attr['data-renderid']){
+                    obj[nodeChild.li_attr['data-renderid']] = parseInt(id_entidadTag);
+                }                
+            }    
+            
+            $scope.GencoElementoEntidad = new plantillaentidad();
+            $scope.GencoElementoEntidad.id_direlemento = id_direlemento;
+            $scope.GencoElementoEntidad.id_entidad = id_entidad;
+            $scope.GencoElementoEntidad.id_elementoentidad = id_elementoentidad;
+            $scope.GencoElementoEntidad.tags = JSON.stringify(obj);
+
+            $scope.GencoElementoEntidad.$update(function(success){
+                //console.log(success);
+                var nodeName = $scope.elementoentidad_selected.tag + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + $("#cbxEntityTag option:selected").text(); + '</b>';
+
+                //$scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node('#'), nodeDef, $('#jstreeBuilds').jstree(true));
+                //console.log('dfdfdfddddddddddd');
+                //console.log($("#cbxEntity option:selected").text());
+                $scope.renameTreeNode($scope.node_item_selected, nodeName);
+                $('#template-entities-modal').modal('hide');
+            },function(error){
+                
+                console.log(JSON.stringify(error.data));
+                //$('#jstreeFolders').jstree(true).delete_node(node); 
+            });
+
+
         }
 
 
@@ -1082,6 +1236,12 @@ console.log($scope.components);
                                         }
                 );
             
+        }
+
+        $scope.showMessage = function(message){
+            $scope.globalMessage = message;
+            $('#info-modal').modal('show');
+
         }
 
         // $scope.template_entities_load = function(id_plantilla){

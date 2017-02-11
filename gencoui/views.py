@@ -39,6 +39,9 @@ from django.shortcuts import get_object_or_404
 from genco_utils import *
 
 
+from rest_framework.exceptions import APIException
+
+
 def current_datetime(request):
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
@@ -89,6 +92,15 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
     
+    def perform_destroy(self, instance):
+        queryset = GencoDirectorioElementos.objects.filter(id_directorio=instance.id_directorio)
+        refElements = '';
+        for i  in queryset:
+            refElements += '\n' + ('Template ' + i.id_plantilla.nombre if i.id_plantilla else '') + '' + ('File ' + i.id_archivo.nombre if i.id_archivo else '')
+
+        if queryset.exists():
+            raise APIException('This Element is referenced by ' + refElements)
+
     def list(self, request):
         queryset = GencoDirectorios.objects.filter(creado_por=request.user.username)
         serializer = GencoDirectoriosSerializer(queryset, many=True)
@@ -103,7 +115,7 @@ class GencoArchivosViewSet(viewsets.ModelViewSet):
     serializer_class = GencoArchivosSerializer
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())
     
     def list(self, request):
         queryset = GencoArchivos.objects.filter(creado_por=request.user.username)
@@ -122,7 +134,17 @@ class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
     filter_fields = ('id_directorio')
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())
+
+    def perform_destroy(self, instance):
+
+        queryset = GencoElementoEntidad.objects.filter(id_direlemento=instance.id_direlemento)
+        refEntity = '';
+        for i  in queryset:
+            refEntity += '\n' + i.id_entidad.id_repositorio.nombre + '-' + i.id_entidad.nombre
+
+        if queryset.exists():
+            raise APIException('This Element is referenced by ' + refEntity)
     
     def list(self, request):
         queryset = GencoDirectorioElementos.objects.filter(creado_por=request.user.username)
@@ -333,8 +355,20 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
         list = []
         list = getIterableFromTags(serializer.validated_data['tags'])
         dict = updateDictTags(list,dict)
-        serializer.validated_data['tags'] = dict;
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())  
+        serializer.validated_data['tags'] = json.dumps(dict);
+        serializer.save(user=self.request.user, creado_por=self.request.user.username, fecha_creacion=timezone.now())
+
+    def perform_update(self, serializer):
+        dict = {}
+        list = []
+        obj = GencoPlantillas.objects.get(id_plantilla=serializer.validated_data['id_direlemento'].id_plantilla.id_plantilla)
+        # cargamos la lista de tags de la entidad
+        list = getIterableFromTags(obj.tags)
+        # cargamos el dicionario de tags desde la vista Builds
+        dict = getIterableFromTags(serializer.validated_data['tags'])
+        dict = updateDictTags(list,dict)
+        serializer.validated_data['tags'] = json.dumps(dict);
+        serializer.save()      
 
 
 def get_form(request, id_form=None):
@@ -767,22 +801,28 @@ class dir_elemento_entidad_tree(APIView):
         context = {'error':'none'}
         gencoElementoEntidad = GencoElementoEntidad
         elementoEntidad = gencoElementoEntidad.objects.filter(id_direlemento=id_direlemento, id_entidad__id_repositorio=id_repositorio)
+        gencoEntidad = GencoEntidad.objects.filter(id_repositorio=id_repositorio).values()
 
 
         dirs = []
         tags = {}
         id_padre = ''
+        nombreEntidad = ''
 
         for elemento  in elementoEntidad:         
-            dirs.append({'id': elemento.id_elementoentidad, 'parent': '#', 'text': elemento.id_direlemento.id_plantilla.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"template",'data-renderid': elemento.id_elementoentidad, 'data-rendername':elemento.id_direlemento.id_plantilla.nombre}})
+            dirs.append({'id': elemento.id_elementoentidad, 'parent': '#', 'text': elemento.id_direlemento.id_plantilla.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"template",'data-renderid': elemento.id_elementoentidad, 'data-rendername':elemento.id_direlemento.id_plantilla.nombre, 'data-renderentity': elemento.id_entidad.id_entidad}})
             
             print 'tags'
             print elemento.tags
 
             if elemento.tags:
-                tags = getIterableFromTags(elemento.tags)    
+                tags = getIterableFromTags(elemento.tags)
+
                 for key, value in tags.items():
-                    dirs.append( {'id': key, 'parent': elemento.id_elementoentidad, 'text': key + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': key, 'data-rendername': key}})        
+                    print gencoEntidad
+                    nombreEntidad = next((item for item in gencoEntidad if item.get("id_entidad") == int(float(value))),{'nombre':''})
+                    print nombreEntidad
+                    dirs.append( {'id': key + str(elemento.id_elementoentidad), 'parent': elemento.id_elementoentidad, 'text': key + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + str(nombreEntidad.get('nombre')) + '</b>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': key, 'data-rendername': key, 'data-renderentity': value}})        
         print dirs    
 
         return JsonResponse({'dirs':dirs})
