@@ -22,7 +22,7 @@ return $resource('http://127.0.0.1:8000/gencoui/directorio/:id_directorio\\/',{i
 
 }).factory('directorioelemento',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/directorioelemento/:id\\/',{id:'@id'},{
+return $resource('http://127.0.0.1:8000/gencoui/directorioelemento/:id\\/',{id:'@id_direlemento'},{
     update: {
             //url: 'http://127.0.0.1:9000/demo/movies/:id\\/',
             method: 'PUT'
@@ -91,7 +91,7 @@ return $resource('http://127.0.0.1:8000/gencoui/archivo/:id\\/',{id:'@id'},{
 
 }).factory('plantillaentidad',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@id_direlemento'},{
+return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@id_elementoentidad'},{
     update: {
             method: 'PUT'
         },

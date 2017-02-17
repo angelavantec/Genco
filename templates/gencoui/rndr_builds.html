@@ -110,7 +110,6 @@
 
 
 {% block content %}
-
 <div id="ctrl_editor" ng-app="app_editor" data-ng-init="init()" ng-controller="ctrl_editor">
 	<input hidden id="key_module" value="{{entorno.id_entorno}}"/>
 	<input hidden id="key_project" value="{{proyecto.id_proyecto}}"/>
@@ -144,94 +143,87 @@
 		</div>
 
 	    <div id="main">
-	    	<div id="tree" style="height:99%; ">
+	    	<div id="tree" style="margin-top:70px;height:85%;">
 
-		    	<div class="modal-header" style="margin-top:70px;">
-		    		Options
+		    	<div class="modal-header">
+		    		
 		    		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default btn-xs" ng-click="submit()" data-placement="bottom"data-tt="tooltip" title="Save">
+		          		<!-- <a class="btn icon-btn btn-default btn-xs" ng-click="submit()" data-placement="bottom"data-tt="tooltip" title="Save">
 							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
-						</a>
+						</a> -->
+						<h3 style="margin-top:0px">{{proyecto.nombre}}<sub style="color:#CCCCCC">Project</sub></h3>
 					</div>
-					<div style="position: absolute;right: 70px; display:inline">	
-						<div class="dropdown" style="display:inline">
-							{% verbatim %}
-							{{repository_selected.data.nombre}}
-							<button class="btn btn-warning dropdown-toggle btn-xs" type="button" id="dropdownRepo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-placement="top" data-tt="tooltip" title="Select a Repository">
-							 	</span>Repository 
-								<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu" aria-labelledby="dropdownRepo" >
-								
-								<li ng-repeat="repository in repositories">
-									
-									<a ng-click="change_repository(repository)">{{repository.nombre}}</a>
-									
-								</li>								
-							</ul>							
-							{% endverbatim %}
-						</div>
-					</div>	
+
 	          	</div>
 
-	          	<div class="row" style="height:80%;width:95%; margin-top:10px; overflow:auto">
-				  	<div class="col-sm-6">
-						<div style="margin-top: 15px; margin-left: 15px">
-					    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Folders </h4>
+	          	<div class="" style="height:88%;margin-right:0px; overflow:auto">
+				  	<div class="col-sm-6" style="height: 100%; border-right: solid 1px #e5e5e5;">
+						<div style="margin-top: 15px; margin-left: 15px;">
+							{% verbatim %}
+					    	<!-- <h4 style="display:inline;margin-top: 10px;margin-right:10px">Folders </h4> -->
+
+					    		<div style="height: 60px; float: right"><!-- 
+					    		<h5 style="margin-top: 10px;" ng-if="repository_selected.data.id_repositorio != null">{{repository_selected.data.nombre}}</h5>
+					    		<h5 style="margin-top: 10px;" ng-if="repository_selected.data.id_repositorio == null">No Repository Selected</h5>	 -->
+					    		{{repository_selected.data.nombre}}
+
+									<div class="dropdown" style="display:inline;">
+																				
+										<button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropdownRepo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" onclick="$('#popUpRepo').hide();">
+										 	</span>Repository 
+											<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" aria-labelledby="dropdownRepo" >
+											
+											<li ng-repeat="repository in repositories">
+												
+												<a ng-click="change_repository(repository)">{{repository.nombre}}</a>
+												
+											</li>								
+										</ul>
+										
+										
+									</div>
+									
+									{% endverbatim %}
+									
+								</div>
 
 							<div id="jstreeFolders"></div>
 				    		
 		
 				    	</div>
 				  	</div>
-				  	<div class="col-sm-6 .hidden-xs" style="height: 95%; background-color: #eee;border:solid 1px #ccc">
-						
-					    		{% verbatim %}
-					    		<h4 style="margin-top: 10px;" ng-if="direlemento_selected.id == null">Entities</h4>
-				    			<h4 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id != null">{{direlemento_selected.nombre_padre}}/{{direlemento_selected.nombre}}</h4>				    			
-				    			<span style="display:inline;" class="glyphicon glyphicon-link" ng-if="direlemento_selected.id != null"></span>
-				    			<!-- <select style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null">
-									<option>abc</option>
-									<option>zte</option>
-									<option>aan</option>
-									<option>zfr</option>
-									<option>zog</option>
-									<option>abc</option>
-									<option>zte</option>
-									<option>aan</option>
-									<option>zfr</option>
-									<option>zog</option>
-									<option>abc</option>
+				  	<div class="col-sm-6 .hidden-xs" style="height: 100%;  background-color:#ecf0f1">
+				  		{% verbatim %}
+					    		
+				  		<div class="" style="height: 90%; margin-top:15px;background-color:#fff;box-shadow: 3px 3px 3px #ccc;" >
 
-								</select> -->
-								<select id="cbxEntity" style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null" ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_entidad as types_cnv.nombre for types_cnv in types_types">
-											      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
-											      				<option value=''>Select</option>
-													      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
-								</select>	
-								<a class="btn icon-btn btn-default btn-xs" ng-if="direlemento_selected.id != null" ng-click="new_elemento_entidad(direlemento_selected.id, Conversions[$index])" data-placement="bottom"data-tt="tooltip" title="Save">
-										<span class="glyphicon btn-glyphicon glyphicon-floppy-save img-circle" ></span>					
-								</a>			    	
-																						
+					    		
+				    		
+				    		<div class="" style="height: 100%; padding:10px">
+				    			<div style="height:50px;background-color:#8dc9ed;padding:8px; color:white">
+				    				<h5 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id == null">Entities</h5>
+					    			<h5 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id != null">{{direlemento_selected.nombre_padre}}/{{direlemento_selected.nombre}}</h5>				    			
+					    			<span style="display:inline;" class="glyphicon glyphicon-link" ng-if="direlemento_selected.id != null"></span>
 
+									<select id="cbxEntity" style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null" ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_entidad as types_cnv.nombre for types_cnv in types_types">
+												      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
+												      				<option value=''>Select</option>
+														      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
+									</select>	
+									<a class="btn icon-btn btn-default btn-xs" ng-if="direlemento_selected.id != null" ng-click="new_elemento_entidad(direlemento_selected.id, Conversions[$index])" data-placement="bottom"data-tt="tooltip" title="Save">
+											<span class="glyphicon btn-glyphicon glyphicon-floppy-save img-circle" ></span>					
+									</a>
+				    			</div>
+			    	
 								{% endverbatim %}
-					    		<div id="jstreeBuilds" style="margin-top:20px"></div>
-		
-				    	
+					    		<div id="jstreeBuilds" style="margin-top:20px;height: 85%;background-color: white;overflow:auto"></div>
+					    	</div>	
+					
+				    	</div>
 				  	</div>
 
-				</div>
-
-			    <div class="row" style="height:40%;width:95%;margin-left:15px;" hidden>
-
-				 	<div class="col-sm-12" style="height:99%; background-color: #eee;border:solid 1px #ccc">
-
-				 		<h4 style="margin-top: 15px;">Builds </h4>
-						<div id="jstreeFolders"></div>
-						    	
-			
-									   
-			  		</div>
 				</div>
 	
     		</div>
@@ -274,7 +266,7 @@
 						</a>
 					</div>	
 					<div style="display:inline">	
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
 								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 						</a>
 					</div>	
@@ -317,7 +309,7 @@
 						</a>
 					</div>	
 					<div style="display:inline">	
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
 								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 						</a>
 					</div>	
@@ -351,7 +343,7 @@
 						</a>
 					</div>
 					<div style="display:inline">	
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
 								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 						</a>
 					</div>	
@@ -386,7 +378,7 @@
 						</a>
 					</div>
 					<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
 								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 						</a>
 					</div>
@@ -395,77 +387,6 @@
 	        </div>
 	    </div>
 	</div>
-
-
-
-	    <!-- Modal Templates -->
-	<div class="modal fade" id="folder-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-	    <div class="modal-dialog modal-sm">
-
-	        <div class="modal-content">
-		        <div class="modal-header">
-			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title">Confirm</h4>
-			    </div>	     
-	          	<div class="modal-body">
-	          		{% verbatim %}
-	          		Do you really want to delete {{component_selected.nombre}} componenent?
-	          		{% endverbatim %}
-	          	</div>
-	          	<div class="modal-footer">
-	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="delete_component()" data-placement="bottom"data-tt="tooltip" title="Save">
-							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
-						</a>
-					</div>
-					<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-						</a>
-					</div>	
-	          	</div>
-
-	        </div>
-	    </div>
-	</div>
-
-
-
-		    <!-- Modal Templates -->
-	<div class="modal fade" id="file-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-	    <div class="modal-dialog modal-sm">
-
-	        <div class="modal-content">
-		        <div class="modal-header">
-			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title">Confirm</h4>
-			    </div>	     
-	          	<div class="modal-body">
-	          		{% verbatim %}
-	          		Do you really want to delete {{template_selected.nombre}} template?
-	          		{% endverbatim %}
-	          	</div>
-	          	<div class="modal-footer">
-	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="delete_template()" data-placement="bottom"data-tt="tooltip" title="Save">
-							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
-						</a>
-					</div>
-					<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-						</a>
-					</div>	
-	          	</div>
-
-	        </div>
-	    </div>
-	</div>
-
-
-
 
 
 	<div class="modal fade" id="repository-alert-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -499,6 +420,42 @@
 			    <div class="modal-body">
 	    		{% verbatim %}
 		    		<h4 style="margin-top: 10px;" ng-if="direlemento_selected.id == null">Entities</h4>
+	    			<h5 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id != null">{{direlemento_selected.nombre_padre}}/{{direlemento_selected.nombre}}</h5>				    			
+	    			<span style="display:inline;" class="glyphicon glyphicon-link" ng-if="direlemento_selected.id != null"></span>
+
+					<select id="cbxEntity" style="display:inline; width:150px" class="form-control" ng-if="direlemento_selected.id != null" ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_entidad as types_cnv.nombre for types_cnv in types_types">
+	      				<option value=''>Select</option>
+					</select>	
+								    	
+				</div>														
+				{% endverbatim %}	     
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="update_elemento_entidad(direlemento_selected.id, Conversions[$index])" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+	    	</div>
+		</div>
+	</div>
+	<div class="modal fade" id="template-entities-tag-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Select Entities</h4>
+			    </div>
+			    <div class="modal-body">
+	    		{% verbatim %}
+		    		<h4 style="margin-top: 10px;" ng-if="direlemento_selected.id == null">Entities</h4>
 	    			<h5 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id != null">{{direlemento_selected.nombre_padre}}/{{direlemento_selected.nombre}}<sub style="color:#CCCCCC">@</sub>{{elementoentidad_selected.tag}}</h5>				    			
 	    			<span style="display:inline;" class="glyphicon glyphicon-link" ng-if="direlemento_selected.id != null"></span>
 
@@ -515,7 +472,7 @@
 						</a>
 					</div>
 					<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
 								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 						</a>
 					</div>	
@@ -528,19 +485,12 @@
 
 	    <div class="modal-dialog" >
 
-	        <div class="modal-content" style="    padding: 20px;
-    margin: 20px 0;
-    /*border: 1px solid #eee;*/
-    border-left-width: 20px;
-    border-radius: 3px; border-left-color: #ce4844;">
+	        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
 		        <div class="modal-header">
 			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
 		        	<h4 class="modal-title">Information</h4>
 			    </div>	     
-	          	<div class="modal-body">
-	          		{% verbatim %}
-	          		{{globalMessage}}
-	          		{% endverbatim %}
+	          	<div id="imConfirm" class="modal-body">
 	          	</div>
 	          	<div class="modal-footer">
 					<div style="display:inline">
@@ -554,7 +504,36 @@
 	    </div>
 	</div>
 
+	<div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog">
+
+	        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ffb612;">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Confirm</h4>
+			    </div>	     
+	          	<div id="tedmConfirm" class="modal-body">
+
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="confirm_delete()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
    
+   <div id="popUpRepo" class="bubble_message" style="position: absolute;display: none; z-index:1000;" >Select Repository!</div>
 
 </div>
 {% endblock %}

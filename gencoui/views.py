@@ -96,10 +96,13 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
         queryset = GencoDirectorioElementos.objects.filter(id_directorio=instance.id_directorio)
         refElements = '';
         for i  in queryset:
-            refElements += '\n' + ('Template ' + i.id_plantilla.nombre if i.id_plantilla else '') + '' + ('File ' + i.id_archivo.nombre if i.id_archivo else '')
+            refElements += '<br>' + ('Template ' + i.id_plantilla.nombre if i.id_plantilla else '') + '' + ('File ' + i.id_archivo.nombre if i.id_archivo else '')
 
         if queryset.exists():
             raise APIException('This Element is referenced by ' + refElements)
+
+        instance.delete()
+            
 
     def list(self, request):
         queryset = GencoDirectorios.objects.filter(creado_por=request.user.username)
@@ -141,11 +144,14 @@ class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
         queryset = GencoElementoEntidad.objects.filter(id_direlemento=instance.id_direlemento)
         refEntity = '';
         for i  in queryset:
-            refEntity += '\n' + i.id_entidad.id_repositorio.nombre + '-' + i.id_entidad.nombre
+            refEntity += '<br><b>' + i.id_entidad.id_repositorio.nombre + '-</b>' + i.id_entidad.nombre
 
         if queryset.exists():
             raise APIException('This Element is referenced by ' + refEntity)
+
+        instance.delete()
     
+
     def list(self, request):
         queryset = GencoDirectorioElementos.objects.filter(creado_por=request.user.username)
         serializer = GencoDirectorioElementosSerializer(queryset, many=True)
@@ -353,10 +359,12 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         dict = {}
         list = []
-        list = getIterableFromTags(serializer.validated_data['tags'])
+        obj = GencoPlantillas.objects.get(id_plantilla=serializer.validated_data['id_direlemento'].id_plantilla.id_plantilla)
+        # cargamos la lista de tags de la entidad
+        list = getIterableFromTags(obj.tags)
         dict = updateDictTags(list,dict)
         serializer.validated_data['tags'] = json.dumps(dict);
-        serializer.save(user=self.request.user, creado_por=self.request.user.username, fecha_creacion=timezone.now())
+        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())
 
     def perform_update(self, serializer):
         dict = {}
@@ -810,12 +818,12 @@ class dir_elemento_entidad_tree(APIView):
         nombreEntidad = ''
 
         for elemento  in elementoEntidad:         
-            dirs.append({'id': elemento.id_elementoentidad, 'parent': '#', 'text': elemento.id_direlemento.id_plantilla.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"template",'data-renderid': elemento.id_elementoentidad, 'data-rendername':elemento.id_direlemento.id_plantilla.nombre, 'data-renderentity': elemento.id_entidad.id_entidad}})
+            dirs.append({'id': elemento.id_elementoentidad, 'parent': '#', 'text': elemento.id_direlemento.id_plantilla.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + elemento.id_entidad.nombre + '</b>' , 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"template",'data-renderid': elemento.id_elementoentidad, 'data-renderiddirtemplate': elemento.id_direlemento.id_direlemento, 'data-rendername':elemento.id_direlemento.id_plantilla.nombre, 'data-renderentity': elemento.id_entidad.id_entidad}})
             
             print 'tags'
             print elemento.tags
 
-            if elemento.tags:
+            if elemento.tags: 
                 tags = getIterableFromTags(elemento.tags)
 
                 for key, value in tags.items():

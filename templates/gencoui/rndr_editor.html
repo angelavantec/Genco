@@ -237,55 +237,55 @@
 		</div>
 
 	    <div id="main">
-	    	<div id="tree">
+	    	<div id="tree"  style="margin-top:70px;">
 
-	    	<div class="modal-header" style="margin-top:70px;">
-	    		Options
-	    		<div style="display:inline">
-	          		<a class="btn icon-btn btn-default btn-xs" ng-click="submit()" data-placement="bottom"data-tt="tooltip" title="Save">
-						<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
-					</a>
-				</div>
-				<div style="display:inline">	
-					<a class="btn icon-btn btn-default btn-xs" ng-click="preview()" data-placement="bottom"data-tt="tooltip" title="Preview">
-						<span class="glyphicon btn-glyphicon glyphicon-eye-open img-circle" ></span>					
-					</a>
-				</div>	
-          	</div>
+		    	<div class="modal-header">
+		    		Options
+		    		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default btn-xs" ng-click="submit()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">	
+						<a class="btn icon-btn btn-default btn-xs" ng-click="preview()" data-placement="bottom"data-tt="tooltip" title="Preview">
+							<span class="glyphicon btn-glyphicon glyphicon-eye-open img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
 
-	    
-		<div role="tabpanel" >
-			{% verbatim %}
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" ng-repeat="tab in tabs" ng-click="selectTab(tab.id_plantilla, $index, true)" ng-class="{active: tab.id_plantilla==current_template}">
-                    <a data-target="#tab" aria-controls="home" role="tab" data-toggle="tab">{{tab.nombre}} <span ng-click="deleteTab($index)" class="glyphicon glyphicon-remove"></span></a>
-                </li>
-<!--                 <li role="presentation" >
-                    <a aria-controls="home" role="tab" data-toggle="tab">( + )</a>
-                </li> -->
-            </ul>
-            {% endverbatim %}
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="tab">
-                    
-                    <!-- <form method="post" ng-submit="submit()"> -->
-                    	{% csrf_token %}
-                    	{% verbatim %}
-	                    <!-- <h1>Tab {{tabs[selectedTab].id}}</h1> -->
-	                    <!-- <h3>Content:- {{tabs[selectedTab].content}}</h3> -->
-	                    <div id="editor" name="" class="editor"></div>
+		    
+				<div role="tabpanel" >
+					{% verbatim %}
+		            <ul class="nav nav-tabs" role="tablist">
+		                <li role="presentation" ng-repeat="tab in tabs" ng-click="selectTab(tab.id_plantilla, $index, true)" ng-class="{active: tab.id_plantilla==current_template}">
+		                    <a data-target="#tab" aria-controls="home" role="tab" data-toggle="tab">{{tab.nombre}} <span ng-click="deleteTab($index)" class="glyphicon glyphicon-remove"></span></a>
+		                </li>
+		<!--                 <li role="presentation" >
+		                    <a aria-controls="home" role="tab" data-toggle="tab">( + )</a>
+		                </li> -->
+		            </ul>
+		            {% endverbatim %}
+		            <div class="tab-content">
+		                <div role="tabpanel" class="tab-pane active" id="tab">
+		                    
+		                    <!-- <form method="post" ng-submit="submit()"> -->
+		                    	{% csrf_token %}
+		                    	{% verbatim %}
+			                    <!-- <h1>Tab {{tabs[selectedTab].id}}</h1> -->
+			                    <!-- <h3>Content:- {{tabs[selectedTab].content}}</h3> -->
+			                    <div id="editor" name="" class="editor"></div>
 
-	                    <!-- <textarea name='editor' rows='4' cols='50' maxlength='100'></textarea> -->
-	                    {% endverbatim %}
-	                    <!-- <input type='submit' value='Submit'/> 	                    -->
-                    <!-- </form> -->
-                    
-                </div>
-            </div>
-        </div>				
+			                    <!-- <textarea name='editor' rows='4' cols='50' maxlength='100'></textarea> -->
+			                    {% endverbatim %}
+			                    <!-- <input type='submit' value='Submit'/> 	                    -->
+		                    <!-- </form> -->
+		                    
+		                </div>
+		            </div>
+		        </div>				
 		 
 	
-	    </div>
+	    	</div>
 
 
 

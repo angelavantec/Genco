@@ -78,6 +78,7 @@ $scope.GencoEntidadFields = [];
 
 
 $scope.globalMessage = 'NA';
+$scope.ConfirmDeleteCallback = null;
 
 $scope.dataLang = {
     repeatSelectLang: null,
@@ -85,9 +86,6 @@ $scope.dataLang = {
 };
 
 
-
-jsTreeFoldersInst = $('#jstreeFolders').jstree(true);
-jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
 
     /*Instancia del arbol de la seccion de FOLDERS*/
 
@@ -202,7 +200,8 @@ jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
                                     // $scope.component_selected.nombre = obj.text;
                                     // $scope.component_selected.id = obj.id;
                                     // console.log($scope.component_selected);
-                                    $scope.delete_directorioelemento(obj.li_attr['data-renderiddirtemplate'], obj);
+                                    $scope.showConfirmDelete("Do you really want to detach " + obj['text'] + " Template?");
+                                    $scope.ConfirmDeleteCallback = function(){$scope.delete_directorioelemento(obj.li_attr['data-renderiddirtemplate'], obj)};
                                     //this.remove(obj);
                                     //$("#jstreeFolders").jstree(true).remove(obj);
                                     //Hago que la interfaz refresque el titulo con el valor de component_selected
@@ -304,10 +303,12 @@ jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
                                             var renderAs = obj.li_attr['data-renderas'];
                                             
                                             if(renderAs === 'folder'){
-                                                $scope.delete_directorio(renderId, obj);
+                                                $scope.showConfirmDelete("Do you really want to delete " + obj['text'] + " Folder?");
+                                                $scope.ConfirmDeleteCallback = function(){$scope.delete_directorio(renderId, obj)};
                                                 //$('#folder-edit-modal').modal('show');
                                             }else{
-                                                $scope.delete_file(renderId, obj);
+                                                $scope.showConfirmDelete("Do you really want to delete " + obj['text'] + " File?");
+                                                $scope.ConfirmDeleteCallback = function(){$scope.delete_file(renderId, obj)};
                                                 // $('#file-edit-modal').modal('show');
                                             }
 
@@ -364,16 +365,13 @@ jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
         // console.log("Drop node " + data.node.id + " to " + data.parent + " " + data.node.li_attr['data-renderid']);
 
         console.log(data.parent);
-
+        $("#jstreeFolders").jstree(true).select_node(data.node.id);
         $scope.new_directorioelemento(data.parent,  data.node.li_attr['data-renderid'], null, data.node, null);
 
         //$('#jstreeFolders').jstree(true).delete_node(data.node);
     }).bind("dblclick.jstree", function(e) {
 
-        if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
-            $scope.alert_repository();  
-            return;                                  
-        }
+        
 
         var tree = $(this).jstree(); 
         var node = tree.get_node(e.target); 
@@ -381,6 +379,11 @@ jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
         if(node.li_attr['data-renderas'] != 'template'){
             //$scope.direlemento_selected = {id:null, nombre:null};
             //angular.element($("#ctrl_editor")).scope().$apply();
+            return;                                  
+        }
+
+        if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
+            $scope.alert_repository();  
             return;                                  
         }
 
@@ -435,9 +438,12 @@ jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
                                     
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
-
+                                    $scope.node_item_selected = obj;
+                                    $scope.showConfirmDelete("Do you really want to detach " + obj['text'] + " Linked?");
+                                    $scope.ConfirmDeleteCallback = function(){$scope.delete_elementoentidad(obj.li_attr['data-renderid'], obj)};
                                     //borrar direlementoentidad   
                                     //$scope.delete_directorioelemento(obj.li_attr['data-renderiddirtemplate'], obj);
+                                    //$scope.delete_elementoentidad(obj.li_attr['data-renderid'], obj);
         
                                 }
                             },
@@ -458,7 +464,7 @@ jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
                                     $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
                                     $scope.node_item_selected = obj;                            
                                     angular.element($("#ctrl_editor")).scope().$apply();
-                                    $('#template-entities-modal').modal('show');
+                                    $('#template-entities-tag-modal').modal('show');
         
                                 }
                             },
@@ -484,7 +490,7 @@ jsTreeBuildsInst = $('#jstreeBuilds').jstree(true);
         $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
         $scope.node_item_selected = obj;                            
         angular.element($("#ctrl_editor")).scope().$apply();
-        $('#template-entities-modal').modal('show');
+        $('#template-entities-tag-modal').modal('show');
     });
 
 
@@ -502,7 +508,7 @@ tree.get({id:$scope.project_selected}, function(success){
                         $('#jstreeFolders').jstree(true).settings.core.data = success.dirs;
                         $('#jstreeFolders').jstree(true).refresh();
                                                     
-                    },function(error){
+                    },function(error){                        
                         console.log('ERR');
                         console.log(error);  
                     });
@@ -523,6 +529,8 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                         $('#jstreeBuilds').jstree(true).refresh();                        
 
                     },function(error){
+                        $('#jstreeBuilds').jstree(true).settings.core.data = {};
+                        $('#jstreeBuilds').jstree(true).refresh(); 
                         console.log('ERR');
                         console.log(error);  
                     });
@@ -694,16 +702,20 @@ console.log($scope.components);
                 //     nodeDef.id = success.id_direlemento;
                 //     nodeDef.parent = success.id_directorio;
                 //     //nodeDef.li_attr.data-renderiddirtemplate = success.id_dirplantilla;
-                //     $scope.addTreeNode(node, nodeDef, jsTreeFoldersInst);
+                //     $scope.addTreeNode(node, nodeDef, $('#jstreeFolders').jstree(true));
                 // }
 
-                node.li_attr['data-renderiddirtemplate'] = success.id_direlemento;
-                console.log(node.li_attr['data-renderiddirtemplate']);
-                //node.li_attr.data-renderiddirtemplate = success.id_dirplantilla;
+                if(nodeDef.li_attr['data-renderas']=='file'){
+                    //Se agrega el nodoDef solo para archivos ya que las plantillas son agregadas por DND
+                    $scope.addTreeNode(node, nodeDef, $('#jstreeFolders').jstree(true));
+                    $('#file-create-modal').modal('hide');
+                    $('#file-edit-modal').modal('hide');
+                    $scope.showMessage("<b>" + nodeDef['text'] + "</b> was created.");
+                }
 
             },function(error){
                 
-                console.log(error);
+                $scope.showMessage(error.data['detail']);
                 $('#jstreeFolders').jstree(true).delete_node(node); 
                 //delete from restapi
                 //agregar la llamada al metodo delete_archivo
@@ -711,9 +723,9 @@ console.log($scope.components);
             
         } 
 
-        $scope.delete_directorioelemento = function(id_dirplantilla, node){
+        $scope.delete_directorioelemento = function(id_direlemento, node){
 
-            directorioelemento.delete({id: id_dirplantilla},function(success){
+            directorioelemento.delete({id: id_direlemento},function(success){
                 console.log('****************************************************');
                 console.log(node);           
                 
@@ -755,7 +767,7 @@ console.log($scope.components);
                             }
                 console.log($scope.node_selected)
                 console.log(nodeDef);
-                $scope.addTreeNode($scope.node_selected, nodeDef, jsTreeFoldersInst);
+                $scope.addTreeNode($scope.node_selected, nodeDef, $('#jstreeFolders').jstree(true));
             },function(error){
                 
                 console.log(error);
@@ -1022,7 +1034,14 @@ console.log($scope.components);
 
         $scope.alert_repository = function(){
 
-            $('#repository-alert-modal').modal('show');
+            var p = $( "#dropdownRepo" );
+            var position = p.offset();
+            var iwith = p.width();
+            console.log('position');
+            console.log(position);
+            $("#popUpRepo").css({top: position.top-40, left: position.left-226, position:'absolute'});
+            $("#popUpRepo").show("fast");
+            //$('#repository-alert-modal').modal('show');
 
         }
         
@@ -1033,6 +1052,9 @@ console.log($scope.components);
             $scope.repository_selected.data = repository;
             $scope.load_entities(repository.id_repositorio);            
             $scope.getItemTree($scope.direlemento_selected.id, $scope.repository_selected.data.id_repositorio);
+
+            
+            
         }
 
 
@@ -1083,7 +1105,7 @@ console.log($scope.components);
                                             'data-renderentity': success.id_entidad
                                         }
                             }
-                $scope.addTreeNode(jsTreeBuildsInst.get_node('#'), nodeDef, jsTreeBuildsInst);
+                $scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node('#'), nodeDef, $('#jstreeBuilds').jstree(true));
                 var nodeChild = {};
                 if (success.tags!= null || success.tags != undefined){
                     //tags = getIterableFromTags(elemento.tags)  
@@ -1106,7 +1128,7 @@ console.log($scope.components);
                                                 'data-renderentity': -1
                                             }
                                     }
-                        $scope.addTreeNode(jsTreeBuildsInst.get_node(''+success.id_elementoentidad), nodeChild, jsTreeBuildsInst);
+                        $scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node(''+success.id_elementoentidad), nodeChild, $('#jstreeBuilds').jstree(true));
                       }
                     }
                     // for (var key in data){
@@ -1130,6 +1152,7 @@ console.log($scope.components);
             },function(error){
                 
                 console.log(error);
+                $scope.showMessage(error.data['detail']);
                 //$('#jstreeFolders').jstree(true).delete_node(node); 
             }); 
         }
@@ -1164,7 +1187,7 @@ console.log($scope.components);
 
             $scope.GencoElementoEntidad.$update(function(success){
                 //console.log(success);
-                var nodeName = $scope.direlemento_selected.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + $("#cbxEntityTag option:selected").text(); + '</b>';
+                var nodeName = $scope.direlemento_selected.nombre + '<sub style="color:#CCCCCC">@</sub>' + '<b>' + $("#cbxEntity option:selected").text(); + '</b>';
 
                 //$scope.addTreeNode($('#jstreeBuilds').jstree(true).get_node('#'), nodeDef, $('#jstreeBuilds').jstree(true));
                 //console.log('dfdfdfddddddddddd');
@@ -1196,6 +1219,8 @@ console.log($scope.components);
                 nodeChild = $('#jstreeBuilds').jstree(true).get_node(''+nodeDirelemento.children_d[i]);
                 if($scope.elementoentidad_selected.tag == nodeChild.li_attr['data-renderid']){
                     obj[nodeChild.li_attr['data-renderid']] = parseInt(id_entidadTag);
+                }else{
+                    obj[nodeChild.li_attr['data-renderid']] = parseInt(nodeChild.li_attr['data-renderentity']);
                 }                
             }    
             
@@ -1213,7 +1238,7 @@ console.log($scope.components);
                 //console.log('dfdfdfddddddddddd');
                 //console.log($("#cbxEntity option:selected").text());
                 $scope.renameTreeNode($scope.node_item_selected, nodeName);
-                $('#template-entities-modal').modal('hide');
+                $('#template-entities-tag-modal').modal('hide');
             },function(error){
                 
                 console.log(JSON.stringify(error.data));
@@ -1223,6 +1248,19 @@ console.log($scope.components);
 
         }
 
+
+        $scope.delete_elementoentidad = function(node){
+
+            var id_elementoentidad = obj.li_attr['data-renderid'];
+
+            plantillaentidad.delete({id: id_elementoentidad},function(success){
+                $('#jstreeBuilds').jstree(true).delete_node(node); 
+            },function(error){
+                $scope.showMessage(error.data['detail']);
+
+            });
+            
+        }
 
         $scope.load_entities = function(id_repositorio){
 
@@ -1239,9 +1277,19 @@ console.log($scope.components);
         }
 
         $scope.showMessage = function(message){
-            $scope.globalMessage = message;
+            $('#imConfirm').html(message);
             $('#info-modal').modal('show');
 
+        }
+
+        $scope.showConfirmDelete = function(message){
+            $('#tedmConfirm').html(message);
+            $('#confirm-delete-modal').modal('show');
+        }
+
+        $scope.confirm_delete = function(){
+            $('#confirm-delete-modal').modal('hide');
+           $scope.ConfirmDeleteCallback();
         }
 
         // $scope.template_entities_load = function(id_plantilla){
