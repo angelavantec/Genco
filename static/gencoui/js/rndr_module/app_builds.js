@@ -20,6 +20,7 @@ $scope.direlemento_selected = {
     nombre: null,
     nombre_padre: null,
     tags: null,
+    as_list: null,
 };
 
 $scope.elementoentidad_selected = {
@@ -167,7 +168,7 @@ $scope.dataLang = {
                                     //$scope.component_selected.id = obj.id;
                                     //console.log($scope.component_selected);
                                     if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
-                                        $scope.alert_repository();
+                                        $scope.infoBubble('Select Repository!','#dropdownRepo');
                                         //$scope.globalMessage = "No repository selected";
                                         //angular.element($("#ctrl_editor")).scope().$apply();
                                        // console.log($scope.globalMessage);
@@ -383,7 +384,7 @@ $scope.dataLang = {
         }
 
         if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
-            $scope.alert_repository();  
+            $scope.infoBubble('Select Repository!','#dropdownRepo');  
             return;                                  
         }
 
@@ -395,7 +396,11 @@ $scope.dataLang = {
         var nodeParent = tree.get_node(node.parents[0]);
         console.log(nodeParent);
         console.log(nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'])
-        $scope.direlemento_selected = {id:renderId, nombre:node.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername'], tags:node.li_attr['data-tags'] };
+        $scope.direlemento_selected = {id:renderId, nombre:node.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername'], tags:node.li_attr['data-rendertags'], as_list:node.li_attr['data-renderaslist'] };
+
+        if($scope.direlemento_selected.as_list==1){
+            $("#chkAsList").prop('checked', true);
+        }               
         $scope.getItemTree(renderId, $scope.repository_selected.data.id_repositorio);
 
     });
@@ -439,7 +444,7 @@ $scope.dataLang = {
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
                                     $scope.node_item_selected = obj;
-                                    $scope.showConfirmDelete("Do you really want to detach " + obj['text'] + " Linked?");
+                                    $scope.showConfirmDelete("Do you really want to detach " + obj['text'] + " Link?");
                                     $scope.ConfirmDeleteCallback = function(){$scope.delete_elementoentidad(obj.li_attr['data-renderid'], obj)};
                                     //borrar direlementoentidad   
                                     //$scope.delete_directorioelemento(obj.li_attr['data-renderiddirtemplate'], obj);
@@ -608,6 +613,8 @@ function add_templates(proccess, componente, plantillas){
         console.log($scope.nodeComponente);
         $('#jstree').jstree(true).settings.core.data = $scope.nodeComponente;
         $('#jstree').jstree(true).refresh();
+        setTimeout(function(){$scope.infoBubble('Drag Templates here!','#jstreeFolders');},2000);
+        
     }
 
     
@@ -1032,19 +1039,21 @@ console.log($scope.components);
         }
 
 
-        $scope.alert_repository = function(){
+        $scope.infoBubble = function(message, elementId){
 
-            var p = $( "#dropdownRepo" );
+            var p = $( elementId );
             var position = p.offset();
             var iwith = p.width();
-            console.log('position');
-            console.log(position);
-            $("#popUpRepo").css({top: position.top-40, left: position.left-226, position:'absolute'});
-            $("#popUpRepo").show("fast");
-            //$('#repository-alert-modal').modal('show');
+            $('#popBubbleText').html(message);
+            $("#popBubble").css({top: position.top-60, left: position.left-180, position:'absolute'});
+            $("#popBubble").show("fast", function(){
+                setTimeout(function(){hideBubble()},3000);
+            });
 
         }
-        
+        function hideBubble(){
+            $("#popBubble").hide("fast");
+        }
 
 
         $scope.change_repository = function(repository){
@@ -1086,6 +1095,7 @@ console.log($scope.components);
             $scope.GencoElementoEntidad.id_direlemento = id_direlemento;
             $scope.GencoElementoEntidad.id_entidad = id_entidad;
             $scope.GencoElementoEntidad.tags = $scope.direlemento_selected.tags;
+            //$scope.GencoElementoEntidad.entidades_en_lista = $('#chkAsList').val() ? 1 : 0;
             $scope.save_elemento_entidad();
       
         }
@@ -1148,7 +1158,7 @@ console.log($scope.components);
                         
                 }
                  
-                
+                //$('#chkAsList').prop('checked', false);
             },function(error){
                 
                 console.log(error);
@@ -1184,6 +1194,7 @@ console.log($scope.components);
             $scope.GencoElementoEntidad.id_entidad = id_entidad;
             $scope.GencoElementoEntidad.id_elementoentidad = id_elementoentidad;
             $scope.GencoElementoEntidad.tags = JSON.stringify(obj);
+           // $scope.GencoElementoEntidad.entidades_en_lista = $('#chkAsList').val()? 1 : 0;
 
             $scope.GencoElementoEntidad.$update(function(success){
                 //console.log(success);
@@ -1194,6 +1205,7 @@ console.log($scope.components);
                 //console.log($("#cbxEntity option:selected").text());
                 $scope.renameTreeNode($scope.node_item_selected, nodeName);
                 $('#template-entities-modal').modal('hide');
+                //$('#chkAsList').prop('checked', false);
             },function(error){
                 
                 console.log(error);
@@ -1229,6 +1241,7 @@ console.log($scope.components);
             $scope.GencoElementoEntidad.id_entidad = id_entidad;
             $scope.GencoElementoEntidad.id_elementoentidad = id_elementoentidad;
             $scope.GencoElementoEntidad.tags = JSON.stringify(obj);
+           // $scope.GencoElementoEntidad.entidades_en_lista = $('#chkAsList').val()? 1 : 0;
 
             $scope.GencoElementoEntidad.$update(function(success){
                 //console.log(success);
@@ -1239,6 +1252,7 @@ console.log($scope.components);
                 //console.log($("#cbxEntity option:selected").text());
                 $scope.renameTreeNode($scope.node_item_selected, nodeName);
                 $('#template-entities-tag-modal').modal('hide');
+                //$('#chkAsList').prop('checked', false);
             },function(error){
                 
                 console.log(JSON.stringify(error.data));
@@ -1355,207 +1369,7 @@ console.log($scope.components);
         // $scope.save_entity_selecteds = function(id_entity){
             
         //     console.log($scope.entities_added);
-        // } 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        $scope.update_component = function(){
-
-            $scope.GencoComponentes.$update(function(){
-            $scope.load_components(); 
-            $('#component-edit-modal').modal('hide');
-            });
-            
-        } 
-
-        $scope.load_component = function(id_component){
-
-            console.log(id_component);
-            var data = componente.get({id:id_component});
-            $scope.GencoComponentes = data;
-        }
-
-        $scope.new_template = function(id_componente){
-
-            $scope.GencoPlantillas= new plantillas();
-            console.log($scope.GencoPlantillas);
-            $scope.GencoPlantillas.id_componente = id_componente;
-            console.log('new');
-
-      
-        }
-
-        $scope.save_template = function(){
-
-            console.log($scope.GencoPlantillas);
-            $scope.GencoPlantillas.id_lenguaje = $scope.dataLang.repeatSelectLang;
-            $scope.GencoPlantillas.$save(function(){   
-                $scope.reload_tree();      
-                $('#template-create-modal').modal('hide')
-            });
-            
-        } 
-
-        $scope.load_template = function(id_template){
-
-            var data = plantillas.get({id:id_template});
-            $scope.GencoPlantillas = data;
-            data.$promise.then(function(data){
-                console.log(data.id_lenguaje);
-                $scope.dataLang.repeatSelectLang = data.id_lenguaje.toString();        
-                $scope.GencoPlantillas.id_lenguajeprocesador = data.id_lenguajeprocesador.toString();
-        });
-        } 
-
-        $scope.update_template = function(){
-            $scope.GencoPlantillas.$update(function(){
-                $scope.reload_tree();      
-                $('#template-edit-modal').modal('hide')
-            });
-
-        }
-
-        $scope.delete_template = function(){
-
-            plantillas.delete({id: $scope.template_selected.id},function(success){
-                console.log(success);
-                $scope.reload_tree();
-                $('#template-delete-modal').modal('hide');
-            },function(error){
-                console.log(error);
-            });
-            
-        } 
-
-        $scope.cancel = function(){
-            $scope.GencoEntorno = $scope.tmpGencoEntorno;
-            $('#template-create-modal').modal('hide');
-            $('#template-preview-modal').modal('hide');
-            $('#component-create-modal').modal('hide');
-            $('#component-edit-modal').modal('hide');
-            $('#template-edit-modal').modal('hide');
-            $('#template-delete-modal').modal('hide');
-            $('#component-delete-modal').modal('hide');            
-        } 
-
-        //$scope.counter = 1;
-        /** Function to add a new tab **/
-        $scope.addTab = function(id_template, name){
-            console.log('desde arbol ' + id_template);
-            
-            pos = $scope.tabs.map(function(x) {return x.id_plantilla.toString()}).indexOf(id_template);
-
-            if(pos>=0){
-                $scope.selectedTab=pos;
-                $scope.selectTab(id_template, pos);
-                return;
-            }
-            
-
-            var data;
-
-
-            template.get({id_plantilla:id_template}, function(success){
-                                    console.log('success');
-                                    console.log(success);
-                                    data = success;// success callback
-                                    console.log(data);
-                                    // templateObj = data.templateObj[0];
-                                    // $scope.tabs.push({id_plantilla:id_template, nombre: $scope.plantillas[pos].nombre ,content: data});
-                                    $scope.tabs.push({id_plantilla:id_template, nombre: data.templateName ,content: data.fileContent});
-                                    console.log('select');
-                                    $scope.selectedTab = $scope.tabs.length - 1; //set the newly added tab active. 
-                                    $scope.selectTab(id_template, $scope.selectedTab);
-                                },function(error){
-                                    console.log('ERR');
-                                    console.log(error);  
-            });
-
-
-        }
-        
-        /** Function to delete a tab **/
-        $scope.deleteTab = function(index){
-            // $scope.isTabSelected=true;
-            $scope.tabs.splice(index,1);
-            var index = $scope.tabs.length; 
-            if(index==0){
-                 //remove the object from the array based on index
-                editor.setValue('');    
-            }else{
-                $scope.selectedTab = index - 1;
-                $scope.selectTab($scope.tabs[index-1].id_plantilla, $scope.selectedTab);    
-            }
-            
-            
-        }
-        
-        $scope.selectedTab = 0; //set selected tab to the 1st by default.
-        
-        /** Function to set selectedTab **/
-        $scope.selectTab = function(id_template, pos){
-            
-            editor.setValue($scope.tabs[pos].content);
-            editor.setTheme("ace/theme/eclipse");
-            editor.getSession().setMode("ace/mode/python");
-            $scope.current_template = id_template;
-
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-
-        }
-
-
-        $scope.submit = function() {
-
-            var content = editor.getValue();
-
-            /*Actualizo el contenido en memoria antes de hacer el request por si hay un cambio de tab no se va a perder
-            el contenido ni haya necesidad de hacer otra peticion al API Rest*/
-            pos = $scope.tabs.map(function(x) {return x.id_plantilla.toString()}).indexOf($scope.current_template);
-            $scope.tabs[pos].content=content;
- 
-            var templ = new template({editor: content});
-            templ.$save({id_plantilla:$scope.current_template})
-
-            console.log('post editor');
-            console.log(editor.getValue());
-        };
-
-
-
-
-        $scope.preview = function() {
-
-            var content = editor.getValue();
-            editor_preview.setValue('');
-
-            var templ = new template({editor: content});
-            templ.$update({id_plantilla:$scope.current_template}, function(success){
-                                    data = success;// success callback
-                                    console.log(data);
-                                    editor_preview.setValue(data.fileContent);
-                                    $('#template-preview-modal').modal('show');  
-                                },function(error){
-                                    console.log('ERR');
-                                    console.log(error);  
-            })
-
-
-        };
+        // }
 
 
         function getCookie(cname) {
@@ -1580,6 +1394,8 @@ console.log($scope.components);
         $scope.load_repository();
         //$scope.getItemTree();
         $scope.getDirTree();
+
+
 
         function setListenterContent() {
                 var fileInput = document.getElementById('fileInput');

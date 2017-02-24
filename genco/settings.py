@@ -133,9 +133,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-
-#LOGIN_REDIRECT_URL = '/api-auth/login'
-#LOGOUT_REDIRECT_URL = '/api-auth/logout'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/gencoui'
+LOGOUT_REDIRECT_URL = '/login'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True

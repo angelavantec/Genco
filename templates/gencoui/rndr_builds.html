@@ -1,6 +1,6 @@
 {% extends "admin/base.html" %}
 {% load staticfiles %}
-{% block title %}Render Developer{% endblock %}
+{% block title %}Snippet Developer{% endblock %}
 
 
 {% block extrastyle %}
@@ -169,7 +169,7 @@
 
 									<div class="dropdown" style="display:inline;">
 																				
-										<button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropdownRepo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" onclick="$('#popUpRepo').hide();">
+										<button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropdownRepo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 										 	</span>Repository 
 											<span class="caret"></span>
 										</button>
@@ -202,7 +202,7 @@
 					    		
 				    		
 				    		<div class="" style="height: 100%; padding:10px">
-				    			<div style="height:50px;background-color:#8dc9ed;padding:8px; color:white">
+				    			<div style="min-height:50px;background-color:#eee;padding:8px; color:#536260">
 				    				<h5 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id == null">Entities</h5>
 					    			<h5 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id != null">{{direlemento_selected.nombre_padre}}/{{direlemento_selected.nombre}}</h5>				    			
 					    			<span style="display:inline;" class="glyphicon glyphicon-link" ng-if="direlemento_selected.id != null"></span>
@@ -218,7 +218,13 @@
 				    			</div>
 			    	
 								{% endverbatim %}
-					    		<div id="jstreeBuilds" style="margin-top:20px;height: 85%;background-color: white;overflow:auto"></div>
+								<div class="checkbox" >
+								    <label hidden>
+								      <input type="checkbox" id="chkAsList" hidden>As List
+								    </label>
+								</div>
+					    		<div id="jstreeBuilds" style="margin-top:20px;min-height: 50%;background-color: white;overflow:auto"></div>
+					    										
 					    	</div>	
 					
 				    	</div>
@@ -533,7 +539,10 @@
 	    </div>
 	</div>
    
-   <div id="popUpRepo" class="bubble_message" style="position: absolute;display: none; z-index:1000;" >Select Repository!</div>
+   <div  id="popBubble" style="position: absolute;display: none;"  class="bubble_message">
+   		<!-- <img src="{% static 'gencoui/img/pebro.png' %}" width="32px" height="32px"></img> -->
+		<div id="popBubbleText"></div>
+   </div>   
 
 </div>
 {% endblock %}

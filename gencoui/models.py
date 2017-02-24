@@ -9,6 +9,11 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+# Manager to filter user in snippets.
+class UserObjects(models.Manager):
+    def get_queryset(self, user):
+        return super(UserObjects, self).get_queryset().filter(creado_por=user.username)
+
 
 class AdminLenguajeProcesador(models.Model):
     id_lenguajeprocesador = models.AutoField(primary_key=True)
@@ -222,8 +227,12 @@ class GencoDirectorioElementos(models.Model):
     id_directorio = models.ForeignKey('GencoDirectorios', models.DO_NOTHING, db_column='id_directorio')
     id_plantilla = models.ForeignKey('GencoPlantillas', models.DO_NOTHING, db_column='id_plantilla', blank=True, null=True)
     id_archivo = models.ForeignKey(GencoArchivos, models.DO_NOTHING, db_column='id_archivo', blank=True, null=True)
+    entidades_en_lista = models.IntegerField()
     creado_por = models.CharField(max_length=30)
     fecha_creacion = models.DateTimeField()
+
+    objects = models.Manager() # The default manager.
+    #user_objects = UserObjects()
 
     class Meta:
         managed = False

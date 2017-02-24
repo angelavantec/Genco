@@ -391,7 +391,7 @@ def get_form(request, id_form=None):
     # form = GencoEntornoForm()
     return render(request,template_name,{'form':switcher.get(id_form)})
 
-
+@login_required
 def get_module(request, id_module=None, key_env=None, key_project=None):
 
     # switcher = {
@@ -401,32 +401,32 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
     # }
 
     if id_module == 'env':
-        context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}    
+        context = {'form_add_env': GencoEntornoForm, 'user': request.user}    
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
-        obj = get_object_or_404(GencoEntorno,id_entorno=key_env)
-        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user.username, 'key_module':key_env, 'entorno': obj}    
+        obj = get_object_or_404(GencoEntorno, creado_por=request.user.username, id_entorno=key_env)
+        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': obj}    
         return render(request,'gencoui/rndr_editor.html',context)
     elif id_module == 'entities':
         context = {'form_add_repository': GencoRepositorioForm, 
                     'form_add_entity': GencoEntidadForm, 
                     'form_add_entitydef': GencoEntidadDefinicionForm,                     
                     'form_edit_entitydef': GencoEntidadDefinicionFormEdit,                     
-                    'user': request.user.username}    
+                    'user': request.user}    
         return render(request,'gencoui/rndr_repository.html',context)        
     elif id_module == 'langs':
-        context = {'form_add_lang': GencoLenguajesForm, 'form_add_type': GencoTipodatoForm,'user': request.user.username}    
+        context = {'form_add_lang': GencoLenguajesForm, 'form_add_type': GencoTipodatoForm,'user': request.user}    
         return render(request,'gencoui/rndr_langs.html',context)
     elif id_module == 'builds':
-        env = get_object_or_404(GencoEntorno,id_entorno=key_env)
+        env = get_object_or_404(GencoEntorno, creado_por=request.user.username, id_entorno=key_env)
         prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
         
 
         context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_element_entity': GencoElementoEntidadForm,
-                    'user': request.user.username, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
+                    'user': request.user, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
-        context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}    
+        context = {'form_add_env': GencoEntornoForm, 'user': request.user}    
         return render(request,'gencoui/rndr_builds.html',context)
     # form = GencoEntornoForm()
     # context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}
@@ -567,7 +567,7 @@ class tmpl_preview(APIView):
 
         return JsonResponse(context)   
 
-
+@login_required
 def index(request):  
     #template = loader.get_template("gencoui/ng_menu.html")
     #return HttpResponse(template.render())  
@@ -576,7 +576,7 @@ def index(request):
 	#titulo = 'Generics'
 	#link = 'Render'
     #data =  serializers.serialize('xml',GencoGrupo.objects.all())
-    context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'link': request.user.username}
+    context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user}
     # return render(request, 'gencoui/rndr_main.html', context)    
     return render(request, 'gencoui/menu.html', context)    
     #return HttpResponse(serializers.serialize('json',GencoGrupo.objects.all()))
@@ -794,7 +794,7 @@ class dir_template_tree(APIView):
                 # templates = {}
                 # childrens = {}
             if i.id_plantilla > 0:    
-                dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre, 'data-tags':i.id_plantilla.tags}})
+                dirs.append( {'id': 't'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_plantilla.nombre + '<sub style="color:#CCCCCC">'  + i.id_plantilla.id_lenguaje.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_plantilla.nombre, 'data-rendertags':i.id_plantilla.tags, 'data-renderaslist': i.entidades_en_lista}})
             else:
                 dirs.append( {'id': 'f'+str(i.id_direlemento), 'parent': i.id_directorio_id, 'text': i.id_archivo.nombre + '<sub style="color:#CCCCCC">file</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"file", 'data-renderid': i.id_archivo_id,'data-renderiddirtemplate': i.id_direlemento, 'data-rendername': i.id_archivo.nombre}})
         print dirs    

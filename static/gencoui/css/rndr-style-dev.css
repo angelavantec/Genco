@@ -62,12 +62,6 @@
 	    }
 
 
-		.navbar-brand {
-		    float: left;
-		    padding: 10px 15px;
-		}
-
-
 		#rendertoolbar{
 	    	//background-color:#2F3129;	
 	    	padding-top:8px;
@@ -177,7 +171,7 @@
   float: right;
   width: 200px;
 }
-.bubble_message:before {
+/*.bubble_message:before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -187,8 +181,8 @@
   border-right: 20px solid #0B93F6;
   border-bottom-left-radius: 16px 14px;
   -webkit-transform: translate(0, -2px);
-}
-.bubble_message:after {
+}*/
+/*.bubble_message:after {
   content: "";
   position: absolute;
   z-index: 1;
@@ -199,4 +193,17 @@
   background: white;
   border-bottom-left-radius: 10px;
   -webkit-transform: translate(-30px, -2px);
+}*/
+
+
+.bubble_message:before {
+    content: ' ';
+    position: absolute;
+    width: 0;
+    height: 0;
+    right: 20px;
+    top: auto;
+    bottom: -20px;
+    border: 10px solid;
+    border-color: #0b93f6 #0b93f6 transparent transparent;
 }

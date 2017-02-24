@@ -10,10 +10,16 @@
             <span class="icon-bar"></span>
           </button>
             <a class="navbar-brand" href="#">
-            <img alt="Brand" src="{% static 'gencoui/img/rndr/Generics_saturn.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="40px" data-toggle="modal" data-target="#myModal">
-            </a>
+            <img alt="Brand" src="{% static 'gencoui/img/rndr/Generics_saturn.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="40px" data-toggle="modal" data-target="#myModal" sytle="top:10px">
+            </a>          
         </div>
-
+        <div style="float: right; margin-top:20px">
+            {% if user.is_authenticated %}
+                <p style="color:white; display:inline;">{{ user.get_username }} <a href="/logout">logout</a></p>
+            {% else %}
+                <p style="color:white; display:inline;">Welcome <a href="/login">login</a></p>
+            {% endif %}
+        </div>  
         <!-- Collect the nav links, forms, and other content for toggling -->
 <!--         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
