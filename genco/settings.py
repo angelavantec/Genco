@@ -39,6 +39,8 @@ INSTALLED_APPS = (
     'gencoui',
     'rest_framework',
     'corsheaders',
+    'login',
+    'widget_tweaks',
     #'rest_framework.authtoken',
 )
 
@@ -56,8 +58,8 @@ MIDDLEWARE_CLASSES = (
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+        #'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -84,7 +86,7 @@ WSGI_APPLICATION = 'genco.wsgi.application'
 DATABASES = {
     'default': {
        'ENGINE': 'django.db.backends.mysql',
-       'NAME': 'snipet',
+       'NAME': 'snippet',
        'USER': 'root',
        'PASSWORD': 'root',
        'HOST': '127.0.0.1',

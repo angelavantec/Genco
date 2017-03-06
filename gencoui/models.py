@@ -22,9 +22,9 @@ class AdminLenguajeProcesador(models.Model):
     version = models.IntegerField()
     componente_binario = models.CharField(max_length=200)
     estado = models.CharField(max_length=15)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -45,9 +45,9 @@ class AdminOrigendatos(models.Model):
     clave_jdbc = models.CharField(max_length=30, blank=True, null=True)
     nombre_jndi = models.CharField(max_length=30, blank=True, null=True)
     hora_sistema = models.CharField(max_length=30, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -59,9 +59,9 @@ class AdminProyectoAlcance(models.Model):
     id_alcance = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -183,7 +183,7 @@ class GencoArchivos(models.Model):
     id_archivo = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=150, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
     upload = models.FileField(upload_to='user_templates')
 
@@ -197,9 +197,9 @@ class GencoComponentes(models.Model):
     nombre = models.CharField(unique=True, max_length=50)
     descripcion = models.CharField(max_length=200, blank=True, null=True)
     id_entorno = models.ForeignKey('GencoEntorno', models.DO_NOTHING, db_column='id_entorno')
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -211,9 +211,9 @@ class GencoConversionTipodato(models.Model):
     id_conversion = models.AutoField(primary_key=True)
     id_tipodato = models.ForeignKey('GencoTipodato', models.DO_NOTHING, db_column='id_tipodato', related_name='tipodato_origen')
     id_tipodato_cnv = models.ForeignKey('GencoTipodato', models.DO_NOTHING, db_column='id_tipodato_cnv', related_name='tipodato_cnv')
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -228,7 +228,7 @@ class GencoDirectorioElementos(models.Model):
     id_plantilla = models.ForeignKey('GencoPlantillas', models.DO_NOTHING, db_column='id_plantilla', blank=True, null=True)
     id_archivo = models.ForeignKey(GencoArchivos, models.DO_NOTHING, db_column='id_archivo', blank=True, null=True)
     entidades_en_lista = models.IntegerField()
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
 
     objects = models.Manager() # The default manager.
@@ -247,10 +247,13 @@ class GencoDirectorios(models.Model):
     id_padre = models.ForeignKey('self', models.DO_NOTHING, db_column='id_padre', blank=True, null=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=200, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
+    
+    objects = models.Manager() # The default manager.
+    user_objects = UserObjects()
 
     class Meta:
         managed = False
@@ -264,7 +267,7 @@ class GencoElementoEntidad(models.Model):
     id_entidad = models.ForeignKey('GencoEntidad', models.DO_NOTHING, db_column='id_entidad')
     id_direlemento = models.ForeignKey(GencoDirectorioElementos, models.DO_NOTHING, db_column='id_direlemento')
     tags = models.CharField(max_length=1024, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
 
     class Meta:
@@ -277,9 +280,9 @@ class GencoEntidad(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
     id_repositorio = models.ForeignKey('GencoRepositorio', models.DO_NOTHING, db_column='id_repositorio')
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -302,9 +305,9 @@ class GencoEntidadDefinicion(models.Model):
     obligatorio = models.CharField(max_length=10, blank=True, null=True)
     entidad_ref = models.ForeignKey(GencoEntidad, models.DO_NOTHING, db_column='entidad_ref', related_name='entidad_ref', blank=True, null=True)
     regexpr = models.CharField(max_length=200, blank=True, null=True)
-    creado_por = models.CharField(max_length=30, blank=True, null=True)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField(blank=True, null=True)
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -322,9 +325,9 @@ class GencoEntorno(models.Model):
     id_grupo = models.ForeignKey('GencoGrupo', models.DO_NOTHING, db_column='id_grupo')
     version = models.CharField(max_length=10, blank=True, null=True)
     icono = models.CharField(max_length=50, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -336,7 +339,7 @@ class GencoEntornoLenguajes(models.Model):
     id_entornolenguaje = models.AutoField(primary_key=True)
     id_entorno = models.ForeignKey(GencoEntorno, models.DO_NOTHING, db_column='id_entorno')
     id_lenguaje = models.ForeignKey('GencoLenguajes', models.DO_NOTHING, db_column='id_lenguaje')
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
 
     class Meta:
@@ -349,14 +352,17 @@ class GencoGrupo(models.Model):
     id_grupo = models.AutoField(primary_key=True)
     nombre = models.CharField(unique=True, max_length=100)
     descripcion = models.CharField(max_length=200, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'genco_grupo'
+
+    def __unicode__(self):
+        return '%s' % (self.nombre)    
 
 
 class GencoLenguajes(models.Model):
@@ -364,9 +370,9 @@ class GencoLenguajes(models.Model):
     nombre = models.CharField(max_length=30)
     version = models.CharField(max_length=10)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -381,9 +387,9 @@ class GencoParametros(models.Model):
     valor_numerico = models.IntegerField(blank=True, null=True)
     valor_alfanumerico = models.CharField(max_length=200, blank=True, null=True)
     id_proyecto = models.ForeignKey('GencoProyectos', models.DO_NOTHING, db_column='id_proyecto')
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -400,9 +406,9 @@ class GencoPlantillas(models.Model):
     id_componente = models.ForeignKey(GencoComponentes, models.DO_NOTHING, db_column='id_componente')
     archivo = models.CharField(max_length=100, blank=True, null=True)
     tags = models.CharField(max_length=512, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -434,9 +440,9 @@ class GencoProyectos(models.Model):
     url = models.CharField(max_length=100, blank=True, null=True)
     version = models.CharField(max_length=45, blank=True, null=True)
     id_alcance = models.ForeignKey(AdminProyectoAlcance, models.DO_NOTHING, db_column='id_alcance')
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -448,10 +454,12 @@ class GencoRepositorio(models.Model):
     id_repositorio = models.AutoField(primary_key=True)
     nombre = models.CharField(unique=True, max_length=50)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
-    fecha_creacion = models.DateTimeField()
     url_ext_repositorio = models.CharField(max_length=300, blank=True, null=True)
     token_ext_repositorio = models.CharField(max_length=256, blank=True, null=True)
+    creado_por = models.IntegerField()
+    fecha_creacion = models.DateTimeField()
+    modificado_por = models.IntegerField()
+    fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -466,9 +474,9 @@ class GencoTipodato(models.Model):
     contenedor = models.CharField(max_length=100, blank=True, null=True)
     prefijo = models.CharField(max_length=10, blank=True, null=True)
     longitud_maxima = models.IntegerField(blank=True, null=True)
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
-    modificado_por = models.CharField(max_length=30, blank=True, null=True)
+    modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
 
     class Meta:
@@ -481,7 +489,7 @@ class GencoTipodato(models.Model):
 class GencoUsuarioGrupo(models.Model):
     auth_user_id = models.IntegerField()
     id_grupo = models.ForeignKey(GencoGrupo, models.DO_NOTHING, db_column='id_grupo')
-    creado_por = models.CharField(max_length=30)
+    creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
 
     class Meta:

@@ -54,14 +54,23 @@ class GencoProyectosViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoProyectos.objects.all()
     serializer_class = GencoProyectosSerializer
+
+    def get_queryset(self):
+        return GencoProyectos.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_proyecto=instance.id_proyecto)
+        instance.delete()
+            
     def list(self, request):
-        queryset = GencoProyectos.objects.filter(creado_por=request.user.username)
+        queryset = self.get_queryset()
         serializer = GencoProyectosSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -70,14 +79,23 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoEntorno.objects.all()
     serializer_class = GencoEntornoSerializer
+
+    def get_queryset(self):
+        return GencoEntorno.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_entorno=instance.id_entorno)
+        instance.delete()
+            
     def list(self, request):
-        queryset = GencoEntorno.objects.filter(creado_por=request.user.username)
+        queryset = self.get_queryset()
         serializer = GencoEntornoSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -86,16 +104,22 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoDirectorios.objects.all()
     serializer_class = GencoDirectoriosSerializer
+
+    def get_queryset(self):
+        return GencoDirectorios.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        queryset = GencoDirectorioElementos.objects.filter(id_directorio=instance.id_directorio)
+        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+
         refElements = '';
-        for i  in queryset:
+        for i  in obj:
             refElements += '<br>' + ('Template ' + i.id_plantilla.nombre if i.id_plantilla else '') + '' + ('File ' + i.id_archivo.nombre if i.id_archivo else '')
 
         if queryset.exists():
@@ -103,9 +127,8 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
 
         instance.delete()
             
-
     def list(self, request):
-        queryset = GencoDirectorios.objects.filter(creado_por=request.user.username)
+        queryset = self.get_queryset()
         serializer = GencoDirectoriosSerializer(queryset, many=True)
         return Response(serializer.data)
  
@@ -114,14 +137,23 @@ class GencoArchivosViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoArchivos.objects.all()
     serializer_class = GencoArchivosSerializer
+
+    def get_queryset(self):
+        return GencoArchivos.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        instance.delete()
+            
     def list(self, request):
-        queryset = GencoArchivos.objects.filter(creado_por=request.user.username)
+        queryset = self.get_queryset()
         serializer = GencoArchivosSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -130,30 +162,34 @@ class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoDirectorioElementos.objects.all()
-    serializer_class = GencoDirectorioElementosSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoDirectorioElementosFilter
     filter_fields = ('id_directorio')
+    serializer_class = GencoDirectorioElementosSerializer
+
+    def get_queryset(self):
+        return GencoDirectorioElementos.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
     def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_direlemento=instance.id_direlemento)
 
-        queryset = GencoElementoEntidad.objects.filter(id_direlemento=instance.id_direlemento)
-        refEntity = '';
-        for i  in queryset:
+        refElements = '';
+        for i  in obj:
             refEntity += '<br><b>' + i.id_entidad.id_repositorio.nombre + '-</b>' + i.id_entidad.nombre
 
-        if queryset.exists():
+        if obj.exists():
             raise APIException('This Element is referenced by ' + refEntity)
 
         instance.delete()
-    
-
+            
     def list(self, request):
-        queryset = GencoDirectorioElementos.objects.filter(creado_por=request.user.username)
+        queryset = self.get_queryset()
         serializer = GencoDirectorioElementosSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -162,188 +198,277 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoLenguajes.objects.all()
     serializer_class = GencoLenguajesSerializer
-    #authentication_classes = (TokenAuthentication, SessionAuthentication)  
-    #permission_classes = (IsAuthenticated,)  
-    #authentication_classes = (TokenAuthentication,)
-    #def create(self, validated_data):
-        #lang = GencoLenguajes(validated_data)
-        #lang.creado_por = 'admin'
-        #lang.fecha_creacion = timezone.now() 
-        #return lang
-    def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+
+    def get_queryset(self):
+        return GencoLenguajes.objects.filter(creado_por=self.request.user.id)
     
+    def perform_create(self, serializer):
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        instance.delete()
+            
     def list(self, request):
-        queryset = GencoLenguajes.objects.filter(creado_por=request.user.username)
+        queryset = self.get_queryset()
         serializer = GencoLenguajesSerializer(queryset, many=True)
-        return Response(serializer.data)      
+        return Response(serializer.data)   
 
 
 class GencoTipodatoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoTipodato.objects.all()
-    serializer_class = GencoTipodatoSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoTipodatoFilter
     filter_fields = ('id_entorno')
+    serializer_class = GencoTipodatoSerializer
 
+    def get_queryset(self):
+        return GencoTipodato.objects.filter(creado_por=self.request.user.id)
+    
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        instance.delete()
+            
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = GencoTipodatoSerializer(queryset, many=True)
+        return Response(serializer.data)        
 
 
 class GencoEntornoLenguajesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoEntornoLenguajes.objects.all()
-    serializer_class = GencoEntornoLenguajesSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoEntornoLenguajesFilter
     filter_fields = ('id_entorno')
+    serializer_class = GencoEntornoLenguajesSerializer
 
-    def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
+    def get_queryset(self):
+        return GencoEntornoLenguajes.objects.filter(creado_por=self.request.user.id)
     
-    # def list(self, request):
-    #     queryset = GencoEntornoLenguajes.objects.filter(creado_por=request.user.username)
-    #     serializer = GencoEntornoLenguajesSerializer(queryset, many=True)
-    #     return Response(serializer.data) 
+    def perform_create(self, serializer):
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        instance.delete()
+            
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = GencoEntornoLenguajesSerializer(queryset, many=True)
+        return Response(serializer.data) 
 
 
 class GencoConversionTipodatoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoConversionTipodato.objects.all()
-    serializer_class = GencoConversionTipodatoSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoConversionTipodatoFilter
     filter_fields = ('id_tipodato')
+    serializer_class = GencoConversionTipodatoSerializer
 
+    def get_queryset(self):
+        return GencoConversionTipodato.objects.filter(creado_por=self.request.user.id)
+    
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())  
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        instance.delete()
+            
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = GencoConversionTipodatoSerializer(queryset, many=True)
+        return Response(serializer.data) 
 
 
 class GencoGrupoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoGrupo.objects.all()
     serializer_class = GencoGrupoSerializer    
-    #authentication_classes = (TokenAuthentication, SessionAuthentication)  
-    #permission_classes = (IsAuthenticated,)  
 
-    # def get_queryset(self):
-    #     return self.request.user.accounts.filter(creado_por='angel')
+    def get_queryset(self):
+        return GencoConversionTipodato.objects.filter(creado_por=self.request.user.id)
+    
+    def perform_create(self, serializer):
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+
+        refElements = '';
+        for i  in obj:
+            refElements += '<br>' + ('Group ' + i.nombre if i.id_plantilla else '') + '' + ('File ' + i.id_archivo.nombre if i.id_archivo else '')
+
+        if queryset.exists():
+            raise APIException('This Element is referenced by ' + refElements)
+
+        instance.delete()
+            
     def list(self, request):
-        queryset = GencoGrupo.objects.filter(creado_por=request.user.username)
-        serializer = GencoGrupoSerializer(queryset, many=True)
-        return Response(serializer.data)
+        queryset = self.get_queryset()
+        serializer = GencoConversionTipodatoSerializer(queryset, many=True)
+        return Response(serializer.data) 
 
-# def author_list_plaintext(request):
-# 	response = listView.object_list(
-# 		request,
-# 		queryset = GencoLenguajes.objects.all(),
-# 		mimetype = text/plain,
-# 		template_name = books/author_list.txt
-# 	)
-# 	response[Content-Disposition] = attachment; filename=authors.txt
-# 	return response
+
 
 class GencoComponentesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoComponentes.objects.all()
-    serializer_class =GencoComponentesSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoComponenteFilter
     filter_fields = ('id_entorno')
+    serializer_class = GencoComponentesSerializer    
 
+    def get_queryset(self):
+        return GencoComponentes.objects.filter(creado_por=self.request.user.id)
+    
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())       
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        instance.delete()
+            
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = GencoComponentesSerializer(queryset, many=True)
+        return Response(serializer.data)      
 
 
 class GencoPlantillasViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoPlantillas.objects.all()
-    serializer_class = GencoPlantillasSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoPlantillasFilter
     filter_fields = ('id_componente')
+    serializer_class = GencoPlantillasSerializer    
 
+    def get_queryset(self):
+        return GencoPlantillas.objects.filter(creado_por=self.request.user.id)
+    
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())     
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        instance.delete()
+            
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = GencoPlantillasSerializer(queryset, many=True)
+        return Response(serializer.data)     
 
 
 class GencoRepositorioViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoRepositorio.objects.all()
     serializer_class = GencoRepositorioSerializer
-    # filter_backends = (filters.DjangoFilterBackend,)    
-    # filter_class = GencoRepositorioFilter
-    # filter_fields = ('id_repositorio')
 
+    def get_queryset(self):
+        return GencoRepositorio.objects.filter(creado_por=self.request.user.id)
+    
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())                         
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        instance.delete()
+            
     def list(self, request):
-        queryset = GencoRepositorio.objects.filter(creado_por=request.user.username)
+        queryset = self.get_queryset()
         serializer = GencoRepositorioSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data)  
 
 
 class GencoEntidadViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoEntidad.objects.all()
-    serializer_class = GencoEntidadSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoEntidadFilter
-    # filter_fields = ('id_repo')
+    serializer_class = GencoEntidadSerializer
 
+    def get_queryset(self):
+        return GencoEntidad.objects.filter(creado_por=self.request.user.id)
+    
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())                         
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
-    # def list(self, request):
-    #     queryset = GencoEntidad.objects.filter(creado_por=request.user.username)
-    #     serializer = GencoEntidadSerializer(queryset, many=True)
-    #     return Response(serializer.data)        
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        instance.delete()
+            
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = GencoEntidadSerializer(queryset, many=True)
+        return Response(serializer.data)     
 
 class GencoEntidadDefinicionViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoEntidadDefinicion.objects.all()
-    serializer_class = GencoEntidadDefinicionSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoEntidadDefinicionFilter
-    # filter_fields = ('id_repositorio')
+    serializer_class = GencoEntidadDefinicionSerializer
 
+    def get_queryset(self):
+        return GencoEntidadDefinicion.objects.filter(creado_por=self.request.user.id)
+    
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())                         
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
-    # def list(self, request):
-        # queryset = GencoEntidadDefinicion.objects.filter(creado_por=request.user.username)
-        # serializer = GencoEntidadDefinicionSerializer(queryset, many=True)
-        # return Response(serializer.data)
-
-# class AdminArchivoPlantillaViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed or edited.
-#     """
-#     queryset = AdminArchivoPlantilla.objects.all()
-#     serializer_class = AdminArchivoPlantillaSerializer
+    def perform_update(self, serializer):
+        serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        instance.delete()
+            
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = GencoEntidadDefinicionSerializer(queryset, many=True)
+        return Response(serializer.data)  
 
 
 class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
@@ -364,7 +489,7 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
         list = getIterableFromTags(obj.tags)
         dict = updateDictTags(list,dict)
         serializer.validated_data['tags'] = json.dumps(dict);
-        serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now())
 
     def perform_update(self, serializer):
         dict = {}
@@ -404,7 +529,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         context = {'form_add_env': GencoEntornoForm, 'user': request.user}    
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
-        obj = get_object_or_404(GencoEntorno, creado_por=request.user.username, id_entorno=key_env)
+        obj = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
         context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': obj}    
         return render(request,'gencoui/rndr_editor.html',context)
     elif id_module == 'entities':
@@ -418,7 +543,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         context = {'form_add_lang': GencoLenguajesForm, 'form_add_type': GencoTipodatoForm,'user': request.user}    
         return render(request,'gencoui/rndr_langs.html',context)
     elif id_module == 'builds':
-        env = get_object_or_404(GencoEntorno, creado_por=request.user.username, id_entorno=key_env)
+        env = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
         prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
         
 
@@ -569,34 +694,8 @@ class tmpl_preview(APIView):
 
 @login_required
 def index(request):  
-    #template = loader.get_template("gencoui/ng_menu.html")
-    #return HttpResponse(template.render())  
-    #return render_to_response('gencoui/desktop.html')
-    #print os.path.dirname(os.path.dirname(__file__))
-	#titulo = 'Generics'
-	#link = 'Render'
-    #data =  serializers.serialize('xml',GencoGrupo.objects.all())
     context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user}
-    # return render(request, 'gencoui/rndr_main.html', context)    
     return render(request, 'gencoui/menu.html', context)    
-    #return HttpResponse(serializers.serialize('json',GencoGrupo.objects.all()))
-
-
-
-def details(request, id_grupo=None):
-   return HttpResponse("It's working. %s" % id_grupo )
-
-def login(request):
-    return render(request, 'gencoui/login.html',context = {'titulo': request.user.username, 'link': request.user.username} )    
-
-class GencoGrupoCreate(CreateView):
-    model = GencoGrupo
-    fields = ['nombre', 'descripcion']    
-
-    def form_valid(self, form):
-        print 'barrios' 
-        save_log(self, self.request, form)   
-        return HttpResponseRedirect(self.get_success_url())
 
 class GencoGrupoListView(ListView):
 
@@ -627,81 +726,9 @@ class GencoGrupoListView(ListView):
             return GencoGrupo.objects.filter(nombre__icontains=self.search_value)
         else:
             return GencoGrupo.objects.all() 
-
-
-
-class GencoLenguajesCreate(CreateView):
-    model = GencoLenguajes
-    fields = ['nombre', 'descripcion', 'id_grupo']
-
-    def form_valid(self, form):
-        save_log(self, request, form)        
-        return HttpResponseRedirect(self.get_success_url())        
-
-def save_log(self, request, form):
-    self.object = form.save(commit=False)
-    if self.object.creado_por is None or self.object.creado_por == '':
-        self.object.creado_por = self.request.user.username
-        self.object.fecha_creacion = timezone.now()
-    else:   
-        self.object.modificado_por = self.request.user.username
-        self.object.fecha_modificacion = timezone.now() 
-    self.object.save()
    
 
-def crudGencoGrupos(request):
-    # c = {}
-    # c.update(csrf(request))
-    GencoGruposFormSet = formset_factory(GencoGrupo, GencoGrupoForm)
-    if request.method == "POST":
-        formset = GencoGruposFormSet(request.POST)
-        if formset.is_valid():
-            formset.save()
-            # Do something.
-    else:
-        #formset = GencoGruposFormSet(queryset=Bodega.objects.all())
-        formset = GencoGruposFormSet()
-    return render(request, "gencoui/crud.html", {"formset": formset,})
-    #return render_to_response("gencoui/crud.html", c)
-
-#@login_required(login_url='/admin/login/')
-def archiveData(request):
-	code = '''public class GencoDBtoXMLImpl implements GencoDBtoXML { 
-	static Logger  logger = Logger.getLogger(GencoDBtoXMLImpl.class);)
-	private SAXBuilder xconstructor = null;
-	private Document xdoc;
-	private Element xroot;
-    private Hashtable<String, Cursor> htCursors    				= new Hashtable<String, Cursor>();
-    private Hashtable<String, ResultSet> htResultset    		= new Hashtable<String, ResultSet>();
-    private Hashtable<String, PreparedStatement> htStatement    = new Hashtable<String, PreparedStatement>();
-    private String rootTagName 		= root;
-    private String recordTagName 	= record;
-    private String startParam       = <;
-    private String endParam         = >;
-    private boolean isSetParams;
-    private ArrayList<String> listLogs = new ArrayList<String>();
-    Properties prop = new Properties();
-    
-    public GencoDBtoXMLImpl(Hashtable<String, Cursor> htCursors){
-     	this.htCursors = htCursors;	
-    	
-    }
-    '''
-
-        print request.user.username
-        print request.user.id
-
-	return HttpResponse(code)		
-
-def logout(request):
-    request.session.flush()
-    return HttpResponseRedirect('/')    
-
-
-
 # Path for the files used by file handler
-
-
 def getNewFileName():
     td = (datetime.datetime.now()-datetime.datetime(1970,1,1)).total_seconds()
     td = int(td)
@@ -836,24 +863,3 @@ class dir_elemento_entidad_tree(APIView):
         return JsonResponse({'dirs':dirs})
 
 
-# class template_entity(APIView):
-    
-#     def get(self, request, id_proyecto=None, id_plantilla=None):
-    
-#         gd = GencoPlantillaEntidad
-#         gdSet = gd.objects.filter(id_proyecto=id_).order_by('id_entidad')
-
-#         dirs = []
-#         templates = {}
-#         id_padre = ''
-
-#         for i  in gdSet:         
-#             # if i.entidad is None:
-#             id_padre = '#'
-#             # else:
-#             #     id_padre = i.id_padre_id
-
-#             dirs.append({'id': i.id_entidad, 'parent': id_padre, 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"folder",'data-renderid': i.id_entidad, 'data-rendername':i.nombre}})
-        
-
-#         return JsonResponse({'dirs':dirs}) 

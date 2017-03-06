@@ -27,13 +27,13 @@ class GencoGrupoSerializer(serializers.ModelSerializer):
         fields = ('id_grupo', 'nombre', 'creado_por','fecha_creacion','modificado_por','fecha_modificacion')
         read_only_fields = ('creado_por','fecha_creacion','modificado_por','fecha_modificacion',)
    
-    def create(self, validated_data):
-        print 'creating object '
-        lang = GencoGrupo(**validated_data)
-        lang.creado_por = 'admin'
-        lang.fecha_creacion = timezone.now()
-        print 'created'
-        return GencoGrupo.objects.create(creado_por='admin',fecha_creacion=timezone.now(), **validated_data)
+    # def create(self, validated_data):
+    #     print 'creating object '
+    #     lang = GencoGrupo(**validated_data)
+    #     lang.creado_por = 'admin'
+    #     lang.fecha_creacion = timezone.now()
+    #     print 'created'
+    #     return GencoGrupo.objects.create(creado_por='admin',fecha_creacion=timezone.now(), **validated_data)
         
     # def create(self, validated_data):
     #     print serializers.request.user.username

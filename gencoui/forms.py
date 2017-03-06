@@ -3,6 +3,7 @@ from django.forms import ModelForm
 from django import forms
 from django.views.generic.edit import CreateView
 from models import *
+from django.utils.translation import ugettext_lazy as _
 
 class GencoGrupoForm(ModelForm):
     class Meta:
@@ -159,3 +160,4 @@ def genco_init(mpodelform, self, *args, **kwargs):
 	super(mpodelform, self).__init__(*args, **kwargs)
 	for field in self.fields:
 		self.fields[field].widget.attrs.update({'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})
+
