@@ -1,34 +1,135 @@
 angular.module('app_lang', ['ngResource','lang.services'])
 
-.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion) {
+.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree) {
 
     $scope.langs = [];
     $scope.langs=lang.query();
 
     $scope.types = [];
-    $scope.types=lang_tipodato.query({id:3});
+    //$scope.types=lang_tipodato.query({id:3});
     console.log($scope.langs);
     $scope.types_types = [];
-
 
     $scope.data = {
     repeatSelect: null,
     availableOptions: $scope.langs,
     };
 
-    
-
-
     $scope.datad = [];
     $scope.selectedCnv = [];
     $scope.Conversions = [];
 
-
     convArr = [];
     conversionArr = [];
 
-
     $scope.GencoTipodato;
+
+    $scope.conversionsObj = [];
+
+    //$scope.lang_selected;
+    $scope.language_selected = {
+        id: null,
+        nombre: null,
+    }
+
+    /*Instancia del arbol de la seccion de ENTITIES*/
+    /*IMPORTANTE*/
+    /* Para que el arbol permita manipular(create, rename, delete) los nodos check_callback debe ser true*/
+    $('#jstree').jstree({        
+        'core':{check_callback : true, dblclick_toggle : false},
+        "plugins" : [ "contextmenu", "sort", "dnd" ],
+        // "contextmenu": {
+        //         "items": function ($node) {
+
+        //             console.log($node.li_attr['data-renderas'] );
+
+        //             if($node.li_attr['data-renderas'] === 'template')
+        //                 return {
+
+        //                     "Rename": {
+        //                         "label": "Change Entity",
+        //                         "action": function (data) {
+
+        //                             var inst = $.jstree.reference(data.reference),
+        //                             obj = inst.get_node(data.reference);
+        //                             var renderId = obj.li_attr['data-renderid'];                                    
+        //                             $scope.elementoentidad_selected = {id:renderId, nombre:obj.li_attr['data-rendername']};    
+        //                             $scope.node_item_selected = obj;                            
+                                    
+        //                             //cargar combobox entidades
+        //                             //$scope.template_entities_load(renderId);
+        //                             angular.element($("#ctrl_editor")).scope().$apply();
+        //                             $('#template-entities-modal').modal('show');
+                                    
+        
+        //                         }
+        //                     },
+        //                     "Delete": {
+        //                         "label": "Detach Entity",
+        //                         "action": function (data) {
+                                    
+        //                             var inst = $.jstree.reference(data.reference),
+        //                             obj = inst.get_node(data.reference);
+        //                             $scope.node_item_selected = obj;
+        //                             $scope.showConfirmDelete("Do you really want to detach " + obj['text'] + " Link?");
+        //                             $scope.ConfirmDeleteCallback = function(){$scope.delete_elementoentidad(obj.li_attr['data-renderid'], obj)};
+        //                             //borrar direlementoentidad   
+        //                             //$scope.delete_directorioelemento(obj.li_attr['data-renderiddirtemplate'], obj);
+        //                             //$scope.delete_elementoentidad(obj.li_attr['data-renderid'], obj);
+        
+        //                         }
+        //                     },
+
+        //                 };
+        //             else{
+
+        //                 return {
+        //                     "Rename": {
+        //                         "label": "Change Entity",
+        //                         "action": function (data) {
+
+        //                             var inst = $.jstree.reference(data.reference),
+        //                             obj = inst.get_node(data.reference);
+
+        //                             var nodeParent = $('#jstreeBuilds').jstree(true).get_node(''+obj.parent)
+        //                             var renderId = nodeParent.li_attr['data-renderid'];
+        //                             $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
+        //                             $scope.node_item_selected = obj;                            
+        //                             angular.element($("#ctrl_editor")).scope().$apply();
+        //                             $('#template-entities-tag-modal').modal('show');
+        
+        //                         }
+        //                     },
+                        
+   
+        //                 }
+        //             }    
+
+        //         }
+        // }
+    }).bind("dblclick.jstree", function(e) {
+
+        var tree = $(this).jstree(); 
+        var obj = tree.get_node(e.target); 
+
+        console.log(obj.li_attr['data-renderas']);
+        
+        if(obj.li_attr['data-renderas']!='language'){
+            return;
+        }
+        $scope.language_selected.id = obj.li_attr['data-renderid']; 
+        $scope.language_selected.nombre = obj.li_attr['data-rendername']; 
+        $scope.load_lang($scope.language_selected.id);
+            
+        // var nodeParent = tree.get_node(''+obj.parent)
+        // var renderId = nodeParent.li_attr['data-renderid'];
+        // $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
+        // $scope.node_item_selected = obj;                            
+        // angular.element($("#ctrl_editor")).scope().$apply();
+        // $('#template-entities-tag-modal').modal('show');
+
+    });
+
 
     conversionObj = function(id_tipodato, id_tipodato_cnv, id_conversion){
         this.id_tipodato = id_tipodato;
@@ -36,23 +137,22 @@ angular.module('app_lang', ['ngResource','lang.services'])
         this.id_conversion = id_conversion;
     };
 
-    $scope.conversionsObj = [];
 
+    /* Ya construidos los arboles cargo los items de directorio elemento*/
+    $scope.getLangTree = function(){
+    langs_tree.get({}, function(success){
+                            
+                            console.log('success');    
+                            $('#jstree').jstree();
+                            $('#jstree').jstree(true).settings.core.data = success.dirs;
+                            $('#jstree').jstree(true).refresh();
+                                                        
+                        },function(error){                        
+                            console.log('ERR');
+                            console.log(error);  
+                        });
+    }
 
-    $scope.lang_selected;
-    // $scope.selectedCnv = conversion.query({id_tipodato__id_lenguaje:3, id_tipodato_cnv__id_lenguaje:2});// [ 'usa', 'canada', 'mexico' ];
-    // console.log($scope.selectedCnv);
-   // console.log( $scope.selectedCnv );
-
-    //console.log(types);
-    //console.log(types_types);
-
-
-
-    //console.log(conversion.query({id_conversion:2}));
-    //$scope.GencoEntorno = new env();
-    //$scope.tmpGencoEntorno;
-    //$scope.descripcion = '';
 
     $scope.load_lang = function(id_lang){
 
@@ -60,7 +160,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
         $scope.data.repeatSelect = null;
         $scope.types_types = [];
         $scope.Conversions = [];
-        $scope.lang_selected = $scope.langs[$scope.langs.map(function(x) {return x.id_lenguaje}).indexOf(id_lang)].nombre;
+        //$scope.lang_selected = $scope.langs[$scope.langs.map(function(x) {return x.id_lenguaje}).indexOf(id_lang)].nombre;
 
   //       var data = lang.get({id:id_lang});
   //       $scope.GencoEntorno = data;
@@ -78,7 +178,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
         $scope.GencoTipodato= new lang_tipodato();
         console.log($scope.GencoTipodato);
-        $scope.GencoTipodato.id_lenguaje = ""+id_lang;
+        $scope.GencoTipodato.id_lenguaje = undefined; //""+$scope.language_selected;
         console.log('new');
 
   
@@ -101,10 +201,13 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
 
         console.log($scope.GencoTipodato);
-        $scope.GencoTipodato.$save(function(){   
+        $scope.GencoTipodato.$save(function(success){   
             $scope.load_lang($scope.GencoTipodato.id_lenguaje);       
             $scope.new_type($scope.GencoTipodato.id_lenguaje);
             //$('#type-add-modal').modal('hide')
+        },function(error){
+                $scope.showMessage(error.data['detail']);
+
         });
         
     } 
@@ -220,74 +323,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
     } 
 
 
-    // $scope.save_conversion = function(id_lang){
-    //     index = 0;
-    //     reload = false;
-    //     // console.log($scope.Conversions);
-    //     // if (conversionsObj.length <= 0)
-    //     //     return;
-
-    //     angular.forEach($scope.types, function(value, key){
-
-    //         if($scope.Conversions[index]!=null){
-
-    //             //pos = conversionsObj.indexOf($scope.Conversions[index]);
-    //             //pos = conversionsObj.map(function(x) {return x.id_tipodato_cnv}).indexOf($scope.Conversions[index]);
-
-                
-
-    //             if(conversionsObj[index].id_conversion!=null){
-
-    //                 if(conversionsObj[index].id_tipodato_cnv!=$scope.Conversions[index]){
-    //                     console.log( value.id_tipodato + " conv to  " + $scope.Conversions[index] + " -> PUT " + conversionsObj[index].id_conversion);
-    //                     var conv = new conversion({id_tipodato: value.id_tipodato, id_tipodato_cnv: $scope.Conversions[index], id_conversion: conversionsObj[index].id_conversion});
-    //                     conv.$update();
-    //                     reload = true;
-    //                 }    
-    //             }else{
-    //                 console.log( value.id_tipodato + " conv to  " + $scope.Conversions[index] + " -> POST ");
-    //                 var conv = new conversion({id_tipodato: value.id_tipodato, id_tipodato_cnv: $scope.Conversions[index]});
-    //                 conv.$save();
-    //                 reload = true;
-
-    //             }
-
-                
-            
-    //         }else{
-    //             //pos = conversionsObj.map(function(x) {return x.id_tipodato}).indexOf(value.id_tipodato);
-    //             if (conversionsObj[index].id_conversion != null) {
-    //                 console.log( value.id_tipodato + " conv to  " + $scope.Conversions[index] + " -> DEL " + conversionsObj[index].id_conversion);    
-    //             };
-    //             reload = true;
-
-    //         }
-
-    //         index++;
-
-           
-   
-    //         // pos = convArr.indexOf(value.id_tipodato);
-    //         // //console.log(pos);
-
-    //         // if(pos>=0) {
-    //         //      console.log( value.id_tipodato + " conv to  " + conversionArr[pos]); //$scope.Conversions.push(conversionArr[pos]); 
-    //         // }
-    //         // // else{
-    //         // //     $scope.Conversions.push(""); 
-    //         // // }
-
-    //         if($scope.types.length == index && reload){
-    //         //$scope.load_lang(id_lang);
-    //         //$scope.data.repeatSelect = id_lang;
-    //             console.log('reload ' + $scope.types.length + " " + index);
-    //             $scope.getTypesCombos();
-    //         }
-            
-    //     })
-
-        
-    // }
+ 
 
 
     $scope.save_conversion = function(id_lang){
@@ -295,60 +331,14 @@ angular.module('app_lang', ['ngResource','lang.services'])
         console.log($scope.Conversions);
         console.log($scope.conversionsObj);
         save_conversion_validator(id_lang, $scope.getTypesCombos );
-    //             index = 0;
-    //     reload = false;
-
-
-    //     angular.forEach($scope.types, function(value, key){
-
-    //         if($scope.Conversions[index]!=null){
-
-    //             //pos = conversionsObj.indexOf($scope.Conversions[index]);
-    //             //pos = conversionsObj.map(function(x) {return x.id_tipodato_cnv}).indexOf($scope.Conversions[index]);
-
-                
-
-    //             if(conversionsObj[index].id_conversion!=null){
-
-    //                 if(conversionsObj[index].id_tipodato_cnv!=$scope.Conversions[index]){
-    //                     console.log( value.id_tipodato + " conv to  " + $scope.Conversions[index] + " -> PUT " + conversionsObj[index].id_conversion);
-    //                     var conv = new conversion({id_tipodato: value.id_tipodato, id_tipodato_cnv: $scope.Conversions[index], id_conversion: conversionsObj[index].id_conversion});
-    //                     conv.$update();
-    //                     reload = true;
-    //                 }    
-    //             }else{
-    //                 console.log( value.id_tipodato + " conv to  " + $scope.Conversions[index] + " -> POST ");
-    //                 var conv = new conversion({id_tipodato: value.id_tipodato, id_tipodato_cnv: $scope.Conversions[index]});
-    //                 conv.$save();
-    //                 reload = true;
-
-    //             }
-
-                
-            
-    //         }else{
-    //             //pos = conversionsObj.map(function(x) {return x.id_tipodato}).indexOf(value.id_tipodato);
-    //             if (conversionsObj[index].id_conversion != null) {
-    //                 console.log( value.id_tipodato + " conv to  " + $scope.Conversions[index] + " -> DEL " + conversionsObj[index].id_conversion);    
-    //             };
-    //             reload = true;
-
-    //         }
-
-    //         index++;
-
-    // })
-                           
+                             
     }
 
 
     function save_conversion_validator(id_lang, callback){
 
         index = 0;
-        //total = $scope.types.length;
         proccess = [];
-        //console.log($scope.conversionsObj);
-        //console.log($scope.types);
 
         angular.forEach($scope.types, function(value, key){
 
@@ -433,6 +423,12 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
   };
 
+    $scope.showMessage = function(message){
+        $('#imConfirm').html(message);
+        $('#info-modal').modal('show');
+
+    }
+
     function conversion_validator(proccess, id_lang, callback){
 
         //Render -> Wait
@@ -445,8 +441,10 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     }
 
-
-
+    /*
+    Inicializamos el UI
+    */
+    $scope.getLangTree();
 
 
   });

@@ -775,13 +775,14 @@ console.log($scope.components);
                 console.log($scope.node_selected)
                 console.log(nodeDef);
                 $scope.addTreeNode($scope.node_selected, nodeDef, $('#jstreeFolders').jstree(true));
+                $('#folder-create-modal').modal('hide');
             },function(error){
                 
                 console.log(error);
                 //$('#jstreeFolders').jstree(true).delete_node(node); 
             });
             //$scope.GencoDirectorios = new directorio();
-            $('#folder-create-modal').modal('hide');
+            
         } 
 
 

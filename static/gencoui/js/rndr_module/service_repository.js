@@ -86,6 +86,14 @@ return $resource('http://127.0.0.1:8000/gencoui/entidaddef/?id_entidad=:id\\/',{
     }, 
   });
 
+}).factory('repo_tree',function($resource){
+
+return $resource('http://localhost:8000/gencoui/repo_tree\\/',{
+    query: {
+        isArray:true    
+    }, 
+  });
+
 }).service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);

@@ -67,6 +67,14 @@ return $resource('http://127.0.0.1:8000/gencoui/conversiontipodatos/:id\\/',{id:
   });
 
 
+}).factory('langs_tree',function($resource){
+
+return $resource('http://localhost:8000/gencoui/langs_tree\\/',{
+    query: {
+        isArray:true    
+    }, 
+  });
+
 }).service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);

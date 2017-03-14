@@ -3,8 +3,23 @@
 <!-- {% block title %}Render Developer{% endblock %} -->
 
 {% block extrastyle %}
-    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" >
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
 	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_lang.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+
+		$('#example').popover('show');
+	</script>
 {% endblock %}
 
 {% block extrahead %}
@@ -87,23 +102,9 @@
 
 {% endblock %}
 
-{% block extrajs %}
-	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
-	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
-	<script src="{% static 'gencoui/js/rndr_module/app_lang.js' %}"></script>
-	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
-	<script type="text/javascript">
-		$(function () {
-		  $('[data-tt="tooltip"]').tooltip()
-		});
-
-		$('#example').popover('show');
-	</script>
-{% endblock %}
-
 
 {% block content %}
-<div class="container-fluid" id="ctrl_lang" ng-app="app_lang" ng-controller="ctrl_lang">
+<div id="ctrl_lang" ng-app="app_lang" ng-controller="ctrl_lang">
 
 
 	    <div id="sidebar" >
@@ -127,181 +128,90 @@
 
 	    <div id="main">
 	    	<div id="tree" style="margin-top:70px;height:85%;">
+
+	    	
+
+			    		<div class="container-fluid">
+			    			{% verbatim %}
+					      	<div class="panel-body" ng-if="language_selected.nombre!=null">
+					      		
+												<h3>{{ language_selected.nombre }}</h3>
+
+												<table class="table-bordered render-table" style="margin-top: 20px; width:90%">
+												  	
+												  		
+												  		<thead>
+												  			<th colspan="2" style="min-width: 250px; background-color: #ECF0F1"><span>Datatypes </span>  
+												  				<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#type-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Type" ng-click="new_type(lang.id_lenguaje)">
+																	<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+																</a>	
+												  			</th>
+												  			<th style="background-color: #58646f; min-width: 300px;">
+												  				<span style="color:white;">Conversion to </span>
+								   							    <select id="repeatSelect" ng-model="data.repeatSelect" ng-change="getTypesCombos(lang.id_lenguaje)">
+															      	<option ng-repeat="option in data.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }}</option>
+															    </select>
+															     <!-- <tt>repeatSelect = {{data.repeatSelect}}</tt><br/> -->
+															    <div style="display:inline; margin-left:15px;">
+																    <a class="btn icon-btn btn-default" ng-click="save_conversion(lang.id_lenguaje)" data-placement="bottom"data-tt="tooltip" title="Save">
+																		<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+																	</a>
+																	<a class="btn icon-btn btn-default"  ng-click="print()" data-placement="bottom"data-tt="tooltip" title="Undo">
+																		<span class="glyphicon btn-glyphicon glyphicon-refresh img-circle" ></span>					
+																	</a>
+															    </div> 
+
+												  			</th>
+												  			
+												  		</thead>
+												  		<tbody >	
+												  			<!-- item in <code>{{ types | json }}</code> -->
+															<tr  ng-repeat="type in types">
+													      		<td>{{ type.nombre}}<sub style="color:#cccccc">{{ type.descripcion}}</sub></td>						      		
+													      		<td width="100px" >
+
+													      			<div>
+																		<a class="btn btn-sm" data-toggle="modal" data-target="#type-edit-modal" data-placement="bottom" data-tt="tooltip" title="Edit Type" ng-click="edit_type($index)" style="padding: 6px 2px;">
+																			<span class="glyphicon btn-glyphicon glyphicon-pencil" ></span>					
+																		</a>
+																		<a class="btn btn-sm" data-toggle="modal" data-target="#type-remove-modal" data-placement="bottom" data-tt="tooltip" title="Remove Type" ng-click="remove()" style="padding: 6px 2px;">
+																			<span class="glyphicon btn-glyphicon glyphicon-minus" ></span>					
+																		</a>
+													      			</div>
+													      			
+																</td>
+													      		<td>
+													      			<select  ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_tipodato as types_cnv.nombre for types_cnv in types_types">
+													      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
+													      				<option value=''>Select</option>
+															      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
+															    	</select>	
+															    	{{Conversions[$index]}}
+															    	<!-- <tt>repeatSelect = {{type.id_tipodato}}</tt><br/> -->
+													      		</td>
+													      		<!-- <td width="15px">
+																	<a class="btn icon-btn btn-default" href="#">
+																	<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
+																	</a>
+													      		</td> -->
+													      	</tr>
+												      	{% endverbatim %}	
+
+												      	<!-- <tfoot> -->
+											          		
+											  	  		<!-- </tfoot> -->
+											  	  	</tbody>
+
+												</table>
+
+									      </div>
+							</div>
+			    		
 	    	</div>
 	    </div>
 
 
-	    <div class="jumbotron">
 
-    			<div class="rndr-head-container" style="margin-bottom:20px">
-					<div class="rndr-title">Languages</div>
-				  	<!-- <button type="button" class="btn btn-default btn-lg  btn-circle">
-				        <p><b>+</b></p>
-				    </button>	  		  		 -->
-		 
-				    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#lang-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Lang" ng-click="new_lang()">
-							<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
-					</a>
-					<!-- <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="Tooltip on left">Tooltip on left</button> -->
-				</div>
-
-	    		<div class="container-fluid">
-
-
-
-				<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-
-				  <div class="panel panel-default">
-				    <div class="panel-heading" role="tab" id="headingOne">
-				    	
-				      <!-- <h4 class="panel-title"> -->
-				        <p style="display:inline;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-				          Own 
-				        </p>
-				      <!-- </h4> -->
-
-				    </div>
-				    {% verbatim %}
-				    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="subheadingOne">
-				      <div class="panel-body">
-
-
-							<div class="panel-group" id="subaccordion" role="tablist" aria-multiselectable="true">
-
-							  <div class="panel panel-default" style="border: 2px solid #ECF0F1;border-radius: 4px;padding: 10px;" ng-repeat="lang in langs">
-							    <div class="panel-heading" role="tab" id="subheadingOne{{$index}}">
-							      <h4 class="panel-title">
-							      	
-							        <p role="button" data-toggle="collapse" data-parent="#subaccordion" href="#subcollapseOne{{$index}}" aria-expanded="true" aria-controls="subcollapseOne{{$index}}" ng-click="load_lang(lang.id_lenguaje)">
-							
-							          	{{lang.nombre}}
-							          	
-							        </p>
-							      </h4>							      
-							    </div>
-							    <div id="subcollapseOne{{$index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="subheadingOne{{$index}}">
-							      <div class="panel-body">
-							      	{% endverbatim %}
-
-										<table class="table table-bordered" style="margin-top: 20px;">
-										  	<tbody >
-										  		{% verbatim %}
-										  		<thead>
-										  			<th colspan="3" width="50%" style="background-color: #ECF0F1;"><p ></p>Datatypes  
-										  				<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#type-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Type" ng-click="new_type(lang.id_lenguaje)">
-															<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
-														</a>	
-										  			</th>
-										  			<th style="background-color: #2C3E50;">
-										  				<span style="color:white;">Conversion to </span>
-						   							    <select id="repeatSelect" ng-model="data.repeatSelect" ng-change="getTypesCombos(lang.id_lenguaje)">
-													      	<option ng-repeat="option in data.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }}</option>
-													    </select>
-													     <!-- <tt>repeatSelect = {{data.repeatSelect}}</tt><br/> -->
-													    <div style="display:inline; margin-left:15px;">
-														    <a class="btn icon-btn btn-default" ng-click="save_conversion(lang.id_lenguaje)" data-placement="bottom"data-tt="tooltip" title="Save">
-																<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
-															</a>
-															<a class="btn icon-btn btn-default"  ng-click="print()" data-placement="bottom"data-tt="tooltip" title="Undo">
-																<span class="glyphicon btn-glyphicon glyphicon-refresh img-circle" ></span>					
-															</a>
-													    </div> 
-
-										  			</th>
-										  			
-										  		</thead>
-										  			
-										  			<!-- item in <code>{{ types | json }}</code> -->
-													<tr  ng-repeat="type in types">
-											      		<td width="20%" >{{ type.nombre}}</td>						      		
-											      		<td width="15%" >{{ type.descripcion}}</td>
-											      		<td>
-
-											      			<div>
-																<a class="btn btn-sm" data-toggle="modal" data-target="#type-edit-modal" data-placement="bottom" data-tt="tooltip" title="Edit Type" ng-click="edit_type($index)" style="padding: 6px 2px;">
-																	<span class="glyphicon btn-glyphicon glyphicon-pencil" ></span>					
-																</a>
-																<a class="btn btn-sm" data-toggle="modal" data-target="#type-remove-modal" data-placement="bottom" data-tt="tooltip" title="Remove Type" ng-click="remove()" style="padding: 6px 2px;">
-																	<span class="glyphicon btn-glyphicon glyphicon-minus" ></span>					
-																</a>
-											      			</div>
-											      			
-														</td>
-											      		<td>
-											      			<select  ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_tipodato as types_cnv.nombre for types_cnv in types_types">
-											      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
-											      				<option value=''>Select</option>
-													      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
-													    	</select>	
-													    	{{Conversions[$index]}}
-													    	<!-- <tt>repeatSelect = {{type.id_tipodato}}</tt><br/> -->
-											      		</td>
-											      		<!-- <td width="15px">
-															<a class="btn icon-btn btn-default" href="#">
-															<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
-															</a>
-											      		</td> -->
-											      	</tr>
-										      	{% endverbatim %}	
-
-										      	<!-- <tfoot> -->
-									          		
-									  	  		<!-- </tfoot> -->
-									  	  	</tbody>
-
-										</table>
-
-
-
-							      </div>
-							    </div>
-							  </div>		
-
-
-				      		</div>
-					    </div>
-					  </div>
-
-				  </div>			  
-
-				  <div class="panel panel-default">
-				    <div class="panel-heading" role="tab" id="headingTwo">
-				      <h4 class="panel-title">
-				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-				          Developers
-				        </a>
-				      </h4>
-				    </div>
-				    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-				      <div class="panel-body">
-				        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry 
-				      </div>
-				    </div>
-				  </div>
-				  <div class="panel panel-default">
-				    <div class="panel-heading" role="tab" id="headingThree">
-				      <h4 class="panel-title">
-				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-				          Generics
-				        </a>
-				      </h4>
-				    </div>
-				    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-				      <div class="panel-body">
-				        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry 
-				      </div>
-				    </div>
-				  </div>
-
-
-				</div>
-
-
-
-				</div>   
-
-	
-	    </div>
 
 
 
@@ -314,17 +224,19 @@
 	        <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
 		        {% verbatim %}
-		        <h4 class="modal-title">{{lang_selected}} - add type</h4>
+		        <h4 class="modal-title">{{language_selected.nombre}} - add type</h4>
 		        {% endverbatim %}
 		    </div>
           <!-- <div class="arrow-up"></div> -->
           	<div class="modal-body">
    			<input type="hidden" ng-model="GencoTipodato.id_lenguaje" >
-			{{ form_add_type }}
-
+			<form ng-submit="save_type()">
+				{{ form_add_type }}
+				<button type="submit"></button>
+			</form>
           	</div>
           	<div class="modal-footer">
-          		<a class="btn icon-btn btn-default" ng-click="save_type()" data-placement="bottom"data-tt="tooltip" title="Save">
+          		<a class="btn icon-btn btn-default" ng-submit="save_type()" data-placement="bottom"data-tt="tooltip" title="Save">
 					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 				</a>
 				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
@@ -345,14 +257,15 @@
 	        <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
 		        {% verbatim %}
-		        <h4 class="modal-title">{{lang_selected}} - edit type</h4>
+		        <h4 class="modal-title">{{language_selected.nombre}} - edit type</h4>
 		        {% endverbatim %}
 		    </div>
           <!-- <div class="arrow-up"></div> -->
           	<div class="modal-body">
-   
-			{{ form_add_type }}
-
+   				<form ng-submit="update_directorio()">
+					{{ form_add_type }}
+					<button type="submit"></button>
+				</form>
           	</div>
           	<div class="modal-footer">
           		<a class="btn icon-btn btn-default" ng-click="update_type()" data-placement="bottom"data-tt="tooltip" title="Save">
@@ -395,7 +308,30 @@
         </div>
     </div>
 </div>
-          	
+
+<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog" >
+
+        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Information</h4>
+		    </div>	     
+          	<div id="imConfirm" class="modal-body">
+          	</div>
+          	<div class="modal-footer">
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+      	
 
 </div>
 {% endblock %}

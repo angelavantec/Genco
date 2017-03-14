@@ -207,3 +207,23 @@
     border: 10px solid;
     border-color: #0b93f6 #0b93f6 transparent transparent;
 }
+
+
+.render-table  th, tr>td{
+
+	padding: 8px 8px 8px 8px;
+}
+
+
+#main img {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 50%;
+    height: auto;
+    opacity: 0.05;
+    z-index: -1;
+}
+#main {
+	background-color: #eeeeee
+}

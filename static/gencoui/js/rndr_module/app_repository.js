@@ -1,8 +1,8 @@
 angular.module('app_entities', ['ngResource','repository.services'])
 
-.controller('ctrl_entities', function($scope, repository, entity_repo, entity, entitydef, popupService) {
+.controller('ctrl_entities', function($scope, repository, entity_repo, entity, entitydef, repo_tree, popupService) {
 
-  $scope.fields = [{nombre: 'id_person', tipodato:'number', longitud: '5', es_pk: true}];
+  $scope.fields = [];
   $scope.repositories = [];
   $scope.GencoRepositorio;
   $scope.nodeRepository = [];
@@ -25,22 +25,162 @@ angular.module('app_entities', ['ngResource','repository.services'])
       nombre: null,
   };
 
+  /*Instancia del arbol de la seccion de ENTITIES*/
+  /*IMPORTANTE*/
+  /* Para que el arbol permita manipular(create, rename, delete) los nodos check_callback debe ser true*/
+  
+    $("#jstree").jstree({
+      'core':{check_callback : true},
+    //     "core" : {
+    //     "check_callback" : function (operation, node, node_parent, node_position, more) {
+    //             // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+    //             // in case of 'rename_node' node_position is filled with the new node name                      
+                
+
+    //             var validator;
+
+    //             if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
+    //                 return false;
+    //             }
+                    
+    //             console.log(node_parent);
+    //             var renderas = node_parent.li_attr['data-renderas'];
+
+    //             if(typeof renderas == 'undefined'){
+    //                 return false;
+    //             }
+                    
+    //             validator = renderas === 'repository' ? true : false;    
+    //             if(validator && operation == 'move_node'){
+
+    //                 validator = node.li_attr['data-renderas'] === 'archive' ? true : false; 
+
+    //             }   
+    //             return validator;
+                
+    //         }
+    // },
+    "plugins" : [  "contextmenu","dnd" ],
+    "contextmenu": {
+        "items": function ($node) {
+
+            console.log($node.li_attr['data-renderas'] );
+
+            if($node.li_attr['data-renderas'] === 'repository')
+                return {
+
+                    "Rename": {
+                        "label": "Edit Repository",
+                        "action": function (data) {
+                          console.log(data);
+                          
+                          var inst = $.jstree.reference(data.reference),
+                          obj = inst.get_node(data.reference);
+                          //inst.edit(obj);
+                          
+                          $scope.repository_selected.nombre = obj.text;
+                          $scope.repository_selected.id = obj.id;
+                          console.log($scope.repository_selected);
+                          $scope.load_repository(obj.id);
+                          //Hago que la interfaz refresque el titulo con el valor de component_selected
+                          angular.element($("#ctrl_entities")).scope().$apply();
+                          $('#repository-edit-modal').modal('show');
+                        }
+                    },
+                    "Delete": {
+                        "label": "Delete Repository",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                            obj = inst.get_node(data.reference);
+                            //inst.edit(obj);
+                            
+                            $scope.repository_selected.nombre = obj.text;
+                            $scope.repository_selected.id = obj.id;
+                            //$scope.new_template(obj.id);
+                            $scope.node_item_selected = obj;
+                            $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> repository?");
+                            $scope.ConfirmDeleteCallback = function(){$scope.delete_repository( $scope.node_item_selected)};
+                        }
+                    },
+                    "CreateTempl": {
+                        "label": "Create Entity",
+                        "action": function (data) {
+
+                          var inst = $.jstree.reference(data.reference),
+                          obj = inst.get_node(data.reference);
+                          //inst.edit(obj);
+                          
+                          $scope.repository_selected.nombre = obj.text;
+                          $scope.repository_selected.id = obj.id;
+                          $scope.new_entity($scope.repository_selected.id);
+                          //Hago que la interfaz refresque el titulo con el valor de component_selected
+                          //angular.element($("#ctrl_entities")).scope().$apply();
+                          $('#entity-create-modal').modal('show');
+
+                        }
+                        
+                    },
+                };
+            else{
+                return {
+
+                    "Delete": {
+                        "label": "Delete Entity",
+                        "action": function (data) {
+                            var inst = $.jstree.reference(data.reference),
+                            obj = inst.get_node(data.reference);
+                            //inst.edit(obj);
+                            
+                            $scope.entity_selected.nombre = obj.li_attr['data-rendername'];
+                            $scope.entity_selected.id = obj.li_attr['data-renderid'];
+                            $scope.node_item_selected = obj;
+                            $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> entity?");
+                            $scope.ConfirmDeleteCallback = function(){$scope.delete_entity($scope.node_item_selected)};
+                            //$scope.new_template(obj.id);
+                            //angular.element($("#ctrl_entities")).scope().$apply();
+                            //$('#entity-delete-modal').modal('show');
+                        }
+                    }
+                };
+            }
+
+        }
+    }
+    });
+
+   $('#jstree').bind("dblclick.jstree", function (event) {
+        event.preventDefault();
+        console.log('ress'); 
+        var node = $(event.target).closest("li");
+       // var data = node.data;
+
+        var renderas =node.data("renderas");
+        var id =node.data("renderid");
+       // Do my action
+       
+        if(renderas === 'entity'){
+         console.log(node.text()); 
+         $scope.load_entity(id.toString());
+        }
+       
+    });
+
+
+
 
   $scope.load_repositories = function(){
-    $scope.components = [];
-    $scope.repositories = repository.query(
-                    function(success){
-                        console.log('LOAD ********************* success');
-                        console.log(success);
-                        $scope.createTreeModel(); 
-                        //$scope.load();
-                    },function(error){
-                        console.log('ERR');
-                        console.log(error);  
-    });
+    repo_tree.get({}, function(success){
+                            
+                            console.log('success');    
+                            $('#jstree').jstree();
+                            $('#jstree').jstree(true).settings.core.data = success.dirs;
+                            $('#jstree').jstree(true).refresh();
+                                                        
+                        },function(error){                        
+                            console.log('ERR');
+                            console.log(error);  
+                        });
   }
-
-  $scope.load_repositories();
 
 
   $scope.createTreeModel = function(){
@@ -87,7 +227,7 @@ function add_entities(proccess, repository, entidades){
 
         });
 
-      $scope.nodeRepository.push({'id': repository.id_repositorio,'text':repository.nombre, 'icon':"glyphicon glyphicon-oil", 'children':nodeEntidades, 'li_attr':{'data-renderas':'repository'}});
+      $scope.nodeRepository.push({'id': repository.id_repositorio,'text':repository.nombre, 'icon':"/static/gencoui/img/rndr/metadata18.png", 'children':nodeEntidades, 'li_attr':{'data-renderas':'repository'}});
       console.log(nodeEntidades);
 
     }
@@ -108,172 +248,173 @@ function add_entities(proccess, repository, entidades){
 }
 
 
-$scope.load = function(id_repositorio){
+// $scope.loadx = function(id_repositorio){
 
 
-  //angular.forEach($scope.repositories, function(value, key){
+//   //angular.forEach($scope.repositories, function(value, key){
 
-    $(id_repositorio).jstree({
-        "core" : {
-        "check_callback" : function (operation, node, node_parent, node_position, more) {
-                // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-                // in case of 'rename_node' node_position is filled with the new node name                      
+//     $(id_repositorio).jstree({
+//         "core" : {
+//         "check_callback" : function (operation, node, node_parent, node_position, more) {
+//                 // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+//                 // in case of 'rename_node' node_position is filled with the new node name                      
                 
 
-                var validator;
+//                 var validator;
 
-                if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
-                    return false;
-                }
+//                 if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
+//                     return false;
+//                 }
                     
-                console.log(node_parent);
-                var renderas = node_parent.li_attr['data-renderas'];
+//                 console.log(node_parent);
+//                 var renderas = node_parent.li_attr['data-renderas'];
 
-                if(typeof renderas == 'undefined'){
-                    return false;
-                }
+//                 if(typeof renderas == 'undefined'){
+//                     return false;
+//                 }
                     
-                validator = renderas === 'repository' ? true : false;    
-                if(validator && operation == 'move_node'){
+//                 validator = renderas === 'repository' ? true : false;    
+//                 if(validator && operation == 'move_node'){
 
-                    validator = node.li_attr['data-renderas'] === 'archive' ? true : false; 
+//                     validator = node.li_attr['data-renderas'] === 'archive' ? true : false; 
 
-                }   
-                return validator;
+//                 }   
+//                 return validator;
                 
-            }
-    },
-    "plugins" : [  "contextmenu","dnd" ],
-    "contextmenu": {
-        "items": function ($node) {
+//             }
+//     },
+//     "plugins" : [  "contextmenu","dnd" ],
+//     "contextmenu": {
+//         "items": function ($node) {
 
-            console.log($node.li_attr['data-renderas'] );
+//             console.log($node.li_attr['data-renderas'] );
 
-            if($node.li_attr['data-renderas'] === 'repository')
-                return {
+//             if($node.li_attr['data-renderas'] === 'repository')
+//                 return {
 
-                    "Rename": {
-                        "label": "Edit Repository",
-                        "action": function (data) {
-                          console.log(data);
+//                     "Rename": {
+//                         "label": "Edit Repository",
+//                         "action": function (data) {
+//                           console.log(data);
                           
-                          var inst = $.jstree.reference(data.reference),
-                          obj = inst.get_node(data.reference);
-                          //inst.edit(obj);
+//                           var inst = $.jstree.reference(data.reference),
+//                           obj = inst.get_node(data.reference);
+//                           //inst.edit(obj);
                           
-                          $scope.repository_selected.nombre = obj.text;
-                          $scope.repository_selected.id = obj.id;
-                          console.log($scope.repository_selected);
-                          $scope.load_repository(obj.id);
-                          //Hago que la interfaz refresque el titulo con el valor de component_selected
-                          angular.element($("#ctrl_entities")).scope().$apply();
-                          $('#repository-edit-modal').modal('show');
-                        }
-                    },
-                    "Delete": {
-                        "label": "Delete Repository",
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                            //inst.edit(obj);
-                            
-                            $scope.repository_selected.nombre = obj.text;
-                            $scope.repository_selected.id = obj.id;
-                            //$scope.new_template(obj.id);
-                            angular.element($("#ctrl_entities")).scope().$apply();
-                            $('#repository-delete-modal').modal('show');
-                        }
-                    },
-                    "CreateTempl": {
-                        "label": "Create Entity",
-                        "action": function (data) {
+//                           $scope.repository_selected.nombre = obj.text;
+//                           $scope.repository_selected.id = obj.id;
+//                           console.log($scope.repository_selected);
+//                           $scope.load_repository(obj.id);
+//                           //Hago que la interfaz refresque el titulo con el valor de component_selected
+//                           angular.element($("#ctrl_entities")).scope().$apply();
+//                           $('#repository-edit-modal').modal('show');
+//                         }
+//                     },
+//                     "Delete": {
+//                         "label": "Delete Repository",
+//                         "action": function (data) {
+//                             var inst = $.jstree.reference(data.reference),
+//                             obj = inst.get_node(data.reference);
+                                    
+//                             $scope.repository_selected.nombre = obj.text;
+//                             $scope.repository_selected.id = obj.id;
+                           
+//                             //angular.element($("#ctrl_entities")).scope().$apply();
+//                             //$('#repository-delete-modal').modal('show');
+//                             $scope.node_item_selected = obj;
+//                                     $scope.showConfirmDelete("Do you really want to delete " + obj['text'] + " Repository?");
+//                                     $scope.ConfirmDeleteCallback = function(){$scope.delete_repository()};
+//                         }
+//                     },
+//                     "CreateTempl": {
+//                         "label": "Create Entity",
+//                         "action": function (data) {
 
-                          var inst = $.jstree.reference(data.reference),
-                          obj = inst.get_node(data.reference);
-                          //inst.edit(obj);
+//                           var inst = $.jstree.reference(data.reference),
+//                           obj = inst.get_node(data.reference);
                           
-                          $scope.repository_selected.nombre = obj.text;
-                          $scope.repository_selected.id = obj.id;
-                          $scope.new_entity($scope.repository_selected.id);
-                          //Hago que la interfaz refresque el titulo con el valor de component_selected
-                          angular.element($("#ctrl_entities")).scope().$apply();
-                          $('#entity-create-modal').modal('show');
+//                           $scope.repository_selected.nombre = obj.text;
+//                           $scope.repository_selected.id = obj.id;
+//                           $scope.new_entity($scope.repository_selected.id);
+//                           //Hago que la interfaz refresque el titulo con el valor de component_selected
+//                           angular.element($("#ctrl_entities")).scope().$apply();
+//                           $('#entity-create-modal').modal('show');
 
-                        }
+//                         }
                         
-                    },
-                };
-            else{
-                return {
+//                     },
+//                 };
+//             else{
+//                 return {
 
-          //           "Open": {
-          //               "label": "Open Template",
-          //               "action": function (data) {
-          //                  // this.rename(obj);
-          //                   //$('#template-edit-modal').modal('show')
-          //                   console.log('open');
-          // //                    var inst = $.jstree.reference(data.reference),
-          //                   // obj = inst.get_node(data.reference);
-          //                   // inst.edit(obj);
-          //                   // console.log(data);
-          //               }
-          //           },
-          //           "Rename": {
-          //               "label": "Edit Template",
-          //               "action": function (data) {
-          //                  // this.rename(obj);
-          //                   $('#template-edit-modal').modal('show')
-          //                   console.log(data);
-          // //                    var inst = $.jstree.reference(data.reference),
-          //                   // obj = inst.get_node(data.reference);
-          //                   // inst.edit(obj);
-          //                   // console.log(data);
-          //               }
-          //           },
-                    "Delete": {
-                        "label": "Delete Template",
-                        "action": function (data) {
-                            var inst = $.jstree.reference(data.reference),
-                            obj = inst.get_node(data.reference);
-                            //inst.edit(obj);
+//           //           "Open": {
+//           //               "label": "Open Template",
+//           //               "action": function (data) {
+//           //                  // this.rename(obj);
+//           //                   //$('#template-edit-modal').modal('show')
+//           //                   console.log('open');
+//           // //                    var inst = $.jstree.reference(data.reference),
+//           //                   // obj = inst.get_node(data.reference);
+//           //                   // inst.edit(obj);
+//           //                   // console.log(data);
+//           //               }
+//           //           },
+//           //           "Rename": {
+//           //               "label": "Edit Template",
+//           //               "action": function (data) {
+//           //                  // this.rename(obj);
+//           //                   $('#template-edit-modal').modal('show')
+//           //                   console.log(data);
+//           // //                    var inst = $.jstree.reference(data.reference),
+//           //                   // obj = inst.get_node(data.reference);
+//           //                   // inst.edit(obj);
+//           //                   // console.log(data);
+//           //               }
+//           //           },
+//                     "Delete": {
+//                         "label": "Delete Entity",
+//                         "action": function (data) {
+//                             var inst = $.jstree.reference(data.reference),
+//                             obj = inst.get_node(data.reference);
+//                             //inst.edit(obj);
                             
-                            $scope.entity_selected.nombre = obj.li_attr['data-rendername'];
-                            $scope.entity_selected.id = obj.li_attr['data-renderid'];
-                            //$scope.new_template(obj.id);
-                            angular.element($("#ctrl_entities")).scope().$apply();
-                            $('#entity-delete-modal').modal('show');
-                        }
-                    }
-                };
-            }
+//                             $scope.entity_selected.nombre = obj.li_attr['data-rendername'];
+//                             $scope.entity_selected.id = obj.li_attr['data-renderid'];
+//                             //$scope.new_template(obj.id);
+//                             angular.element($("#ctrl_entities")).scope().$apply();
+//                             $('#entity-delete-modal').modal('show');
+//                         }
+//                     }
+//                 };
+//             }
 
-        }
-    }
-    });
+//         }
+//     }
+//     });
 
 
-    $.jstree.defaults.core.dblclick_toggle = false;
+//     $.jstree.defaults.core.dblclick_toggle = false;
 
-    $(id_repositorio).bind("dblclick.jstree", function (event) {
-        event.preventDefault();
-        console.log('ress'); 
-        var node = $(event.target).closest("li");
-       // var data = node.data;
+//     $(id_repositorio).bind("dblclick.jstree", function (event) {
+//         event.preventDefault();
+//         console.log('ress'); 
+//         var node = $(event.target).closest("li");
+//        // var data = node.data;
 
-        var renderas =node.data("renderas");
-        var id =node.data("renderid");
-       // Do my action
+//         var renderas =node.data("renderas");
+//         var id =node.data("renderid");
+//        // Do my action
        
-        if(renderas === 'archive'){
-         console.log(node.text()); 
-         $scope.load_entity(id.toString());
-        }
+//         if(renderas === 'archive'){
+//          console.log(node.text()); 
+//          $scope.load_entity(id.toString());
+//         }
        
-    });
+//     });
 
-  //});
+//   //});
 
-}
+// }
 
 
   
@@ -400,28 +541,40 @@ $scope.load = function(id_repositorio){
 
     $scope.new_repository = function(){
 
-        $scope.GencoRepositorio= new repository();
-  
+        $scope.GencoRepositorio= new repository(); 
     } 
 
     $scope.save_repository = function(){
-        $scope.GencoRepositorio.$save(function(){   
-            $scope.load_repositories();     
-            $('#repository-create-modal').modal('hide')
+
+        $scope.GencoRepositorio.$save(function(success){   
+          console.log(success);
+          var nodeDef = {'id': success.id_repositorio, 
+                          'parent': '#', 
+                          'text': success.nombre, 
+                          'icon':"glyphicon glyphicon-folder-open", 
+                          'li_attr':{'data-renderas':"repository",
+                                      'data-renderid': success.id_repositorio, 
+                                      'data-rendername':success.nombre
+                                  }
+                      }
+
+          $scope.addTreeNode($('#jstree').jstree(true).get_node('#'), nodeDef, $('#jstree').jstree(true));
+          $('#repository-create-modal').modal('hide');
+        },function(error){
+            $scope.showMessage(parseErrorMessage(error));
         });
         
     } 
 
-    $scope.delete_repository = function(){
+    $scope.delete_repository = function(node){
 
         repository.delete({id_repositorio: $scope.repository_selected.id},function(success){
             console.log(success);           
-            $scope.load_repositories();
-            $('#repository-delete-modal').modal('hide');
+            $('#jstree').jstree(true).delete_node(node); 
         },function(error){
-            console.log(error);
+            $scope.showMessage(parseErrorMessage(error));
         });
-        
+
     } 
 
 
@@ -439,15 +592,7 @@ $scope.load = function(id_repositorio){
         console.log(id_repositorio);
         var data = repository.get({id_repositorio:id_repositorio});
         $scope.GencoRepositorio = data;
-        // data.$promise.then(function(data){
-        //     $scope.descripcion = data.descripcion;
-        //     $scope.nombre = data.nombre;
-        // });
-
-        //$scope.tmpGencoRepositorio =  $scope.GencoRepositorio;
-        //$scope.langs=env_lang.get({id:id_env});
-
-  
+ 
     }
  
 
@@ -461,22 +606,34 @@ $scope.load = function(id_repositorio){
     } 
 
     $scope.save_entity = function(){
-        $scope.GencoEntidad.$save(function(){   
-            // $scope.envs=env.query();    
-            $scope.load_repositories();     
-            $('#entity-create-modal').modal('hide')
-        });
 
+        $scope.GencoEntidad.$save(function(success){
+            console.log(success);
+            var nodeDef = {'id': 'entity' + success.id_entidad, 
+                            'parent': success.id_repositorio, 
+                            'text': success.nombre, 
+                            'icon':"glyphicon glyphicon-folder-open", 
+                            'li_attr':{'data-renderas':"entity",
+                                        'data-renderid': success.id_entidad, 
+                                        'data-rendername':success.nombre
+                                    }
+                        }
+            $scope.addTreeNode($scope.repository_selected, nodeDef, $('#jstree').jstree(true));
+        },function(error){
+            $scope.showMessage(parseErrorMessage(error));
+        }); 
+
+        $('#entity-create-modal').modal('hide')
     }
 
-    $scope.delete_entity = function(){
+    $scope.delete_entity = function(node){
 
         entity.delete({id_entidad: $scope.entity_selected.id},function(success){
-            console.log(success);           
-            $scope.createTreeModel();
-            $('#entity-delete-modal').modal('hide');
+            console.log(success)
+            $('#jstree').jstree(true).delete_node(node);
+            $('#jstree').jstree(true).delete_node(node); 
         },function(error){
-            console.log(error);
+            $scope.showMessage(parseErrorMessage(error));
         });
         
     } 
@@ -677,6 +834,56 @@ $scope.load = function(id_repositorio){
     } 
 
 
+    /*
+    * data: datos del nodo seleccionado que activa el menu, de esta se puede obtener el nodo seleccionado, y una instancia para 
+            manipular el arbol.
+    */
+    $scope.addTreeNode = function(node, newNode, jsTree){
+        console.log('agregor');
+        jsTree.create_node(node.id,newNode);                    
+    }
+
+    $scope.showMessage = function(message){
+      $('#imConfirm').html(message);
+      $('#info-modal').modal('show');
+    }
+
+    $scope.showConfirmDelete = function(message){
+        $('#tedmConfirm').html(message);
+        $('#confirm-delete-modal').modal('show');
+    }
+
+    $scope.confirm_delete = function(){
+        $('#confirm-delete-modal').modal('hide');
+       $scope.ConfirmDeleteCallback();
+    }
+
+    function parseErrorMessage(error){
+      var obj;
+      var message;
+
+      obj = error.data;
+
+      
+      console.log(obj);
+      
+         for (var key in obj) {
+           //if (obj.hasOwnProperty(key)) {
+              if(Array.isArray(obj[key])){
+                message += '<br>' + obj[key][0];
+              }else{
+                return obj[key];
+              } 
+           //}
+          }
+        return message;    
+
+    }
+    /*
+    Inicializamos el UI
+    */
+    $scope.load_repositories();
+
 
   });
 
@@ -692,3 +899,4 @@ angular.module('app_entities').config(function($httpProvider){
     // delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 })
+

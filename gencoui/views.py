@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_protect
 # from django.views.generic.list import listView
 
 # Create your views here.
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 from django.core import serializers as renderSerializers
 from models import *  #GencoLenguajes, GencoGrupo, GencoUsuarioGrupo, GencoProyectos, GencoEntorno, GencoDirectorios
 from forms import *
@@ -69,10 +69,10 @@ class GencoProyectosViewSet(viewsets.ModelViewSet):
         obj = get_object_or_404(self.get_queryset(), id_proyecto=instance.id_proyecto)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoProyectosSerializer(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoProyectosSerializer(queryset, many=True)
+    #     return Response(serializer.data)
 
 
 class GencoEntornoViewSet(viewsets.ModelViewSet):
@@ -94,10 +94,10 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
         obj = get_object_or_404(self.get_queryset(), id_entorno=instance.id_entorno)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoEntornoSerializer(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoEntornoSerializer(queryset, many=True)
+    #     return Response(serializer.data)
 
 
 class GencoDirectoriosViewSet(viewsets.ModelViewSet):
@@ -127,10 +127,10 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
 
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoDirectoriosSerializer(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoDirectoriosSerializer(queryset, many=True)
+    #     return Response(serializer.data)
  
 
 class GencoArchivosViewSet(viewsets.ModelViewSet):
@@ -152,10 +152,10 @@ class GencoArchivosViewSet(viewsets.ModelViewSet):
         obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoArchivosSerializer(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoArchivosSerializer(queryset, many=True)
+    #     return Response(serializer.data)
 
 
 class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
@@ -188,10 +188,10 @@ class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
 
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoDirectorioElementosSerializer(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoDirectorioElementosSerializer(queryset, many=True)
+    #     return Response(serializer.data)
 
 
 class GencoLenguajesViewSet(viewsets.ModelViewSet):
@@ -210,13 +210,13 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        obj = get_object_or_404(self.get_queryset(), id_lenguaje=instance.id_lenguaje)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoLenguajesSerializer(queryset, many=True)
-        return Response(serializer.data)   
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoLenguajesSerializer(queryset, many=True)
+    #     return Response(serializer.data)   
 
 
 class GencoTipodatoViewSet(viewsets.ModelViewSet):
@@ -225,7 +225,7 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     """
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoTipodatoFilter
-    filter_fields = ('id_entorno')
+    #filter_fields = ('id_lang')
     serializer_class = GencoTipodatoSerializer
 
     def get_queryset(self):
@@ -238,13 +238,13 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        obj = get_object_or_404(self.get_queryset(), id_tipodato=instance.id_tipodato)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoTipodatoSerializer(queryset, many=True)
-        return Response(serializer.data)        
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoTipodatoSerializer(queryset, many=True)
+    #     return Response(serializer.data)        
 
 
 class GencoEntornoLenguajesViewSet(viewsets.ModelViewSet):
@@ -266,13 +266,13 @@ class GencoEntornoLenguajesViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        obj = get_object_or_404(self.get_queryset(), id_entornolenguaje=instance.id_entornolenguaje)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoEntornoLenguajesSerializer(queryset, many=True)
-        return Response(serializer.data) 
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoEntornoLenguajesSerializer(queryset, many=True)
+    #     return Response(serializer.data) 
 
 
 class GencoConversionTipodatoViewSet(viewsets.ModelViewSet):
@@ -294,13 +294,13 @@ class GencoConversionTipodatoViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_archivo=instance.id_archivo)
+        obj = get_object_or_404(self.get_queryset(), id_conversion=instance.id_conversion)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoConversionTipodatoSerializer(queryset, many=True)
-        return Response(serializer.data) 
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoConversionTipodatoSerializer(queryset, many=True)
+    #     return Response(serializer.data) 
 
 
 class GencoGrupoViewSet(viewsets.ModelViewSet):
@@ -319,7 +319,7 @@ class GencoGrupoViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        obj = get_object_or_404(self.get_queryset(), id_grupo=instance.id_grupo)
 
         refElements = '';
         for i  in obj:
@@ -330,10 +330,10 @@ class GencoGrupoViewSet(viewsets.ModelViewSet):
 
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoConversionTipodatoSerializer(queryset, many=True)
-        return Response(serializer.data) 
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoConversionTipodatoSerializer(queryset, many=True)
+    #     return Response(serializer.data) 
 
 
 
@@ -356,13 +356,13 @@ class GencoComponentesViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        obj = get_object_or_404(self.get_queryset(), id_componente=instance.id_componente)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoComponentesSerializer(queryset, many=True)
-        return Response(serializer.data)      
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoComponentesSerializer(queryset, many=True)
+    #     return Response(serializer.data)      
 
 
 class GencoPlantillasViewSet(viewsets.ModelViewSet):
@@ -384,13 +384,13 @@ class GencoPlantillasViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        obj = get_object_or_404(self.get_queryset(), id_plantilla=instance.id_plantilla)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoPlantillasSerializer(queryset, many=True)
-        return Response(serializer.data)     
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoPlantillasSerializer(queryset, many=True)
+    #     return Response(serializer.data)     
 
 
 class GencoRepositorioViewSet(viewsets.ModelViewSet):
@@ -409,13 +409,21 @@ class GencoRepositorioViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        obj = get_object_or_404(self.get_queryset(), id_repositorio=instance.id_repositorio)
+        obj = GencoEntidad.objects.filter(id_repositorio=instance.id_repositorio)
+        refElements = '';
+        for i  in obj:
+            refElements += '<br>Entity <b>' + i.nombre + '</b>'
+
+        if obj.exists():
+            raise APIException('This Element is referenced by ' + refElements)
+
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoRepositorioSerializer(queryset, many=True)
-        return Response(serializer.data)  
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoRepositorioSerializer(queryset, many=True)
+    #     return Response(serializer.data)  
 
 
 class GencoEntidadViewSet(viewsets.ModelViewSet):
@@ -436,13 +444,13 @@ class GencoEntidadViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        obj = get_object_or_404(self.get_queryset(), id_entidad=instance.id_entidad)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoEntidadSerializer(queryset, many=True)
-        return Response(serializer.data)     
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoEntidadSerializer(queryset, many=True)
+    #     return Response(serializer.data)     
 
 class GencoEntidadDefinicionViewSet(viewsets.ModelViewSet):
     """
@@ -462,24 +470,27 @@ class GencoEntidadDefinicionViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        obj = get_object_or_404(self.get_queryset(), id_entidaddef=instance.id_entidaddef)
         instance.delete()
             
-    def list(self, request):
-        queryset = self.get_queryset()
-        serializer = GencoEntidadDefinicionSerializer(queryset, many=True)
-        return Response(serializer.data)  
+    # def list(self, request):
+    #     queryset = self.get_queryset()
+    #     serializer = GencoEntidadDefinicionSerializer(queryset, many=True)
+    #     return Response(serializer.data)  
 
 
 class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = GencoElementoEntidad.objects.all()
+    #queryset = GencoElementoEntidad.objects.all()
     serializer_class = GencoElementoEntidadSerializer
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoElementoEntidadFilter
     filter_fields = ('id_direlemento', 'id_entidad')
+
+    def get_queryset(self):
+        return GencoEntidadDefinicion.objects.filter(creado_por=self.request.user.id)
 
     def perform_create(self, serializer):
         dict = {}
@@ -502,6 +513,10 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
         dict = updateDictTags(list,dict)
         serializer.validated_data['tags'] = json.dumps(dict);
         serializer.save()      
+
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_elementoentidad=instance.id_elementoentidad)
+        instance.delete()    
 
 
 def get_form(request, id_form=None):
@@ -551,8 +566,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
                     'user': request.user, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
-        context = {'form_add_env': GencoEntornoForm, 'user': request.user}    
-        return render(request,'gencoui/rndr_builds.html',context)
+        raise Http404
     # form = GencoEntornoForm()
     # context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}
     # return render(request,switcher.get(id_module),context)
@@ -863,3 +877,42 @@ class dir_elemento_entidad_tree(APIView):
         return JsonResponse({'dirs':dirs})
 
 
+class langs_tree(APIView):
+    
+    def get(self, request):
+
+        langs = GencoLenguajes.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
+        tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
+
+        dirs = []
+        id_padre = ''
+
+        for i  in langs:         
+            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre, 'icon':"/static/gencoui/img/rndr/metadata18.png", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre}})
+       
+
+        for i  in tipodatos:          
+            dirs.append( {'id': 'type'+str(i.id_tipodato), 'parent': i.id_lenguaje.id_lenguaje, 'text': i.nombre + '<sub style="color:#CCCCCC"></sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"datatype", 'data-renderid': i.id_tipodato, 'data-rendername': i.nombre}})
+        print dirs    
+
+        return JsonResponse({'dirs':dirs})
+
+
+class repo_tree(APIView):
+    
+    def get(self, request):
+
+        repo = GencoRepositorio.objects.filter(creado_por=request.user.id).order_by('id_repositorio')
+        entity = GencoEntidad.objects.filter(creado_por=request.user.id).order_by('id_entidad')
+
+        repos = []
+        id_padre = ''
+
+        for i  in repo:         
+            repos.append({'id': i.id_repositorio, 'parent': '#', 'text': i.nombre, 'icon':"/static/gencoui/img/rndr/metadata18.png", 'li_attr':{'data-renderas':"repository",'data-renderid': i.id_repositorio, 'data-rendername':i.nombre}})
+       
+
+        for i  in entity:          
+            repos.append( {'id': 'entity'+str(i.id_entidad), 'parent': i.id_repositorio.id_repositorio, 'text': i.nombre + '<sub style="color:#CCCCCC"></sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"entity", 'data-renderid': i.id_entidad, 'data-rendername': i.nombre}}) 
+
+        return JsonResponse({'dirs':repos})        
