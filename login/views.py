@@ -17,7 +17,7 @@ def register(request):
             password=form.cleaned_data['password1'],
             email=form.cleaned_data['email']
             )
-            return HttpResponseRedirect('/register/success/')
+            return HttpResponseRedirect('/gencoui/')
     else:
         form = RegistrationForm()
     variables = RequestContext(request, {

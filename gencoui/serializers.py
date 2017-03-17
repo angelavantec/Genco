@@ -5,6 +5,14 @@ from django.core import serializers as renderSerializers
 import json
 
 
+
+class AdminAppIconosSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AdminAppIconos
+        read_only_fields = ('creado_por','fecha_creacion',)   
+
+
 class GencoUsuarioGrupoSerializer(serializers.ModelSerializer):
     #group_listing = serializers.HyperlinkedIdentityField(view_name='group-list')
     

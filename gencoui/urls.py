@@ -21,12 +21,13 @@ router.register(r'repositorio', GencoRepositorioViewSet, base_name="repositorio"
 router.register(r'entidad', GencoEntidadViewSet, base_name="entidad")
 router.register(r'entidaddef', GencoEntidadDefinicionViewSet, base_name="entidaddef")
 router.register(r'plantillaentidad', GencoPlantillaEntidadViewSet, base_name="plantillaentidad")
+router.register(r'icono', AdminAppIconosViewSet, base_name="icono")
 # router.register(r'archivo', AdminArchivoPlantillaViewSet)
 
 urlpatterns = patterns('',	
 	url(r'^$', index, name='index'),
-	url(r'^module/(?P<id_module>\w+)$', get_module),
-	url(r'^module/(?P<id_module>\w+)/(?P<key_env>\w+)/$', get_module),
+	url(r'^module/(?P<id_module>\w+)$', get_module, name='module'),
+	url(r'^module/(?P<id_module>\w+)/(?P<key_env>\w+)/$', get_module , name='module-env'),
 	url(r'^module/(?P<id_module>\w+)/(?P<key_env>\w+)/(?P<key_project>\w+)/$', get_module),
 	url(r'^', include(router.urls)),
 	# url(r'^file/$', author_list_plaintext),

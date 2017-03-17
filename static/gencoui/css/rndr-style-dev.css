@@ -16,13 +16,7 @@
     		padding-bottom: 3px;
 		}
 
-		.btn-glyphicon {
-		    padding:8px;
-		    background:#ffffff;
-		    color:#777;
-		    /*margin-right:2px;*/
-		}    
-/*
+
 		 .well {
 		 	     background-color: transparent;
 		 }  */ 
@@ -227,3 +221,7 @@
 #main {
 	background-color: #eeeeee
 }
+
+
+.rndr-scale { transition: all .2s ease-in-out; }
+.rndr-scale:hover { transform: scale(1.3); }

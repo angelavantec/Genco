@@ -66,6 +66,9 @@ REST_FRAMEWORK = {
         #'rest_framework.permissions.IsAdminUser',
         'rest_framework.permissions.IsAuthenticated',
     ),
+    # 'DEFAULT_RENDERER_CLASSES': (
+    #     'rest_framework.renderers.JSONRenderer',
+    # ),
     'PAGINATE_BY': 10
 }
 
@@ -148,4 +151,4 @@ CORS_ORIGIN_WHITELIST = (
     )
 
 MEDIA_ROOT='C:/Users/Angel/GencoPy/genco'
-MEDIA_URL='/user_templates/'
+MEDIA_URL='/media/'

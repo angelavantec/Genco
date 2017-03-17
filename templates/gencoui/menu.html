@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
   <style type="text/css">
     body {
-        background-color: #3a3838;
+        //background-color: #3a3838;
     }
 
     .navbar {
@@ -38,35 +38,55 @@
 {% block content %}
 <div  id="ctrl_entities" style="width: 98%">
 
-<div class="row" style="padding-top: 85px;">
+<div class="row">
   <div class="col-md-2"></div>
-  <div class="col-md-5">
+  <div class="col-md-8">
     <div class="panel panel-default">
       <div class="panel-body">{% include "gencoui/rndr_builds_search.html" %}</div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="panel panel-default" style="border: none ">
+  <div class="col-md-2"></div>
+</div>
+
+<div class="row">
+  <div class="col-md-2"></div>
+
+  <div class="col-md-4">
+    <div class="panel panel-default" style="border-width:3px; border-color:rgb(165,199,236)">
         <div class="panel-body" style="background-color: rgb(165,199,236); ">
-          <h2 style="color: #202077;">Langs</h2>
-          Panel content
+          <h2 style="color: #202077;display:inline" >Langs</h2> 
+            <a href="{% url 'gencoui:module' 'langs' %}" style="display:inline; float:right">
+              <img src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
+            </a>
         </div>
-        <div class="panel-footer" style="background-color: white">Panel footer</div>
-    </div>    
-    <div class="panel panel-default" style="border: none ">
-        <div class="panel-body" style="background-color: rgb(250,221,127); ">
-          <h2 style="color: #202077;">Entities</h2>
-          Panel content
+        <div class="panel-footer" style="background-color: white; font-size:12px">You can define your knowed languages</div>
+    </div>
+  </div>
+  <div class="col-md-4">      
+    <div class="panel panel-default" style="border-width:3px; border-color:#ffc277">        
+        <div class="panel-body" style="background-color:#ffc277">                  
+            <h2 style="color: #202077;display:inline" >Metadata</h2> 
+            <a href="{% url 'gencoui:module' 'entities' %}" style="display:inline; float:right">
+              <img src="{% static 'gencoui/img/rndr/repository.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
+            </a>          
         </div>
-        <div class="panel-footer" style="background-color: white">Panel footer</div>
+        <div class="panel-footer" style="background-color: white; font-size:12px">Define your eschema data</div>
     </div>    
   </div>
   <div class="col-md-2"></div>
 </div>
 <div class="row">
   <div class="col-md-2"></div>
-  <div class="col-md-5"><div class="panel panel-default"><div class="panel-body">{% include "gencoui/rndr_env.html" %}</div></div></div>
-  <div class="col-md-3">
+  <div class="col-md-8">
+    <div class="panel panel-default" style="border-width:3px; border-color:#6ec15e">
+      <div class="panel-body" style="background-color: #6ec15e;">
+        <h2 style="color:#ffffff;display:inline" >Environments</h2> 
+      </div>
+      <div class="panel-body">{% include "gencoui/rndr_env.html" %}
+      </div>
+    </div>
+  </div>
+<!--   <div class="col-md-3">
      <div class="panel panel-default" style="border: none ">
         <div class="panel-body" style="background-color: rgb(159,222,203); ">
           <h2 style="color: #202077;">Langs</h2>
@@ -74,7 +94,7 @@
         </div>
         <div class="panel-footer" style="background-color: white">Panel footer</div>
     </div>
-  </div>
+  </div> -->
   <div class="col-md-2"></div>
 </div>
 

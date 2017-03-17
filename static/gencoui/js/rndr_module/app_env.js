@@ -1,7 +1,8 @@
 angular.module('app_env', ['ngResource','env.services','lang.services'])
 
-.controller('ctrl_env', function($scope, env_lang, env, lang) {
+.controller('ctrl_env', function($scope, env_lang, env, lang, icons) {
 
+    $scope.langIconos =  icons.get({id:'lang'});
     $scope.langs = [];
     $scope.envs=env.query(
                     function(success){

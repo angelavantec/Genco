@@ -6,7 +6,7 @@
 	    		<div class="container-fluid" style="">				   
 				    
 				    <div style="margin-bottom: 15px;">
-				    	<h2 style="display:inline;">Environments </h2>
+				    	<p style="display:inline;">Environment </p>
 					    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#env-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
 								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
 						</a>	
@@ -16,13 +16,14 @@
 				    </div>
 
 
-    				<ul class="nav nav-pills " role="tablist" >
+    				<ul class="nav nav-tabs " role="tablist" >
 						{% verbatim %}
 						<li role="presentation" style="left:8px;" ng-repeat="env in envs" ng-class="{'active':selectedTab == $index}">
 							<a class="rndr-pills" href="#env_panel" aria-controls="gwt" role="tab" ng-click="load_env(env.id_entorno)" data-toggle="tab">
-								<!-- <img src="gencoui/img/devicon/icons/env.icono" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px"> -->
-								<h3 style="display:inline;">{{env.nombre}}</h3>
+								<img src="/static/gencoui/img/devicon/icons/{{env.icono}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px"/>
+								<p style="display:inline;"><b>{{env.nombre}}</b></p>
 							</a>
+
 						</li>
 						{% endverbatim %}	
 					</ul>
@@ -30,14 +31,14 @@
 
 
 
-			<div class="" style="width: 90%;margin-left: 5%;">
+			<div style="width: 90%;height:300px;margin-left: 5%;overflow:auto">
 
-				<div class="panel panel-default" style="" ng-if="envs.length > 0">
+				<div class="panel panel-default" style="border:none" ng-if="envs.length > 0">
 		
-					<div class="panel-body" style="border: 1px solid #e3e3e3;"> 
+					<div class="panel-body" style=""> 
 						<table>
 			                <tr>
-			                    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';"  data-placement="bottom" data-tt="tooltip" title="Design Templates">
+			                 <!--    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';"  data-placement="bottom" data-tt="tooltip" title="Design Templates">
 			                    	<div style="text-align:center">
 			                    		<img src="{% static 'gencoui/img/desing.png' %}" width="32px">
 			                    	</div>
@@ -46,7 +47,7 @@
 			                    	<div style="text-align:center">
 			                    		<img src="{% static 'gencoui/img/build.png' %}" width="32px">
 			                    	</div>
-			                    </td>
+			                    </td> -->
 			                </tr>
 		            	</table>
 						<div class="rndr_env_desc">
@@ -55,9 +56,9 @@
 						</div>					
 
 
-			  			<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px;">
+			  			<div style="padding: 10px;">
 							<!-- <p style="display:inline;">Langs</p> -->
-							<p style="display:inline;"><b>Langs</b></p>
+							<p style="display:inline;">Langs</p>
 				  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
 				        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
 				        	 </button>-->
@@ -112,6 +113,17 @@
           	<div class="modal-body">
    
 			{{ form_add_env }}
+
+				<div>
+			
+					{% verbatim %}							
+						<div class="checkbox" ng-repeat="icon in langIconos">
+
+							<img class="rndr-scale" src="{{icon.upload}}" width="32px" height="32px" ng-click="setEnvIcon()"/>
+							
+						</div>
+					{% endverbatim %}	
+				</div>
 
           	</div>
           	<div class="modal-footer">

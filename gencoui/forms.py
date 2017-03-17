@@ -36,9 +36,10 @@ class GencoTipodatoForm(ModelForm):
 
 
 class GencoEntornoForm(ModelForm):
+
 	class Meta:
 		model = GencoEntorno
-		exclude = [ 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+		exclude = ['id_icono', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']        
 
 	def __init__(self, *args, **kwargs):
 		super(GencoEntornoForm, self).__init__(*args, **kwargs)

@@ -5,6 +5,10 @@ from rest_framework import filters
 from rest_framework import generics
 
 
+class AdminAppIconosFilter(filters.FilterSet):
+    class Meta:
+        model = AdminAppIconos
+        fields = ['tipo']
 
 
 class GencoEntornoLenguajesFilter(filters.FilterSet):

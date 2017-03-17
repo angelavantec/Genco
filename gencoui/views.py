@@ -48,6 +48,27 @@ def current_datetime(request):
     return HttpResponse(html)
 
 
+class AdminAppIconosViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    filter_backends = (filters.DjangoFilterBackend,)    
+    filter_class = AdminAppIconosFilter
+    filter_fields = ('tipo')
+    serializer_class = AdminAppIconosSerializer
+
+    def get_queryset(self):
+        return AdminAppIconos.objects.filter(creado_por=self.request.user.id)
+    
+    def perform_create(self, serializer):
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+
+    # def perform_update(self, serializer):
+    #     serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
+    
+    def perform_destroy(self, instance):
+        obj = get_object_or_404(self.get_queryset(), id_icono=instance.id_icono)
+        instance.delete()
 
 
 class GencoProyectosViewSet(viewsets.ModelViewSet):
@@ -541,7 +562,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
     # }
 
     if id_module == 'env':
-        context = {'form_add_env': GencoEntornoForm, 'user': request.user}    
+        context = {'form_add_env': GencoEntornoForm, 'user': request.user}
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
         obj = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)

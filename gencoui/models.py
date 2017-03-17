@@ -9,11 +9,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Manager to filter user in snippets.
-class UserObjects(models.Manager):
-    def get_queryset(self, user):
-        return super(UserObjects, self).get_queryset().filter(creado_por=user.username)
-
 
 class AdminLenguajeProcesador(models.Model):
     id_lenguajeprocesador = models.AutoField(primary_key=True)
@@ -67,6 +62,19 @@ class AdminProyectoAlcance(models.Model):
     class Meta:
         managed = False
         db_table = 'admin_proyecto_alcance'
+
+
+class AdminAppIconos(models.Model):
+    id_icono = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    tipo = models.CharField(max_length=45)
+    creado_por = models.IntegerField()
+    fecha_creacion = models.DateTimeField()    
+    upload = models.FileField(upload_to='media')
+
+    class Meta:
+        managed = False        
+        db_table = 'admin_app_iconos'
 
 
 class AuthGroup(models.Model):
@@ -231,9 +239,6 @@ class GencoDirectorioElementos(models.Model):
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
 
-    objects = models.Manager() # The default manager.
-    #user_objects = UserObjects()
-
     class Meta:
         managed = False
         db_table = 'genco_directorio_elementos'
@@ -251,9 +256,6 @@ class GencoDirectorios(models.Model):
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
-    
-    objects = models.Manager() # The default manager.
-    user_objects = UserObjects()
 
     class Meta:
         managed = False
@@ -324,7 +326,7 @@ class GencoEntorno(models.Model):
     descripcion = models.CharField(max_length=100, blank=True, null=True)
     id_grupo = models.ForeignKey('GencoGrupo', models.DO_NOTHING, db_column='id_grupo')
     version = models.CharField(max_length=10, blank=True, null=True)
-    icono = models.CharField(max_length=50, blank=True, null=True)
+    id_icono = models.ForeignKey(AdminAppIconos, models.DO_NOTHING, db_column='id_icono')
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
@@ -370,6 +372,7 @@ class GencoLenguajes(models.Model):
     nombre = models.CharField(max_length=30)
     version = models.CharField(max_length=10)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
+    id_icono = models.ForeignKey(AdminAppIconos, models.DO_NOTHING, db_column='id_icono')
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()

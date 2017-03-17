@@ -7,12 +7,14 @@ angular.module('app_entities', ['ngResource','repository.services'])
   $scope.GencoRepositorio;
   $scope.nodeRepository = [];
   $scope.entity_selected;
+  $scope.repo_selected;
   $scope.GencoEntidad = [];
   $scope.GencoEntidadDefinicion = new entitydef();
   $scope.GencoEntidadDefinicionEdit = new entitydef();
   $scope.GencoEntidadFields = [];
   $scope.pk_fields = [];
   $scope.field_selected;
+  $scope.repoEntities = [];
 
 
   $scope.repository_selected = {
@@ -113,9 +115,9 @@ angular.module('app_entities', ['ngResource','repository.services'])
                           $scope.repository_selected.nombre = obj.text;
                           $scope.repository_selected.id = obj.id;
                           $scope.new_entity($scope.repository_selected.id);
+                          $scope.repo_selected = obj;
                           //Hago que la interfaz refresque el titulo con el valor de component_selected
-                          //angular.element($("#ctrl_entities")).scope().$apply();
-                          $('#entity-create-modal').modal('show');
+                          //angular.element($("#ctrl_entities")).scope().$apply();                         
 
                         }
                         
@@ -148,19 +150,26 @@ angular.module('app_entities', ['ngResource','repository.services'])
     }
     });
 
-   $('#jstree').bind("dblclick.jstree", function (event) {
-        event.preventDefault();
-        console.log('ress'); 
-        var node = $(event.target).closest("li");
-       // var data = node.data;
+   $('#jstree').bind("dblclick.jstree", function (e) {
+        e.preventDefault();
+        var tree = $(this).jstree(); 
+        var obj = tree.get_node(e.target); 
+        var objParent = tree.get_node(''+obj.parent);
 
-        var renderas =node.data("renderas");
-        var id =node.data("renderid");
-       // Do my action
-       
+        var renderas =obj.li_attr['data-renderas'];
+
         if(renderas === 'entity'){
-         console.log(node.text()); 
-         $scope.load_entity(id.toString());
+           $scope.entity_selected.id = obj.li_attr['data-renderid'];
+           $scope.node_item_selected = obj;         
+           $scope.load_entity($scope.entity_selected.id);
+
+           if($scope.repo_selected == undefined || $scope.repo_selected == null ){
+              $scope.load_entities(objParent.id);
+           }else if($scope.repo_selected.id != objParent.id){
+              $scope.load_entities(objParent.id);
+           }
+           $scope.repo_selected = objParent;
+             
         }
        
     });
@@ -182,70 +191,77 @@ angular.module('app_entities', ['ngResource','repository.services'])
                         });
   }
 
-
-  $scope.createTreeModel = function(){
-    counter = 0;
-    idRow = 0;
-    // proccess = [];
-    //$scope.nodeRepository = [];
-    angular.forEach($scope.repositories, function(value, key){
-
-      // if(counter == 0 || counter%2==0){
-      if(counter == 0 ){
-        idRow++;
-        $( "#rndr" ).append( "<div id='row_"+ idRow +"'  style='margin-bottom: 20px; width: 90%'>");
-                
-      }
-      //counter++;    
-      
-      $( "#row_"+idRow ).append("<div><div id='repo_"+ value.id_repositorio +"'></div></div>" );  
-      
-      // proccess.push(1);
-      entity_repo.query({id_repositorio:value.id_repositorio}, function(success){
-          // proccess.pop();
-          add_entities(null, value, success);
+  $scope.load_entities = function(id_repositorio){
+      entity_repo.query({id_repositorio:id_repositorio}, function(success){
+          $scope.repoEntities = success;
       },function(error){
-          // proccess.pop();
-          add_entities(null, value, null);  
       });
-
-    });
-
-
-
   }
 
-function add_entities(proccess, repository, entidades){
+
+  // $scope.createTreeModel = function(){
+  //   counter = 0;
+  //   idRow = 0;
+  //   // proccess = [];
+  //   //$scope.nodeRepository = [];
+  //   angular.forEach($scope.repositories, function(value, key){
+
+  //     // if(counter == 0 || counter%2==0){
+  //     if(counter == 0 ){
+  //       idRow++;
+  //       $( "#rndr" ).append( "<div id='row_"+ idRow +"'  style='margin-bottom: 20px; width: 90%'>");
+                
+  //     }
+  //     //counter++;    
+      
+  //     $( "#row_"+idRow ).append("<div><div id='repo_"+ value.id_repositorio +"'></div></div>" );  
+      
+  //     // proccess.push(1);
+  //     entity_repo.query({id_repositorio:value.id_repositorio}, function(success){
+  //         // proccess.pop();
+  //         add_entities(null, value, success);
+  //     },function(error){
+  //         // proccess.pop();
+  //         add_entities(null, value, null);  
+  //     });
+
+  //   });
+
+
+
+  // }
+
+// function add_entities(proccess, repository, entidades){
     
-    var nodeEntidades=[];
-    $scope.nodeRepository=[];
+//     var nodeEntidades=[];
+//     $scope.nodeRepository=[];
     
-    if(entidades != null){
+//     if(entidades != null){
 
-        angular.forEach(entidades, function(value, key){    
-            nodeEntidades.push({'parent': repository.id_repositorio, 'text':value.nombre, 'icon':"glyphicon glyphicon-list-alt", 'li_attr':{'data-renderas':'archive', 'data-renderid': value.id_entidad}});
+//         angular.forEach(entidades, function(value, key){    
+//             nodeEntidades.push({'parent': repository.id_repositorio, 'text':value.nombre, 'icon':"glyphicon glyphicon-list-alt", 'li_attr':{'data-renderas':'archive', 'data-renderid': value.id_entidad}});
 
-        });
+//         });
 
-      $scope.nodeRepository.push({'id': repository.id_repositorio,'text':repository.nombre, 'icon':"/static/gencoui/img/rndr/metadata18.png", 'children':nodeEntidades, 'li_attr':{'data-renderas':'repository'}});
-      console.log(nodeEntidades);
+//       $scope.nodeRepository.push({'id': repository.id_repositorio,'text':repository.nombre, 'icon':"/static/gencoui/img/rndr/metadata18.png", 'children':nodeEntidades, 'li_attr':{'data-renderas':'repository'}});
+//       console.log(nodeEntidades);
 
-    }
+//     }
 
-          //$.jstree.defaults._themes = "default-dark";
-      $("#repo_" + repository.id_repositorio).jstree('destroy');
-      $scope.load("#repo_" + repository.id_repositorio);
-      $('#repo_'+repository.id_repositorio).jstree(true).settings.core.data = $scope.nodeRepository;
-      $('#repo_'+repository.id_repositorio).jstree(true).refresh();
-
-
-        // $("#jstree").jstree('destroy');
-        // $scope.load();
-        // $('#jstree').jstree(true).settings.core.data = $scope.nodeComponente;
-        // $('#jstree').jstree(true).refresh();
+//           //$.jstree.defaults._themes = "default-dark";
+//       $("#repo_" + repository.id_repositorio).jstree('destroy');
+//       $scope.load("#repo_" + repository.id_repositorio);
+//       $('#repo_'+repository.id_repositorio).jstree(true).settings.core.data = $scope.nodeRepository;
+//       $('#repo_'+repository.id_repositorio).jstree(true).refresh();
 
 
-}
+//         // $("#jstree").jstree('destroy');
+//         // $scope.load();
+//         // $('#jstree').jstree(true).settings.core.data = $scope.nodeComponente;
+//         // $('#jstree').jstree(true).refresh();
+
+
+// }
 
 
 // $scope.loadx = function(id_repositorio){
@@ -601,7 +617,8 @@ function add_entities(proccess, repository, entidades){
 
         $scope.GencoEntidad= new entity();
         $scope.GencoEntidad.id_repositorio = id_repositorio;
-        console.log('new');
+        angular.element($("#ctrl_entities")).scope().$apply();
+        $('#entity-create-modal').modal('show');
 
     } 
 
@@ -612,13 +629,14 @@ function add_entities(proccess, repository, entidades){
             var nodeDef = {'id': 'entity' + success.id_entidad, 
                             'parent': success.id_repositorio, 
                             'text': success.nombre, 
-                            'icon':"glyphicon glyphicon-folder-open", 
+                            'icon':"glyphicon glyphicon-file", 
                             'li_attr':{'data-renderas':"entity",
                                         'data-renderid': success.id_entidad, 
                                         'data-rendername':success.nombre
                                     }
                         }
             $scope.addTreeNode($scope.repository_selected, nodeDef, $('#jstree').jstree(true));
+            $scope.load_entities($scope.repo_selected.id);
         },function(error){
             $scope.showMessage(parseErrorMessage(error));
         }); 
