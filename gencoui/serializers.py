@@ -111,6 +111,7 @@ class GencoProyectosSerializer(serializers.ModelSerializer):
 
 
 class GencoEntornoSerializer(serializers.ModelSerializer):
+    icon= AdminAppIconosSerializer(many=False, source="id_icono", read_only=True)
 
     class Meta:
         model = GencoEntorno

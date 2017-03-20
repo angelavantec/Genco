@@ -20,7 +20,7 @@
 						{% verbatim %}
 						<li role="presentation" style="left:8px;" ng-repeat="env in envs" ng-class="{'active':selectedTab == $index}">
 							<a class="rndr-pills" href="#env_panel" aria-controls="gwt" role="tab" ng-click="load_env(env.id_entorno)" data-toggle="tab">
-								<img src="/static/gencoui/img/devicon/icons/{{env.icono}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px"/>
+								<img src="{{env.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px"/>
 								<p style="display:inline;"><b>{{env.nombre}}</b></p>
 							</a>
 
@@ -114,14 +114,18 @@
    
 			{{ form_add_env }}
 
+				<img id="imgEnvIcon" src="/static/gencoui/img/rndr/noimage.jpg" width="32px" height="32px" style="margin: 8px"/>
+
 				<div>
 			
-					{% verbatim %}							
-						<div class="checkbox" ng-repeat="icon in langIconos">
+					{% verbatim %}
+					<div class="modal-footer">							
+						<div class="checkbox" ng-repeat="icon in langIconos" style="display:inline;margin: 8px">
 
-							<img class="rndr-scale" src="{{icon.upload}}" width="32px" height="32px" ng-click="setEnvIcon()"/>
+							<img class="rndr-scale" src="{{icon.upload}}" width="32px" height="32px" ng-click="setEnvIcon(icon)"/>
 							
 						</div>
+					</div>	
 					{% endverbatim %}	
 				</div>
 

@@ -2,7 +2,8 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
 
 .controller('ctrl_env', function($scope, env_lang, env, lang, icons) {
 
-    $scope.langIconos =  icons.get({id:'lang'});
+    $scope.langIconos =  icons.get({id:'env'});
+    $scope.iconSelected;
     $scope.langs = [];
     $scope.envs=env.query(
                     function(success){
@@ -143,8 +144,6 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     }
 
 
-
-
     function add_lang_validator(proccess, id_env, callback){
         
         console.log("longitud " +proccess.length);
@@ -157,6 +156,12 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
 
         }
 
+    }
+
+    $scope.setEnvIcon = function (icon) {
+        $scope.GencoEntorno.id_icono = icon.id_icon;
+        console.log(icon);
+        $('#imgEnvIcon').attr('src',icon.upload);
     }
 
 
