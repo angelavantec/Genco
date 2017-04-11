@@ -3,101 +3,119 @@
 <div id="ctrl_env" ng-app="app_env" ng-controller="ctrl_env">
 			    
 
-	    		<div class="container-fluid" style="">				   
+	    		<div class="container-fluid" style="">
+					<div class="row">
+						<div class="col-xs-12">
+							<div style="margin-bottom: 15px;">
+						    	<p style="display:inline;">Environment </p>
+							    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#env-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
+										<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+								</a>	
+						    </div>	
+						</div>						
+					</div>
+					<div class="row">
+						<div class="col-xs-12 col-sm-6">
+							
+							<div id="jstreeEnvs">
+				    		</div>
+
+
+		    				<ul class="nav nav-tabs " role="tablist" >
+								{% verbatim %}
+								<li role="presentation" style="left:8px;" ng-repeat="env in envs" ng-class="{'active':selectedTab == $index}">
+									<a class="rndr-pills" href="#env_panel" aria-controls="gwt" role="tab" ng-click="load_env(env.id_entorno)" data-toggle="tab">
+										<img src="{{env.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px"/>
+										<p style="display:inline;"><b>{{env.nombre}}</b></p>
+									</a>
+
+								</li>
+								{% endverbatim %}	
+							</ul>
+							
+						</div>
+						<div class="col-xs-12 col-sm-6">
+							<div style="width: 90%;height:300px;margin-left: 5%;overflow:auto">
+
+								<div class="panel panel-default" style="border:none" ng-if="envs.length > 0">
+						
+									<div class="panel-body" style=""> 
+										<table>
+							                <tr>
+							                 <!--    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';"  data-placement="bottom" data-tt="tooltip" title="Design Templates">
+							                    	<div style="text-align:center">
+							                    		<img src="{% static 'gencoui/img/desing.png' %}" width="32px">
+							                    	</div>
+							                    </td>
+							                    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';" data-placement="bottom" data-tt="tooltip" title="Build Source">
+							                    	<div style="text-align:center">
+							                    		<img src="{% static 'gencoui/img/build.png' %}" width="32px">
+							                    	</div>
+							                    </td> -->
+							                </tr>
+						            	</table>
+										<div class="rndr_env_desc">
+											<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
+											<p style="font-size:14px" ng-bind="descripcion"></p>
+										</div>					
+
+
+							  			<div style="padding: 10px;">
+											<!-- <p style="display:inline;">Langs</p> -->
+											<p style="display:inline;">Langs</p>
+								  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
+								        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
+								        	 </button>-->
+
+								        	<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#lang-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Language" ng-click="all_lang_init()">
+												<span class="glyphicon btn-glyphicon glyphicon-check img-circle" ></span>					
+											</a>
+
+
+											<table class="table table-bordered" style="margin-top: 20px;">
+											  	<!-- <thead>
+											    	<tr style="margin-top:10px">
+											      		<th></th>
+											    	</tr>
+											  	</thead> -->
+											  	<tbody >
+											  		{% verbatim %}
+													<tr  ng-repeat="lang in langs">
+											      		<td>{{lang.lang.nombre}}</td>
+											      		<!-- <td  width="15px">
+											      			<a href="#" class="list-group-item list-group-item-success">Types</a>	
+											      		</td> -->
+											      		<!-- <td width="15px">
+															<a class="btn icon-btn btn-default" href="#">
+															<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
+															</a>
+											      		</td> -->
+											      	</tr>
+											      	{% endverbatim %}	
+										  	  	</tbody>
+											</table> 
+
+										</div>						
+									</div>	
+
+								</div>			
+							 
+											    
+							</div>
+						</div>
+					</div>
+
+
+
 				    
-				    <div style="margin-bottom: 15px;">
-				    	<p style="display:inline;">Environment </p>
-					    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#env-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
-								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
-						</a>	
-				    </div>	
-
-  				    <div id="jstreeEnvs">
-				    </div>
 
 
-    				<ul class="nav nav-tabs " role="tablist" >
-						{% verbatim %}
-						<li role="presentation" style="left:8px;" ng-repeat="env in envs" ng-class="{'active':selectedTab == $index}">
-							<a class="rndr-pills" href="#env_panel" aria-controls="gwt" role="tab" ng-click="load_env(env.id_entorno)" data-toggle="tab">
-								<img src="{{env.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px"/>
-								<p style="display:inline;"><b>{{env.nombre}}</b></p>
-							</a>
 
-						</li>
-						{% endverbatim %}	
-					</ul>
 				</div>   
 
 
 
-			<div style="width: 90%;height:300px;margin-left: 5%;overflow:auto">
 
-				<div class="panel panel-default" style="border:none" ng-if="envs.length > 0">
-		
-					<div class="panel-body" style=""> 
-						<table>
-			                <tr>
-			                 <!--    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';"  data-placement="bottom" data-tt="tooltip" title="Design Templates">
-			                    	<div style="text-align:center">
-			                    		<img src="{% static 'gencoui/img/desing.png' %}" width="32px">
-			                    	</div>
-			                    </td>
-			                    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';" data-placement="bottom" data-tt="tooltip" title="Build Source">
-			                    	<div style="text-align:center">
-			                    		<img src="{% static 'gencoui/img/build.png' %}" width="32px">
-			                    	</div>
-			                    </td> -->
-			                </tr>
-		            	</table>
-						<div class="rndr_env_desc">
-							<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
-							<p style="font-size:14px" ng-bind="descripcion"></p>
-						</div>					
-
-
-			  			<div style="padding: 10px;">
-							<!-- <p style="display:inline;">Langs</p> -->
-							<p style="display:inline;">Langs</p>
-				  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
-				        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
-				        	 </button>-->
-
-				        	<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#lang-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Language" ng-click="all_lang_init()">
-								<span class="glyphicon btn-glyphicon glyphicon-check img-circle" ></span>					
-							</a>
-
-
-							<table class="table table-bordered" style="margin-top: 20px;">
-							  	<!-- <thead>
-							    	<tr style="margin-top:10px">
-							      		<th></th>
-							    	</tr>
-							  	</thead> -->
-							  	<tbody >
-							  		{% verbatim %}
-									<tr  ng-repeat="lang in langs">
-							      		<td>{{lang.lang.nombre}}</td>
-							      		<!-- <td  width="15px">
-							      			<a href="#" class="list-group-item list-group-item-success">Types</a>	
-							      		</td> -->
-							      		<!-- <td width="15px">
-											<a class="btn icon-btn btn-default" href="#">
-											<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
-											</a>
-							      		</td> -->
-							      	</tr>
-							      	{% endverbatim %}	
-						  	  	</tbody>
-							</table> 
-
-						</div>						
-					</div>	
-
-				</div>			
-		 
-					    
-	</div>
 
 <!-- Modal Environments -->
 <div class="modal fade" id="env-add-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
