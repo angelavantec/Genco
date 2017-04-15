@@ -1,27 +1,69 @@
 {% load staticfiles %}
+{% load static %}
 {% block content %}
 <div id="ctrl_env" ng-app="app_env" ng-controller="ctrl_env">
 			    
 
-	    		<div class="container-fluid" style="">
+	    		<!-- <div class="container-fluid" style=""> -->
 					<div class="row">
 						<div class="col-xs-12">
-							<div style="margin-bottom: 15px;">
-						    	<p style="display:inline;">Environment </p>
-							    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#env-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
-										<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
-								</a>	
-						    </div>	
+								
 						</div>						
 					</div>
 					<div class="row">
-						<div class="col-xs-12 col-sm-6">
+						<div class="col-xs-12 col-sm-5">
+						<div style="padding-left: 5%; padding-right:15px; background-color:#eee; height:300px;">
 							
 							<div id="jstreeEnvs">
 				    		</div>
+				    		<div style="margin-bottom: 15px; padding-top:10px">
+						    	<p style="display:inline">Add </p>
+							    <a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#env-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
+										<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+								</a>	
+						    </div>
 
+				    		<table class="table table-condensed table-hover ">
+							  <!-- <thead>
+							    <tr>
+							      <th>#</th>
+							      <th>Column heading</th>
+							      <th>Column heading</th>
+							      <th>Column heading</th>
+							    </tr>
+							  </thead> -->
+							  <tbody>
+							  	{% verbatim %}
 
-		    				<ul class="nav nav-tabs " role="tablist" >
+							    <tr ng-repeat="env in envs">
+							      <td ng-click="load_env(env.id_entorno)">
+							      	
+							      	<img ng-src="{{env.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px"/>
+						      		
+								    <p ng-if="$odd" style="color:#6791bb;display:inline">{{env.nombre}}</p>
+								   	<p ng-if="$even" style="color:#8c8c8c;display:inline">{{env.nombre}}</p>
+							      </td>
+							      <td width="40px">
+							      	<div class="dropdown">
+									  <button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									    Options
+									    <span class="caret"></span>
+									  </button>
+									  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+									    <li><a href="#">Edit</a></li>
+									    <li><a href="#">Design</a></li>
+									    <li><a href="#">Build</a></li>
+									    <li role="separator" class="divider"></li>
+									    <li><a href="#">Remove</a></li>
+									  </ul>
+									</div>
+							      </td>
+							    </tr>
+							    {% endverbatim %}
+						  	  </tbody>
+							</table>
+
+		    				<!-- <ul class="nav nav-tabs " role="tablist" >
 								{% verbatim %}
 								<li role="presentation" style="left:8px;" ng-repeat="env in envs" ng-class="{'active':selectedTab == $index}">
 									<a class="rndr-pills" href="#env_panel" aria-controls="gwt" role="tab" ng-click="load_env(env.id_entorno)" data-toggle="tab">
@@ -31,15 +73,30 @@
 
 								</li>
 								{% endverbatim %}	
-							</ul>
+							</ul -->
 							
+						</div>	
 						</div>
-						<div class="col-xs-12 col-sm-6">
-							<div style="width: 90%;height:300px;margin-left: 5%;overflow:auto">
+						<div class="col-xs-12 col-sm-7" style="">
+							<div style="height:300px;padding-top: 15px; padding-right: 15px; overflow:auto;">
 
-								<div class="panel panel-default" style="border:none" ng-if="envs.length > 0">
+								<div class="panel panel-default" style="border:none; background-color:transparent" ng-if="envs.length > 0">
 						
-									<div class="panel-body" style=""> 
+									<div class="" style=""> 
+										{% verbatim %}
+										<img ng-src="{{icono}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px"/>
+										{% endverbatim %}
+										<div class="rndr_title" style="display:inline">
+											<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
+											<p style="font-size:14px; display:inline" ng-bind="nombre"></p>
+										</div>										
+										<img class="rndr-scale" src="{% static 'gencoui/img/rndr/build.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline; float: right"></img>
+										<img class="rndr-scale" src="{% static 'gencoui/img/rndr/design.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline; float: right"></img>
+										<div class="rndr_env_desc">
+
+											<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
+											<p style="font-size:14px" ng-bind="descripcion"></p>
+										</div>
 										<table>
 							                <tr>
 							                 <!--    <td width="75px" height="60px" onmouseover="this.style.background='rgba(33, 125, 187, 0.14)';" onmouseout="this.style.background='transparent';"  data-placement="bottom" data-tt="tooltip" title="Design Templates">
@@ -54,12 +111,7 @@
 							                    </td> -->
 							                </tr>
 						            	</table>
-										<div class="rndr_env_desc">
-											<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
-											<p style="font-size:14px" ng-bind="descripcion"></p>
-										</div>					
-
-
+										
 							  			<div style="padding: 10px;">
 											<!-- <p style="display:inline;">Langs</p> -->
 											<p style="display:inline;">Langs</p>
@@ -111,7 +163,7 @@
 
 
 
-				</div>   
+				<!-- </div>    -->
 
 
 
@@ -140,7 +192,7 @@
 					<div class="modal-footer">							
 						<div class="checkbox" ng-repeat="icon in langIconos" style="display:inline;margin: 8px">
 
-							<img class="rndr-scale" src="{{icon.upload}}" width="32px" height="32px" ng-click="setEnvIcon(icon)"/>
+							<img class="rndr-scale" ng-src="{{icon.upload}}" width="32px" height="32px" ng-click="setEnvIcon(icon)"/>
 							
 						</div>
 					</div>	

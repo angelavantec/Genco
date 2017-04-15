@@ -279,3 +279,10 @@
 		    color: #217dbb; 
 		    text-decoration: underline;
 		}
+
+		.rndr-env-odd {
+		  color: red;
+		}
+		.rndr-env-even {
+		  color: blue;
+		}

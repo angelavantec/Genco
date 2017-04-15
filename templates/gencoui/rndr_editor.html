@@ -1,5 +1,6 @@
 {% extends "admin/base.html" %}
 {% load staticfiles %}
+{% load static %}
 {% block title %}Render Developer{% endblock %}
 
 
@@ -169,9 +170,8 @@
 
 	    		<div class="container-fluid" style="margin-top:70px;">
 					    <div class="well well-sm">
-					    	
-
-							<img src="{% static 'gencoui/img/devicon/icons/'|add:entorno.icono %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px">
+					    						    	
+							<img src="{% get_media_prefix %}{{icon}}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px">
 							{{entorno.nombre}}</img>
 							
 

@@ -1,15 +1,4 @@
 env/
 static/gencoui/img/devicon/
 
-
-user_templates/
-*.tmpl
-
-genco/
-*.pyc
-
-gencoui/
-*.pyc
-
-login/
 *.pyc

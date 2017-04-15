@@ -29,6 +29,13 @@
 
     $('#example').popover('show');
 
+    function toggleMenu() {
+      console.log($('#menu').is(':visible'));
+      $( "#menu" ).toggle("fast", function(){
+            console.log('termina');
+      });
+    }; 
+
   </script>  
 {% endblock %}
 
@@ -38,99 +45,94 @@
 
 
 {% block content %}
+
 <div  id="ctrl_entities" style="width: 98%">
 
   <div class"container-fluid">
-    <div class="row" style="margin-top:100px">
-      <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <div class="panel panel-default">
-          <div class="panel-body">{% include "gencoui/rndr_builds_search.html" %}</div>
-        </div>
-      </div>
-      <div class="col-md-2"></div>
-    </div>
+    
+      <div class="row">    
+      <div class="col-md-1">
+      </div>  
+      <div class="col-md-3">
+          <div class"container-fluid">
+            <div class="row" style="margin-top:100px">
+              
+              <!-- <div class="col-xs-1"></div> -->
+              <div class="col-xs-12">
+                <div class="panel panel-default" style="border-width:1px; border-color:rgb(164,200,236);box-shadow: 5px 5px 5px #3a3838">
+                    <div class="panel-body" style="background-color: rgb(165,199,236); ">
+                      <h2 style="color: #202077;display:inline" >Langs</h2> 
+                        <a href="{% url 'gencoui:module' 'langs' %}" style="display:inline; float:right">
+                          <img class="rndr-scale" src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
+                        </a>
+                    </div>
+                    <div class="panel-footer" style="font-size:12px; background-color:#ffffff">You can define your knowed languages</div>
+                </div>
+              </div>
+              <div class="col-xs-12">      
+                <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow: 5px 5px 5px #3a3838">        
+                    <div class="panel-body" style="background-color:rgb(251,221,127)">                  
+                        <h2 style="color: #202077;display:inline" >Metadata</h2> 
+                        <a href="{% url 'gencoui:module' 'entities' %}" style="display:inline; float:right">
+                          <img class="rndr-scale" src="{% static 'gencoui/img/rndr/repository.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
+                        </a>          
+                    </div>
+                    <div class="panel-footer" style="font-size:12px; background-color:#ffffff">Define your eschema data</div>
+                </div>    
+              </div>
+              <!-- <div class="col-md-1"></div> -->
+              <div class="col-xs-12">
+                <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow: 5px 5px 5px #3a3838">
+                    <div class="panel-header">
+                      <img src="{% static 'gencoui/img/rndr/search.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline; float: right"></img>
+                    </div>
+                  <div class="panel-body">{% include "gencoui/rndr_builds_search.html" %}</div>
+                </div>
+              </div>
 
-    <div class="row">
-      <div class="col-md-2"></div>
-
-      <div class="col-md-4">
-        <div class="panel panel-default" style="border-width:1px; border-color:rgb(165,199,236);box-shadow: 5px 5px 5px #3a3838">
-            <div class="panel-body" style="background-color: rgb(165,199,236); ">
-              <h2 style="color: #202077;display:inline" >Langs</h2> 
-                <a href="{% url 'gencoui:module' 'langs' %}" style="display:inline; float:right">
-                  <img class="rndr-scale" src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
-                </a>
-            </div>
-            <div class="panel-footer" style="font-size:12px">You can define your knowed languages</div>
-        </div>
-      </div>
-      <div class="col-md-4">      
-        <div class="panel panel-default" style="border-width:1px; border-color:#313b46; box-shadow: 5px 5px 5px #3a3838">        
-            <div class="panel-body" style="background-color:#313b46">                  
-                <h2 style="color: #ffffff;display:inline" >Metadata</h2> 
-                <a href="{% url 'gencoui:module' 'entities' %}" style="display:inline; float:right">
-                  <img class="rndr-scale" src="{% static 'gencoui/img/rndr/repository.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
-                </a>          
-            </div>
-            <div class="panel-footer" style="font-size:12px">Define your eschema data</div>
-        </div>    
-      </div>
-      <div class="col-md-2"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-2"></div>
-
-      <div class="col-md-4">
-        <div class="panel panel-default" style="border-width:1px; border-color:#f79534">
-            <div class="panel-body" style="background-color: #f79534;">
-              <h2 style="color: #202077;display:inline" >Environments</h2> 
-                <a href="{% url 'gencoui:module' 'langs' %}" style="display:inline; float:right">
-                  <img class="rndr-scale" src="{% static 'gencoui/img/rndr/environment.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
-                </a>
-            </div>
-            <div class="panel-footer" style="font-size:12px">Define a stack of languages</div>
-        </div>
-      </div>
-      <div class="col-md-4">      
-        <div class="panel panel-default" style="border-width:1px; border-color:#6ec15e">        
-            <div class="panel-body" style="background-color:#6ec15e">                  
-                <h2 style="color: #202077;display:inline" >Metadata</h2> 
-                <a href="{% url 'gencoui:module' 'entities' %}" style="display:inline; float:right">
-                  <img class="rndr-scale" src="{% static 'gencoui/img/rndr/environment.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
-                </a>          
-            </div>
-            <div class="panel-footer" style="font-size:12px">Define your eschema data</div>
-        </div>    
-      </div>
-      <div class="col-md-2"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-8">
-        <div class="panel panel-default" style="border-width:1px; border-color:#49c1ab;box-shadow: 5px 5px 5px #3a3838">
-          <div class="panel-body" style="background-color: rgb(160,223,204); text-align:center">
-            <img class="rndr-scale" src="{% static 'gencoui/img/rndr/environment.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="64px" height="64px"></img>
-            <h2 style="color: #202077" >Environments</h2>
-            <p style="font-size:14px">Define a stack of languajes</p>
+            </div>        
           </div>
-          <div class="panel-body">{% include "gencoui/rndr_env.html" %}
-          </div>
-        </div>
-      </div>
-    <!--   <div class="col-md-3">
-         <div class="panel panel-default" style="border: none ">
-            <div class="panel-body" style="background-color: rgb(159,222,203); ">
-              <h2 style="color: #202077;">Langs</h2>
-              Panel content
+      </div>                
+      <!-- </div>
+      <div class="row"> -->
+      <div class="col-md-8">
+          <div class"container-fluid">
+
+          <div class="row" style="margin-top:100px">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+              <div class="panel panel-default" style="border-width:1px; border-color:#49c1ab;box-shadow: 5px 5px 5px #3a3838">
+                <div class="panel-body" style="background-color: rgb(160,223,204); text-align:center">
+                  <img src="{% static 'gencoui/img/rndr/environment.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="64px" height="64px"></img>
+                  <h2 style="color: #202077">Environments</h2>
+                  <p style="font-size:14px">Define a stack of languajes</p>
+                </div>
+                <div class="">{% include "gencoui/rndr_env.html" %}
+                </div>
+              </div>
             </div>
-            <div class="panel-footer" style="background-color: white">Panel footer</div>
+          <!--   <div class="col-md-3">
+               <div class="panel panel-default" style="border: none ">
+                  <div class="panel-body" style="background-color: rgb(159,222,203); ">
+                    <h2 style="color: #202077;">Langs</h2>
+                    Panel content
+                  </div>
+                  <div class="panel-footer" style="background-color: white">Panel footer</div>
+              </div>
+            </div> -->
+            <div class="col-md-1"></div>
+          </div>      
         </div>
-      </div> -->
-      <div class="col-md-2"></div>
-    </div>
+        </div>
+      
+          
+
+      </div>  
+
+
+    
+
+    
   </div>  
 </div>
 {% endblock %}

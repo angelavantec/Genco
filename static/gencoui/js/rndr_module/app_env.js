@@ -19,6 +19,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     $scope.tmpGencoEntorno;
     $scope.descripcion = '';
     $scope.nombre = '';
+    $scope.icono = '';
 
     $scope.all_langs=lang.query();
 
@@ -31,6 +32,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
         data.$promise.then(function(data){
             $scope.descripcion = data.descripcion;
             $scope.nombre = data.nombre;
+            $scope.icono = data.icon.upload;
         });
 
         $scope.tmpGencoEntorno =  $scope.GencoEntorno;
@@ -40,7 +42,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
 
     $scope.save = function(){
         $scope.GencoEntorno.$save(function(){   
-            $scope.envs=env.query();         
+            $scope.envs=env.query();
             $('#env-add-modal').modal('hide')
         });
         
@@ -159,7 +161,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     }
 
     $scope.setEnvIcon = function (icon) {
-        $scope.GencoEntorno.id_icono = icon.id_icon;
+        $scope.GencoEntorno.id_icono = icon.id_icono;
         console.log(icon);
         $('#imgEnvIcon').attr('src',icon.upload);
     }

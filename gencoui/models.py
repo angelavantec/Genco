@@ -70,7 +70,7 @@ class AdminAppIconos(models.Model):
     tipo = models.CharField(max_length=45)
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()    
-    upload = models.FileField(upload_to='media')
+    upload = models.FileField(upload_to='icons')
 
     class Meta:
         managed = False        

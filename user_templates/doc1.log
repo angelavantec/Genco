@@ -3,7 +3,7 @@
 2016-08-23 17:03:01,470 | WARN | SimpleSaxErrorHandler.java 48 | Ignored XML validation warning
 org.xml.sax.SAXParseException; lineNumber: 4; columnNumber: 224; schema_reference.4: Failed to read schema document 'http://www.springframework.org/schema/beans/spring-beans.xsd', because 1) could not find the document; 2) the document could not be read; 3) the root element of the document is not <xsd:schema>.
 	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(Unknown Source)
-	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.warning(Unknown Source)
+	at com.sun.org.apache.xerces.internal   .util.ErrorHandlerWrapper.warning(Unknown Source)
 	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
 	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(Unknown Source)
 	at com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler.reportSchemaErr(Unknown Source)

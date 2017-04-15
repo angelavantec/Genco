@@ -566,7 +566,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
         obj = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
-        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': obj}    
+        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': obj, 'icon': obj.id_icono.upload}    
         return render(request,'gencoui/rndr_editor.html',context)
     elif id_module == 'entities':
         context = {'form_add_repository': GencoRepositorioForm, 
