@@ -69,8 +69,23 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
  
 
     $scope.new = function(){
+        console.log('nevo');
         $scope.tmpGencoEntorno =  $scope.GencoEntorno;
-        $scope.GencoEntorno = new env();     
+        $scope.GencoEntorno = new env();
+        
+        
+        new Promise(
+            function(resolve, reject) {
+                $('#env-add-modal').modal('show');
+                console.log('resolve');
+                resolve('ok');
+                //setInterval(function(){ resolve('ok'); }, 1000);
+                
+            }
+        ).then (function (resolve) {
+            console.log('focus ' + resolve );
+            $('#id_nombre').focus();
+        });
     }
 
     $scope.edit = function(){

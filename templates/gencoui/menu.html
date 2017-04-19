@@ -59,7 +59,7 @@
               
               <!-- <div class="col-xs-1"></div> -->
               <div class="col-xs-12">
-                <div class="panel panel-default" style="border-width:1px; border-color:rgb(164,200,236);box-shadow: 5px 5px 5px #3a3838">
+                <div class="panel panel-default" style="border-width:1px; border-color:rgb(164,200,236);box-shadow: 5px 5px 5px #3a3838; margin-bottom:50px">
                     <div class="panel-body" style="background-color: rgb(165,199,236); ">
                       <h2 style="color: #202077;display:inline" >Langs</h2> 
                         <a href="{% url 'gencoui:module' 'langs' %}" style="display:inline; float:right">
@@ -70,7 +70,7 @@
                 </div>
               </div>
               <div class="col-xs-12">      
-                <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow: 5px 5px 5px #3a3838">        
+                <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow: 5px 5px 5px #3a3838; margin-bottom:50px">        
                     <div class="panel-body" style="background-color:rgb(251,221,127)">                  
                         <h2 style="color: #202077;display:inline" >Metadata</h2> 
                         <a href="{% url 'gencoui:module' 'entities' %}" style="display:inline; float:right">
@@ -83,8 +83,7 @@
               <!-- <div class="col-md-1"></div> -->
               <div class="col-xs-12">
                 <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow: 5px 5px 5px #3a3838">
-                    <div class="panel-header">
-                      <img src="{% static 'gencoui/img/rndr/search.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline; float: right"></img>
+                    <div class="panel-header">                      
                     </div>
                   <div class="panel-body">{% include "gencoui/rndr_builds_search.html" %}</div>
                 </div>

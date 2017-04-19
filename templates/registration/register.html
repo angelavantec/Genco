@@ -6,6 +6,17 @@
 	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
 	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
 {% endblock %}
+
+{% block extrajs %}
+   <script type="text/javascript">
+        $(document).ready(function() {
+             window.onload = function() {
+             $("#id_username").focus();
+            };  
+        }); 
+        </script> 
+{% endblock %}
+
 {% block content %}
 	<div class="row" >
 		<div class="col-sm-8" style="">
@@ -25,6 +36,7 @@
 						    {{ form.username|add_class:"form-control"  }}
 					    </div>
 						<div class="form-group">
+							
 							{{ form.email.errors }}
 						    {{ form.email.label_tag }}
 						    {{ form.email|add_class:"form-control"  }}

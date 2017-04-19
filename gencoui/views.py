@@ -584,7 +584,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         
 
         context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_element_entity': GencoElementoEntidadForm,
-                    'user': request.user, 'key_module':key_env, 'entorno': env, 'proyecto': prj}    
+                    'user': request.user, 'key_module':key_env, 'entorno': env, 'proyecto': prj, 'icon': env.id_icono.upload}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
         raise Http404
