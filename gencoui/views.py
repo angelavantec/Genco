@@ -936,4 +936,6 @@ class repo_tree(APIView):
         for i  in entity:          
             repos.append( {'id': 'entity'+str(i.id_entidad), 'parent': i.id_repositorio.id_repositorio, 'text': i.nombre + '<sub style="color:#CCCCCC"></sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"entity", 'data-renderid': i.id_entidad, 'data-rendername': i.nombre}}) 
 
-        return JsonResponse({'dirs':repos})        
+        return JsonResponse({'dirs':repos})
+
+        

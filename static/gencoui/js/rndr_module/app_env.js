@@ -19,20 +19,24 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     $scope.tmpGencoEntorno;
     $scope.descripcion = '';
     $scope.nombre = '';
+    $scope.id_grupo = '';
     $scope.icono = '';
 
     $scope.all_langs=lang.query();
-
-
    
     $scope.load_env = function(id_env){
-        console.log(id_env);
+        
         var data = env.get({id:id_env});
-        $scope.GencoEntorno = data;
+        
         data.$promise.then(function(data){
+            $scope.GencoEntorno = data;
             $scope.descripcion = data.descripcion;
             $scope.nombre = data.nombre;
+            // $scope.id_grupo = data.id_grupo;
             $scope.icono = data.icon.upload;
+
+            $('#lnkToEditorFull').attr('href', 'module/editor/' + id_env);
+            $('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
         });
 
         $scope.tmpGencoEntorno =  $scope.GencoEntorno;
@@ -50,6 +54,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
 
     $scope.update = function(){
         
+
         $scope.GencoEntorno.$update(function(){
             $scope.envs=env.query();         
             $scope.load_env($scope.GencoEntorno.id_entorno);       
@@ -73,24 +78,38 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
         $scope.tmpGencoEntorno =  $scope.GencoEntorno;
         $scope.GencoEntorno = new env();
         
-        
-        new Promise(
-            function(resolve, reject) {
-                $('#env-add-modal').modal('show');
-                console.log('resolve');
-                resolve('ok');
-                //setInterval(function(){ resolve('ok'); }, 1000);
-                
-            }
-        ).then (function (resolve) {
-            console.log('focus ' + resolve );
-            $('#id_nombre').focus();
+
+        $('#env-add-modal').modal('show').on('shown.bs.modal', function() {
+                    $('#id_nombre').focus();
         });
+        
+        // $('#env-add-modal').on('shown.bs.modal', function () {
+        //   $('#id_nombre').focus();
+        // });
+
+        // new Promise(
+        //     function(resolve, reject) {
+        //         $('#env-add-modal').modal('show').on('shown', function() {
+        //             $('#id_nombre').focus();
+        //         });
+        //         console.log('resolve');
+        //         resolve('ok');
+        //         //setInterval(function(){ resolve('ok'); }, 1000);
+                
+        //     }
+        // ).then (function (resolve) {
+        //     console.log('focus ' + resolve );
+        //     $('#id_nombre').focus();
+        // });
     }
 
     $scope.edit = function(){
         $scope.tmpGencoEntorno =  $scope.GencoEntorno;
-        $scope.GencoEntorno.id_grupo = $scope.GencoEntorno.id_grupo.toString(); 
+        $scope.GencoEntorno.id_grupo = $scope.GencoEntorno.id_grupo.toString();
+        $scope.setEnvIconEdit($scope.GencoEntorno.icon);
+        $('#env-edit-modal').modal('show').on('shown.bs.modal', function() {
+                    $('#id_nombre').focus();
+        });
     }
 
 
@@ -175,12 +194,17 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
 
     }
 
-    $scope.setEnvIcon = function (icon) {
+    $scope.setEnvIconAdd = function (icon) {
         $scope.GencoEntorno.id_icono = icon.id_icono;
         console.log(icon);
-        $('#imgEnvIcon').attr('src',icon.upload);
+        $('#imgEnvIconAdd').attr('src',icon.upload);
     }
 
+    $scope.setEnvIconEdit = function (icon) {
+        $scope.GencoEntorno.id_icono = icon.id_icono;
+        console.log(icon);
+        $('#imgEnvIconEdit').attr('src',icon.upload);
+    }
 
 
 

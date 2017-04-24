@@ -122,6 +122,21 @@
 		    border-radius:50px;
 		    padding-right: 2px;
     		padding-bottom: 3px;
+    		border: 2px solid #6d758c;
+    		color:#6d758c;
+    		background-color: #ffffff;
+		}
+
+		.btn-default {
+			border: 2px solid #6d758c;
+    		color:#6d758c;
+    		background-color: #ffffff;
+		}
+
+		.btn-default:hover, .btn-default:active {		    
+    		border: 2px solid #6d758c;
+    		color:#6d758c;
+    		background-color: #ffffff;
 		}
 
 
@@ -286,3 +301,6 @@
 		.rndr-env-even {
 		  color: blue;
 		}
+
+	.rndr-scale { transition: all .2s ease-in-out; }
+	.rndr-scale:hover { transform: scale(1.3); }
