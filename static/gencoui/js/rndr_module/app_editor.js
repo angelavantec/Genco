@@ -68,6 +68,9 @@ console.log($scope.dataLang);
 // ];
 
 
+editors = [];
+
+
 $(function () {
 
         $(document)
@@ -690,9 +693,11 @@ console.log($scope.components);
 
             console.log($scope.GencoPlantillas);
             $scope.GencoPlantillas.id_lenguaje = $scope.dataLang.repeatSelectLang;
-            $scope.GencoPlantillas.$save(function(){   
+            $scope.GencoPlantillas.$save(function(success){   
                 $scope.reload_tree();      
                 $('#template-create-modal').modal('hide')
+            }, function(error){
+                $scope.showMessage($scope.getDataError(error));
             });
             
         } 
@@ -1046,8 +1051,47 @@ console.log($scope.components);
         //     $('#template-create-modal').modal('hide');
         // }
 
+    function  newEditor(id, theme, mode){
+        // editor = ace.edit("editor");
+        // editor.setTheme("ace/theme/eclipse");
+        // editor.getSession().setMode("ace/mode/python");
+        // editor.$blockScrolling = Infinity;
 
-        $scope.load_components();
+        // editor_preview = ace.edit("editor_preview");
+        // editor_preview.getSession().setMode("ace/mode/html");
+        // editor_preview.$blockScrolling = Infinity;
+  
+
+        editor = ace.edit(id);
+        editor.setTheme(theme);
+        editor.getSession().setMode(mode);
+        editor.$blockScrolling = Infinity;
+
+    }
+
+    $scope.showMessage = function(message){
+        $('#imConfirm').html(message);
+        $('#info-modal').modal('show');
+
+    }
+
+    $scope.getDataError = function(error){
+        console.log(error);
+       if(error.data['detail']!=null){
+        return error.data['detail'];
+       } if(error.data!=null){
+            var resp='';
+            angular.forEach(error.data, function(value, key){    
+                console.log(key + ' - ' + value);
+                resp += key + ' - ' + value + '<br/>';
+            });
+            return resp;
+       }
+    }
+
+    newEditor("editor", "ace/theme/eclipse", "ace/mode/python");
+    //newEditor("editor_preview", "ace/theme/eclipse", "ace/mode/html");
+    $scope.load_components();
 
   });
 

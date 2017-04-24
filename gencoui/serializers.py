@@ -52,9 +52,11 @@ class GencoLenguajesSerializer(serializers.ModelSerializer):
     #groups = GencoGrupoSerializer(many=True, read_only=True)
     #groups = serializers.StringRelatedField(many=True)
     #group = GencoGrupoSerializer()
+    icon= AdminAppIconosSerializer(many=False, source="id_icono", read_only=True)
+
     class Meta:        
         model = GencoLenguajes
-        fields = ('id_lenguaje', 'nombre', 'descripcion', 'version', 'id_icono','creado_por','fecha_creacion','modificado_por','fecha_modificacion')
+        fields = ('id_lenguaje', 'nombre', 'descripcion', 'version', 'icon','creado_por','fecha_creacion','modificado_por','fecha_modificacion')
         read_only_fields = ('id_lenguaje', 'creado_por','fecha_creacion','modificado_por','fecha_modificacion',)
 
     # def create(self, validated_data):

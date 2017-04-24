@@ -13,10 +13,14 @@ return $resource('http://127.0.0.1:8000/gencoui/envlangs/?id_env=:id',{id:'@_id'
         url: 'http://127.0.0.1:8000/gencoui/envlangs\\/',
         method: 'POST'
     },    
-    query: {
-        url: 'http://127.0.0.1:8000/gencoui/envlangs\\/',   
-        isArray:true    
-    }, 
+    // query: {
+    //     url: 'http://127.0.0.1:8000/gencoui/envlangs\\/',   
+    //     isArray:true    
+    // }, 
+    delete: {
+        url: 'http://127.0.0.1:8000/gencoui/envlangs/:id\\/',
+        method: 'DELETE'
+    },  
     get: {
         // url: 'http://127.0.0.1:8000/gencoui/envlangs\\/',   
         isArray:true    

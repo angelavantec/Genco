@@ -303,19 +303,22 @@
 			    </div>
 	          <!-- <div class="arrow-up"></div> -->
 	          	<div class="modal-body">
-	   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
-	   			{{ form_create_template.nombre.label_tag }}
-				{{ form_create_template.nombre }}
-				{{ form_create_template.descripcion.label_tag }}
-				{{ form_create_template.descripcion }}
-				{% verbatim %}
-				<label for="repeatSelectLang">Lenguaje: </label>
-				<select id="repeatSelectLang" ng-model="dataLang.repeatSelectLang" class="form-control">
-			      	<option ng-repeat="option in dataLang.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }} {{ option.version }}</option>
-			    </select>	
-				{% endverbatim %}
-				{{ form_create_template.id_lenguajeprocesador.label_tag }}
-				{{ form_create_template.id_lenguajeprocesador }}
+	          		<form ng-submit="save_template()">
+			   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
+			   			{{ form_create_template.nombre.label_tag }}
+						{{ form_create_template.nombre }}
+						{{ form_create_template.descripcion.label_tag }}
+						{{ form_create_template.descripcion }}
+						{% verbatim %}
+						<label for="repeatSelectLang">Lenguaje: </label>
+						<select id="repeatSelectLang" ng-model="dataLang.repeatSelectLang" class="form-control">
+					      	<option ng-repeat="option in dataLang.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }} {{ option.version }}</option>
+					    </select>	
+						{% endverbatim %}
+						{{ form_create_template.id_lenguajeprocesador.label_tag }}
+						{{ form_create_template.id_lenguajeprocesador }}
+						<button type="submit" hidden></button>
+					</form>	
 	          	</div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">
@@ -547,6 +550,29 @@
 	    </div>
 	</div>
 
+	<div class="modal fade" id="info-modal" tabindex="-1" z-index="999" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog" >
+
+        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Information</h4>
+		    </div>	     
+          	<div id="imConfirm" class="modal-body">
+          	</div>
+          	<div class="modal-footer">
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+
 
 </div>
 
@@ -560,14 +586,16 @@
     <script src="{% static 'gencoui/ace/src-noconflict/ace.js' %}" type="text/javascript" charset="utf-8"></script>
     
     <script>
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/eclipse");
-    editor.getSession().setMode("ace/mode/python");
-    editor.$blockScrolling = Infinity;
+    // var editor = ace.edit("editor");
+    // editor.setTheme("ace/theme/eclipse");
+    // editor.getSession().setMode("ace/mode/python");
+    // editor.$blockScrolling = Infinity;
 
-    var editor_preview = ace.edit("editor_preview");
-    editor_preview.getSession().setMode("ace/mode/html");
-    editor_preview.$blockScrolling = Infinity;
+    // var editor_preview = ace.edit("editor_preview");
+    // editor_preview.getSession().setMode("ace/mode/html");
+    // editor_preview.$blockScrolling = Infinity;
+
+
 
     // var editor2 = ace.edit("editor2");
     // //editor2.setTheme("ace/theme/default");
