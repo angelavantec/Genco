@@ -209,7 +209,7 @@
 }
 
 
-#main img {
+/*#main img {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -220,7 +220,7 @@
 }
 #main {
 	background-color: #eeeeee
-}
+}*/
 
 
 .rndr-scale { transition: all .2s ease-in-out; }

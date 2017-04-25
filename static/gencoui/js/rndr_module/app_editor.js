@@ -70,7 +70,6 @@ $(function () {
             })
             .on('dnd_stop.vakata', function (e, data) {
                 var t = $(data.event.target);
-                console.log('yyyyyyyyyyyyyyyyyyyy');
                 console.log(data.data.obj[0].getAttribute('data-renderas'));
                 $(this).attr("data-id");
                 console.log(t);
@@ -80,10 +79,6 @@ $(function () {
                     return;
                 }
 
-                console.log('2.......');
-
-                //var inst = $.jstree.reference(data.reference),
-                //obj = inst.get_node(data.reference);
                 console.log(data.data.obj[0].id);
                 var node = $('#jstree').jstree(true).get_node(data.data.obj[0].id);
                 var nodeParent = $('#jstree').jstree(true).get_node(node.parents[0]);
@@ -129,7 +124,6 @@ $scope.load_components = function(){
 
 $scope.createTreeModel = function(){
     
-   console.log('init');
     $scope.nodeComponente=[];
     proccess = [];
     angular.forEach($scope.components, function(value, key){
@@ -800,16 +794,24 @@ console.log($scope.components);
         /** Function to delete a tab **/
         $scope.deleteTab = function(index){
             // $scope.isTabSelected=true;
+            console.log($scope.tabs[index]);
+            console.log(editors[index]);
             $scope.tabs.splice(index,1);
-            $('#'+editors[index].container.id).remove();
+            //$('#'+editors[index].container.id).remove();
+            //editors.splice(index,1);
+            var aceId = editors[index].container.id;
+            editors[index].destroy();
+            $('#'+aceId).remove();
             editors.splice(index,1);
-            
+
+
             var index = $scope.tabs.length; 
             if(index==0){
+                console.log('indece cero');
                  //remove the object from the array based on index
             }else{
                 $scope.selectedTab = index - 1;
-                $scope.selectTab($scope.tabs[index-1].id_plantilla, $scope.selectedTab);    
+                $scope.selectTab($scope.tabs[index-1].id_plantilla, $scope.selectedTab, true);    
             }
         
         }
@@ -896,7 +898,11 @@ console.log($scope.components);
            //  );
             var templ = new template({editor: content});
     //                 conv.$save();
-            templ.$save({id_plantilla:$scope.current_template})
+            templ.$save({id_plantilla:$scope.current_template}, function(success){
+
+            }, function(error){
+
+            })
 
             // console.log('post editor');
             // console.log(editor.getValue());

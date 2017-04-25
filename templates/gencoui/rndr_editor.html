@@ -163,7 +163,7 @@
 
 
 {% block content %}
-<div id="ctrl_editor" ng-app="app_editor" data-ng-init="init()" ng-controller="ctrl_editor">
+<div id="ctrl_editor" ng-app="app_editor" ng-controller="ctrl_editor">
 	    <div id="sidebar" >
 	    	<span id="position"></span>
 	    	<div id="dragbar"></div>			    
@@ -237,10 +237,38 @@
 		</div>
 
 	    <div id="main">
-	    	<div id="tree"  style="margin-top:70px;">
-
+	    	<div  style="margin-top:70px;">
+						
 		    	<div class="modal-header">
-		    		Options
+
+					<div class="dropdown" style="display:inline;">
+					  <button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropEdtOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					    Options
+					    <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="dropEdtOptions">
+					    <li>
+					    	<a ng-click="submit()">					   					    	
+							Save
+					    	</a>
+					    </li>
+					    <li>
+					    	<a ng-click="preview()">									    	
+							Preview
+					    	</a>
+					    </li>
+					    <li role="separator" class="divider"></li>
+					    <li>
+					    	<a >
+					    		<!-- <img src="{% static 'gencoui/img/rndr/removeenv_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="24px" height="24px" style="display:inline;">
+								</img> -->
+					    		Remove
+					    	</a>
+					    </li>
+					  </ul>
+					</div>
+
+		   <!--  		Options
 		    		<div style="display:inline">
 		          		<a class="btn icon-btn btn-default btn-xs" ng-click="submit()" data-placement="bottom"data-tt="tooltip" title="Save">
 							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
@@ -250,7 +278,7 @@
 						<a class="btn icon-btn btn-default btn-xs" ng-click="preview()" data-placement="bottom"data-tt="tooltip" title="Preview">
 							<span class="glyphicon btn-glyphicon glyphicon-eye-open img-circle" ></span>					
 						</a>
-					</div>	
+					</div>	 -->
 	          	</div>
 
 		    
@@ -287,6 +315,7 @@
 	
 	    	</div>
 
+	    </div>	
 
 
     <!-- Modal Templates -->
