@@ -266,14 +266,14 @@
 		            </ul>
 		            {% endverbatim %}
 		            <div class="tab-content">
-		                <div role="tabpanel" class="tab-pane active" id="tab">
+		                <div role="tabpanel" class="tab-pane active" id="tabPanel">
 		                    
 		                    <!-- <form method="post" ng-submit="submit()"> -->
 		                    	{% csrf_token %}
 		                    	{% verbatim %}
 			                    <!-- <h1>Tab {{tabs[selectedTab].id}}</h1> -->
 			                    <!-- <h3>Content:- {{tabs[selectedTab].content}}</h3> -->
-			                    <div id="editor" name="" class="editor"></div>
+			                    <!-- <div id="editor" name="" class="editor"></div> -->
 
 			                    <!-- <textarea name='editor' rows='4' cols='50' maxlength='100'></textarea> -->
 			                    {% endverbatim %}
@@ -550,7 +550,7 @@
 	    </div>
 	</div>
 
-	<div class="modal fade" id="info-modal" tabindex="-1" z-index="999" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
     <div class="modal-dialog" >
 
@@ -594,8 +594,6 @@
     // var editor_preview = ace.edit("editor_preview");
     // editor_preview.getSession().setMode("ace/mode/html");
     // editor_preview.$blockScrolling = Infinity;
-
-
 
     // var editor2 = ace.edit("editor2");
     // //editor2.setTheme("ace/theme/default");

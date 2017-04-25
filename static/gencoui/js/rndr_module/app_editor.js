@@ -43,30 +43,7 @@ $scope.tabs = [];
         // $scope.isTabSelected=false;
 $scope.current_template;
 $scope.current_pos=0;
-
-// $scope.dataLangProc = {
-//     repeatSelectLangProc: null,
-//     availableOptions: $scope.langs,
-// };
-
-
-console.log($scope.dataLang);
-// $scope.load();
-// $scope.components = [
-//     {
-//         id_componente: 1,
-//         nombre: "UI",
-//         descripcion: "",
-//         id_entorno: 1
-//     },
-//     {
-//         id_componente: 2,
-//         nombre: "Backend",
-//         descripcion: "",
-//         id_entorno: 1
-//     }
-// ];
-
+$scope.current_editor=null;
 
 editors = [];
 
@@ -824,41 +801,53 @@ console.log($scope.components);
         $scope.deleteTab = function(index){
             // $scope.isTabSelected=true;
             $scope.tabs.splice(index,1);
+            $('#'+editors[index].container.id).remove();
+            editors.splice(index,1);
+            
             var index = $scope.tabs.length; 
             if(index==0){
                  //remove the object from the array based on index
-                editor.setValue('');    
             }else{
                 $scope.selectedTab = index - 1;
                 $scope.selectTab($scope.tabs[index-1].id_plantilla, $scope.selectedTab);    
             }
-            
-            
+        
         }
         
         $scope.selectedTab = 0; //set selected tab to the 1st by default.
         
         /** Function to set selectedTab **/
         $scope.selectTab = function(id_template, pos, flgUpd){
-            console.log("id " + id_template);
-            console.log($scope.templates);
+            idTempl= "tmpl" + id_template;
             //$scope.selectedTab = index;
             //pos = $scope.tabs.map(function(x) {return x.id_plantilla.toString()}).indexOf(id_template);
             // editor.setValue($scope.tabs[pos] + " index -> " + $scope.templates[pos].nombre);
-            console.log('alfa - ' + pos);
+            console.log('alfa - ' + pos + ' ... ' + $scope.current_pos);
             //console.log('beta - ' + $scope.$index);
             
 
             //@Generics actualizo el contenido en memoria en caso de que haya sido modificado 
-            if(flgUpd){
-                $scope.tabs[$scope.current_pos].content = editor.getValue();     
+            
+            if(flgUpd){     
+                $scope.tabs[$scope.current_pos].content = editors[$scope.current_pos].getValue();
+                if(pos!=$scope.current_pos){
+                    $('#'+editors[$scope.current_pos].container.id).attr('hidden', true);
+                }
+                $('#'+editors[pos].container.id).attr('hidden', false);     
+            }else{                
+                if(pos!=$scope.current_pos && editors[$scope.current_pos] != undefined){
+                    $('#'+editors[$scope.current_pos].container.id).attr('hidden', true);
+                }
+                $('#tabPanel').append('<div id="' + idTempl + '" class="editor"></div>')
+                var editor = ace.edit(idTempl);
+                editor.setTheme("ace/theme/eclipse");
+                editor.getSession().setMode("ace/mode/python");
+                editor.$blockScrolling = Infinity;
+                editors[pos]=editor;
             }
             
-
-            //console.log($scope.tabs[pos].content);
-            editor.setValue($scope.tabs[pos].content);
-            editor.setTheme("ace/theme/eclipse");
-            editor.getSession().setMode("ace/mode/python");
+            editors[pos].setValue($scope.tabs[pos].content);
+            $scope.current_editor= idTempl;
             $scope.current_template = id_template;
             $scope.current_pos = pos;
 
@@ -875,7 +864,7 @@ console.log($scope.components);
         //   $scope.list.push(this.text);
         //   $scope.text = '';
         // }
-            var content = editor.getValue();
+            var content = editors[$scope.current_pos].getValue();
 
             /*Actualizo el contenido en memoria antes de hacer el request por si hay un cambio de tab no se va a perder
             el contenido ni haya necesidad de hacer otra peticion al API Rest*/
@@ -909,8 +898,8 @@ console.log($scope.components);
     //                 conv.$save();
             templ.$save({id_plantilla:$scope.current_template})
 
-            console.log('post editor');
-            console.log(editor.getValue());
+            // console.log('post editor');
+            // console.log(editor.getValue());
         };
 
 
@@ -1051,30 +1040,6 @@ console.log($scope.components);
         //     $('#template-create-modal').modal('hide');
         // }
 
-    function  newEditor(id, theme, mode){
-        // editor = ace.edit("editor");
-        // editor.setTheme("ace/theme/eclipse");
-        // editor.getSession().setMode("ace/mode/python");
-        // editor.$blockScrolling = Infinity;
-
-        // editor_preview = ace.edit("editor_preview");
-        // editor_preview.getSession().setMode("ace/mode/html");
-        // editor_preview.$blockScrolling = Infinity;
-  
-
-        editor = ace.edit(id);
-        editor.setTheme(theme);
-        editor.getSession().setMode(mode);
-        editor.$blockScrolling = Infinity;
-
-    }
-
-    $scope.showMessage = function(message){
-        $('#imConfirm').html(message);
-        $('#info-modal').modal('show');
-
-    }
-
     $scope.getDataError = function(error){
         console.log(error);
        if(error.data['detail']!=null){
@@ -1089,8 +1054,6 @@ console.log($scope.components);
        }
     }
 
-    newEditor("editor", "ace/theme/eclipse", "ace/mode/python");
-    //newEditor("editor_preview", "ace/theme/eclipse", "ace/mode/html");
     $scope.load_components();
 
   });
