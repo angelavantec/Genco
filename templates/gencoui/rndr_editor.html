@@ -17,6 +17,7 @@
 	<script src="{% static 'gencoui/js/rndr_module/app_editor.js' %}"></script>
 	<script src="{% static 'gencoui/js/rndr_module/service_editor.js' %}"></script>
 	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_env.js' %}"></script>
 	<script type="text/javascript">
 		$(function () {
 		  $('[data-tt="tooltip"]').tooltip()
@@ -381,20 +382,41 @@
 			    </div>
 	          <!-- <div class="arrow-up"></div> -->
 	          	<div class="modal-body">
-	   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
-	   			{{ form_create_template.nombre.label_tag }}
-				{{ form_create_template.nombre }}
-				{{ form_create_template.descripcion.label_tag }}
-				{{ form_create_template.descripcion }}
-				{% verbatim %}
-				<label for="repeatSelectLang">Lenguaje: </label>
-				<select id="repeatSelectLang" ng-model="dataLang.repeatSelectLang" class="form-control">
-			      	<option ng-repeat="option in dataLang.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }} {{ option.version }}</option>
-			    </select>	
-				{% endverbatim %}
-				{{ form_create_template.id_lenguajeprocesador.label_tag }}
-				{{ form_create_template.id_lenguajeprocesador }}
-	          	</div>
+	          		<form ng-submit="update_template()">
+			   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
+			   			{{ form_create_template.nombre.label_tag }}
+						{{ form_create_template.nombre }}
+						{{ form_create_template.descripcion.label_tag }}
+						{{ form_create_template.descripcion }}
+						{% verbatim %}
+						<!-- <label for="repeatSelectLang">Lenguaje: </label>
+						<select id="repeatSelectLang" ng-model="dataLang.repeatSelectLang" class="form-control">
+					      	<option ng-repeat="option in dataLang.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }} {{ option.version }}	
+					      	</option>
+					    </select> -->	
+						{% endverbatim %}
+						{{ form_create_template.id_lenguajeprocesador.label_tag }}
+						{{ form_create_template.id_lenguajeprocesador }}
+
+
+						<div>
+					
+							{% verbatim %}
+							<label>Lenguaje </label>
+							<img id="imgTmplLang" src="" width="32px" height="32px" style="margin: 8px"/>
+							<div class="modal-footer">							
+								<div class="checkbox" ng-repeat="lang in langs" style="display:inline;margin: 8px">
+
+									<img class="rndr-scale" ng-src="{{lang.lang.icon.upload}}" width="32px" height="32px" ng-click="setTemplLang(lang)"/>
+									
+								</div>
+							</div>	
+							{% endverbatim %}	
+						</div>
+
+						<button type="submit" hidden></button>
+					</form>
+			    </div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">
 		          		<a class="btn icon-btn btn-default" ng-click="update_template()" data-placement="bottom"data-tt="tooltip" title="Save">
@@ -428,12 +450,7 @@
 	   				<div id="editor_preview" name="" class="editor"></div>
 
 	          	</div>
-	          	<div class="modal-footer">
-	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="save_lang()" data-placement="bottom"data-tt="tooltip" title="Save">
-							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
-						</a>
-					</div>
+	          	<div class="modal-footer">	          		
 					<div style="display:inline">	
 						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
 								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
@@ -457,9 +474,11 @@
 			    </div>
 	          <!-- <div class="arrow-up"></div> -->
 	          	<div class="modal-body">
-	   			<input type="hidden" ng-model="GencoComponente.id_entorno" >
-				{{ form_create_component }}
-
+		          	<form ng-submit="save_component()">
+		   				<input type="hidden" ng-model="GencoComponente.id_entorno" >
+						{{ form_create_component }}
+						<button type="submit" hidden></button>
+					</form>	
 	          	</div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">
@@ -491,8 +510,11 @@
 			    </div>
 	          <!-- <div class="arrow-up"></div> -->
 	          	<div class="modal-body">
-	   			<input type="hidden" ng-model="GencoComponente.id_entorno" >
-				{{ form_create_component }}
+	          		<form ng-submit="update_component()">
+	   					<input type="hidden" ng-model="GencoComponente.id_entorno" >
+						{{ form_create_component }}
+						<button type="submit" hidden></button>
+					</form>
 	          	</div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">
@@ -512,96 +534,57 @@
 	</div>
 
 
-
-	    <!-- Modal Templates -->
-	<div class="modal fade" id="component-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-	    <div class="modal-dialog modal-sm">
-
-	        <div class="modal-content">
-		        <div class="modal-header">
-			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title">Confirm</h4>
-			    </div>	     
-	          	<div class="modal-body">
-	          		{% verbatim %}
-	          		Do you really want to delete {{component_selected.nombre}} componenent?
-	          		{% endverbatim %}
-	          	</div>
-	          	<div class="modal-footer">
-	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="delete_component()" data-placement="bottom"data-tt="tooltip" title="Save">
-							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
-						</a>
-					</div>
-					<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-						</a>
-					</div>	
-	          	</div>
-
-	        </div>
-	    </div>
-	</div>
-
-
-
-		    <!-- Modal Templates -->
-	<div class="modal fade" id="template-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-	    <div class="modal-dialog modal-sm">
-
-	        <div class="modal-content">
-		        <div class="modal-header">
-			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        	<h4 class="modal-title">Confirm</h4>
-			    </div>	     
-	          	<div class="modal-body">
-	          		{% verbatim %}
-	          		Do you really want to delete {{template_selected.nombre}} template?
-	          		{% endverbatim %}
-	          	</div>
-	          	<div class="modal-footer">
-	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="delete_template()" data-placement="bottom"data-tt="tooltip" title="Save">
-							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
-						</a>
-					</div>
-					<div style="display:inline">
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-						</a>
-					</div>	
-	          	</div>
-
-	        </div>
-	    </div>
-	</div>
-
 	<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
-    <div class="modal-dialog" >
+	    <div class="modal-dialog" >
 
-        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
-	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-	        	<h4 class="modal-title">Information</h4>
-		    </div>	     
-          	<div id="imConfirm" class="modal-body">
-          	</div>
-          	<div class="modal-footer">
-				<div style="display:inline">
-					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
-							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-					</a>
-				</div>	
-          	</div>
+	        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Information</h4>
+			    </div>	     
+	          	<div id="imConfirm" class="modal-body">
+	          	</div>
+	          	<div class="modal-footer">
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
 
-        </div>
-    </div>
-</div>
+	        </div>
+	    </div>
+	</div>
 
+	<div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog">
+
+	        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ffb612;">
+		        <div class="modal-header">
+			    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        	<h4 class="modal-title">Confirm</h4>
+			    </div>	     
+	          	<div id="tedmConfirm" class="modal-body">
+
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="confirm_delete()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
 
 </div>
 

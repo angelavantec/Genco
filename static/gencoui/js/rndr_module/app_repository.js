@@ -596,9 +596,11 @@ angular.module('app_entities', ['ngResource','repository.services'])
 
     $scope.update_repository = function(){
 
-        $scope.GencoRepositorio.$update(function(){
+        $scope.GencoRepositorio.$update(function(success){
         $scope.load_repositories();   
           $('#repository-edit-modal').modal('hide');
+        },function(error){
+            $scope.showMessage(parseErrorMessage(error));
         });
         
     } 

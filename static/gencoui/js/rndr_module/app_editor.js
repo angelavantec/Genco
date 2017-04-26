@@ -1,6 +1,6 @@
-angular.module('app_editor', ['ngResource','editor.services','lang.services'])
+angular.module('app_editor', ['ngResource','editor.services','lang.services', 'env.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang) {
+.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, tree, env_lang) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -29,7 +29,7 @@ $scope.GencoComponentes;
 
 
 $scope.langs = [];
-$scope.langs=lang.query();
+$scope.langs=env_lang.get({id:$("#key_module").val()});//lang.query();
 // $scope.langs = [];
 // $scope.langs=lang.query();
 
@@ -46,6 +46,9 @@ $scope.current_pos=0;
 $scope.current_editor=null;
 
 editors = [];
+
+$scope.node_selected;
+$scope.ConfirmDeleteCallback;
 
 
 $(function () {
@@ -107,6 +110,25 @@ $(function () {
 
             });
   });
+
+
+/* Ya construidos los arboles cargo los items de directorio elemento*/
+$scope.getDirTree = function(){
+tree.get({id:$scope.environment_selected}, function(success){
+                        
+                        console.log('success');    
+                        //$('#jstreeBuilds').jstree();
+                        //$('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
+                        //$('#jstreeBuilds').jstree(true).refresh();
+
+                        $('#jstree').jstree();
+                        $('#jstree').jstree(true).settings.core.data = success.dirs;
+                        $('#jstree').jstree(true).refresh();
+                                                    
+                    },function(error){                        
+                        $scope.showMessage($scope.getDataError(error)); 
+                    });
+}
 
 
 $scope.load_components = function(){
@@ -360,45 +382,44 @@ console.log($scope.components);
         
         
 
-
-
-
-        $scope.load = function(){
-
             $("#jstree").jstree({
+                //'core':{check_callback : true},
                 "core" : {
                 "check_callback" : function (operation, node, node_parent, node_position, more) {
                         // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
                         // in case of 'rename_node' node_position is filled with the new node name                      
                         
 
-                        var validator;
+                        if(operation == 'move_node'){
+                            var validator;
+                            console.log('core check');
+                            console.log(node_parent);
+                            if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
+                                return false;
+                            }
+                                
 
-                        if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
-                            return false;
+                            console.log(node_parent.li_attr['data-renderas']); 
+                            console.log(node_parent);
+                            var renderas = node_parent.li_attr['data-renderas'];
+                            console.log(renderas);
+                            console.log(node_parent);
+
+                            if(typeof renderas == 'undefined'){
+                                return false;
+                            }
+                           // console.log(node.data['renderas']);
+                           // console.log(node_parent.data['renderas']);                       
+                            validator = renderas === 'component' ? true : false;    
+                            if(validator){
+                                //console.log(node_parent);
+                                //console.log(node);
+                                validator = node.li_attr['data-renderas'] === 'template' ? true : false; 
+
+                            }   
+                            return validator;
                         }
-                            
-
-                        //console.log(node_parent.li_attr['data-renderas']); 
-                        //console.log(node_parent);
-                        var renderas = node_parent.li_attr['data-renderas'];
-                        //console.log(renderas);
-                        //console.log(node_parent);
-
-                        if(typeof renderas == 'undefined'){
-                            return false;
-                        }
-                       // console.log(node.data['renderas']);
-                       // console.log(node_parent.data['renderas']);                       
-                        validator = renderas === 'component' ? true : false;    
-                        if(validator && operation == 'move_node'){
-                            //console.log(node_parent);
-                            //console.log(node);
-                            validator = node.li_attr['data-renderas'] === 'archive' ? true : false; 
-
-                        }   
-                        return validator;
-                        
+                        return true;
                     }
             },
             "crrm" : { move : { check_move : function (m) { return false; } } },
@@ -419,6 +440,7 @@ console.log($scope.components);
                                     
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
+                                    $scope.node_selected = obj;
                                     //inst.edit(obj);
                                     
                                     $scope.component_selected.nombre = obj.text;
@@ -427,7 +449,10 @@ console.log($scope.components);
                                     $scope.load_component(obj.id);
                                     //Hago que la interfaz refresque el titulo con el valor de component_selected
                                     angular.element($("#ctrl_editor")).scope().$apply();
-                                    $('#component-edit-modal').modal('show');
+                                    //$('#component-edit-modal').modal('show');
+                                    $('#component-edit-modal').modal('show').on('shown.bs.modal', function() {
+                                            $('#component-edit-modal #id_nombre').focus();
+                                    });
         
                                 }
                             },
@@ -436,13 +461,12 @@ console.log($scope.components);
                                 "action": function (data) {
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
-                                    //inst.edit(obj);
-                                    
+                                    $scope.node_selected = obj;
+                                    //inst.edit(obj);                                    
                                     $scope.component_selected.nombre = obj.text;
-                                    $scope.component_selected.id = obj.id;
-                                    //$scope.new_template(obj.id);
-                                    angular.element($("#ctrl_editor")).scope().$apply();
-                                    $('#component-delete-modal').modal('show');
+                                    $scope.component_selected.id = obj.id;                                    
+                                    $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> component?");
+                                    $scope.ConfirmDeleteCallback = function(){$scope.delete_component()}
                                     
                                 }
                             },
@@ -453,13 +477,17 @@ console.log($scope.components);
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
                                     //inst.edit(obj);
+                                    $scope.node_selected = obj;
                                     
                                     $scope.component_selected.nombre = obj.text;
                                     $scope.component_selected.id = obj.id;
-                                    $scope.new_template($scope.component_selected.id);
+                                    $scope.new_template($scope.component_selected.id);                                    
                                     //Hago que la interfaz refresque el titulo con el valor de component_selected
                                     angular.element($("#ctrl_editor")).scope().$apply();
                                     $('#template-create-modal').modal('show');
+                                    $('#template-create-modal').modal('show').on('shown.bs.modal', function() {
+                                            $('#template-create-modal #id_nombre').focus();
+                                    });
                                     //this.create(obj);
                                 //     //alert('render');
                                 //     //getCode();
@@ -489,6 +517,7 @@ console.log($scope.components);
                                 "action": function (data) {
                                     var inst = $.jstree.reference(data.reference);
                                     obj = inst.get_node(data.reference);
+                                    $scope.node_selected = obj;
                                     // var instP = $.jstree.reference(obj.parent.reference);
                                     // objP = instP.get_node(obj.parent.reference);
                                     console.log('debut');
@@ -500,7 +529,10 @@ console.log($scope.components);
                                     $scope.template_selected.nombre = obj.li_attr['data-rendername'];
                                     $scope.template_selected.id = obj.li_attr['data-renderid'];
                                     $scope.load_template($scope.template_selected.id);
-                                    $('#template-edit-modal').modal('show');
+                                    //$('#template-edit-modal').modal('show');
+                                    $('#template-edit-modal').modal('show').on('shown.bs.modal', function() {
+                                            $('#template-edit-modal #id_nombre').focus();
+                                    });
                                     console.log(data);
                   //                    var inst = $.jstree.reference(data.reference),
                                     // obj = inst.get_node(data.reference);
@@ -513,13 +545,16 @@ console.log($scope.components);
                                 "action": function (data) {
                                     var inst = $.jstree.reference(data.reference);
                                     obj = inst.get_node(data.reference);
+                                    $scope.node_selected = obj;
                                     //inst.edit(obj);
                                     
                                     $scope.template_selected.nombre = obj.li_attr['data-rendername'];
                                     $scope.template_selected.id = obj.li_attr['data-renderid'];
+                                    $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> template?");
+                                    $scope.ConfirmDeleteCallback = function(){$scope.delete_template()}
                                     //$scope.new_template(obj.id);
-                                    angular.element($("#ctrl_editor")).scope().$apply();
-                                    $('#template-delete-modal').modal('show');
+                                    //angular.element($("#ctrl_editor")).scope().$apply();
+                                    //$('#template-delete-modal').modal('show');
                                 }
                             }
                         };
@@ -542,7 +577,7 @@ console.log($scope.components);
                var id =node.data("renderid");
                // Do my action
                
-               if(renderas === 'archive'){
+               if(renderas === 'template'){
                 console.log(node.text()); 
                 $scope.addTab(id.toString(), node.text());
                }
@@ -580,15 +615,17 @@ console.log($scope.components);
 
             // });
 
-        }
+    
 
         $scope.new_component = function(){
 
             $scope.GencoComponentes = new componente();
             console.log($scope.GencoComponentes);
             $scope.GencoComponentes.id_entorno = ""+$scope.environment_selected;
-            console.log('new comp');
-            $('#component-create-modal').modal('show');
+            //$('#component-create-modal').modal('show');
+            $('#component-create-modal').modal('show').on('shown.bs.modal', function() {
+                    $('#component-create-modal #id_nombre').focus();
+            });
 
       
         }
@@ -596,41 +633,53 @@ console.log($scope.components);
         $scope.save_component = function(){
 
             console.log($scope.GencoComponentes);
-            $scope.GencoComponentes.$save(function(){   
-                $scope.load_components();      
+            $scope.GencoComponentes.$save(function(success){   
+                //$scope.load_components();      
+                var nodeDef = {'id': success.id_componente, 
+                                'parent': '#', 
+                                'text': success.nombre, 
+                                'icon':"glyphicon glyphicon-folder-open", 
+                                'li_attr':{'data-renderas':"component",
+                                            'data-renderid': success.id_componente, 
+                                            'data-rendername':success.nombre
+                                        }
+                            }
+                $scope.addTreeNode($('#jstree').jstree(true).get_node('#'), nodeDef, $('#jstree').jstree(true));
                 $('#component-create-modal').modal('hide')
+            }, function(error){
+                $scope.showMessage($scope.getDataError(error));
             });
             
         } 
 
         $scope.delete_component = function(){
 
-            componente.delete({id: $scope.component_selected.id},function(success){
-                console.log(success);           
-                $scope.load_components();
-                $('#component-delete-modal').modal('hide');
+            componente.delete({id: $scope.component_selected.id},function(success){                
+                console.log(success);
+                //$scope.reload_tree();
+                $('#jstree').jstree(true).delete_node($scope.node_selected); 
             },function(error){
-                
-                console.log(error);
+                $scope.showMessage($scope.getDataError(error));
             });
+            //     console.log(success);           
+            //     $scope.load_components();
+            //     $('#component-delete-modal').modal('hide');
+            // },function(error){
+                
+            //     console.log(error);
+            // });
             
         } 
 
 
         $scope.update_component = function(){
 
-            // console.log($scope.GencoComponentes);
-            // $scope.GencoComponentes.$save(function(){   
-            //     $scope.reload_tree();      
-            //     $('#component-create-modal').modal('hide')
-            // });
-
-            $scope.GencoComponentes.$update(function(){
-            $scope.load_components();
-            //$scope.envs=env.query();         
-            //$scope.load_env($scope.GencoEntorno.id_entorno);       
-            $('#component-edit-modal').modal('hide');
-        });
+            $scope.GencoComponentes.$update(function(success){
+                $scope.renameTreeNode($scope.node_selected, success.nombre);
+                $('#component-edit-modal').modal('hide');
+            }, function(error){
+                $scope.showMessage($scope.getDataError(error));
+            });
             
         } 
 
@@ -665,8 +714,20 @@ console.log($scope.components);
             console.log($scope.GencoPlantillas);
             $scope.GencoPlantillas.id_lenguaje = $scope.dataLang.repeatSelectLang;
             $scope.GencoPlantillas.$save(function(success){   
-                $scope.reload_tree();      
-                $('#template-create-modal').modal('hide')
+                console.log(success);
+                //$scope.reload_tree();
+                //$scope.load_entities($scope.repo_selected.id);
+                var nodeDef = {'id': 'template' + success.id_plantilla, 
+                                'parent': success.id_componente, 
+                                'text': success.nombre, 
+                                'icon':"glyphicon glyphicon-file", 
+                                'li_attr':{'data-renderas':"entity",
+                                            'data-renderid': success.id_plantilla, 
+                                            'data-rendername':success.nombre
+                                        }
+                            }
+                $scope.addTreeNode($scope.node_selected, nodeDef, $('#jstree').jstree(true));                
+                $('#template-create-modal').modal('hide');
             }, function(error){
                 $scope.showMessage($scope.getDataError(error));
             });
@@ -687,9 +748,12 @@ console.log($scope.components);
         } 
 
         $scope.update_template = function(){
-            $scope.GencoPlantillas.$update(function(){
-                $scope.reload_tree();      
+            $scope.GencoPlantillas.$update(function(success){
+                //$scope.reload_tree();
+                $scope.renameTreeNode($scope.node_selected, success.nombre);
                 $('#template-edit-modal').modal('hide')
+            },function(error){
+                $scope.showMessage($scope.getDataError(error));
             });
 
         }
@@ -698,10 +762,10 @@ console.log($scope.components);
 
             plantillas.delete({id: $scope.template_selected.id},function(success){
                 console.log(success);
-                $scope.reload_tree();
-                $('#template-delete-modal').modal('hide');
+                //$scope.reload_tree();
+                $('#jstree').jstree(true).delete_node($scope.node_selected); 
             },function(error){
-                console.log(error);
+                $scope.showMessage($scope.getDataError(error));
             });
             
         } 
@@ -831,11 +895,12 @@ console.log($scope.components);
             //@Generics actualizo el contenido en memoria en caso de que haya sido modificado 
             
             if(flgUpd){     
-                $scope.tabs[$scope.current_pos].content = editors[$scope.current_pos].getValue();
+                //$scope.tabs[$scope.current_pos].content = editors[$scope.current_pos].getValue();
                 if(pos!=$scope.current_pos){
                     $('#'+editors[$scope.current_pos].container.id).attr('hidden', true);
                 }
-                $('#'+editors[pos].container.id).attr('hidden', false);     
+                $('#'+editors[pos].container.id).attr('hidden', false); 
+                editors[pos].focus();
             }else{                
                 if(pos!=$scope.current_pos && editors[$scope.current_pos] != undefined){
                     $('#'+editors[$scope.current_pos].container.id).attr('hidden', true);
@@ -846,9 +911,10 @@ console.log($scope.components);
                 editor.getSession().setMode("ace/mode/python");
                 editor.$blockScrolling = Infinity;
                 editors[pos]=editor;
+                editors[pos].setValue($scope.tabs[pos].content);
             }
             
-            editors[pos].setValue($scope.tabs[pos].content);
+            //
             $scope.current_editor= idTempl;
             $scope.current_template = id_template;
             $scope.current_pos = pos;
@@ -1046,6 +1112,40 @@ console.log($scope.components);
         //     $('#template-create-modal').modal('hide');
         // }
 
+
+
+    /*
+    * data: datos del nodo seleccionado que activa el menu, de esta se puede obtener el nodo seleccionado, y una instancia para 
+            manipular el arbol.
+    */
+    $scope.addTreeNode = function(node, newNode, jsTree){
+        jsTree.create_node(node.id,newNode);
+    }
+
+    $scope.renameTreeNode = function(node, newText){
+        $('#jstree').jstree('set_text', node, newText); 
+    }
+
+    $scope.setTemplLang = function (lang) {
+        $scope.GencoPlantillas.id_lenguaje = lang.id_lenguaje;        
+        $('#imgTmplLang').attr('src',lang.lang.icon.upload);
+    }
+
+    $scope.showMessage = function(message){
+        $('#imConfirm').html(message);
+        $('#info-modal').modal('show');
+    }
+
+    $scope.showConfirmDelete = function(message){
+        $('#tedmConfirm').html(message);
+        $('#confirm-delete-modal').modal('show');
+    }
+
+    $scope.confirm_delete = function(){
+        $('#confirm-delete-modal').modal('hide');
+       $scope.ConfirmDeleteCallback();
+    }
+
     $scope.getDataError = function(error){
         console.log(error);
        if(error.data['detail']!=null){
@@ -1060,7 +1160,8 @@ console.log($scope.components);
        }
     }
 
-    $scope.load_components();
+    //$scope.load_components();
+    $scope.getDirTree();
 
   });
 

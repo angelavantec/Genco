@@ -119,7 +119,7 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)    
     filter_class = GencoTipodatoFilter
     filter_fields = ('id_entorno')
-
+ 
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.username, fecha_creacion=timezone.now())        
 

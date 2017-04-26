@@ -938,4 +938,22 @@ class repo_tree(APIView):
 
         return JsonResponse({'dirs':repos})
 
-        
+
+class component_template_tree(APIView):
+    
+    def get(self, request, id_entorno=None):
+
+        comp = GencoComponentes.objects.filter(id_entorno=id_entorno, creado_por=request.user.id).order_by('id_componente')
+        template = GencoPlantillas.objects.filter(id_componente__id_entorno=id_entorno, creado_por=request.user.id).order_by('id_plantilla')
+
+        comps = []
+        id_padre = ''
+
+        for i  in comp:         
+            comps.append({'id': i.id_componente, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"component",'data-renderid': i.id_componente, 'data-rendername':i.nombre}})
+       
+
+        for i  in template:          
+            comps.append( {'id': 'template'+str(i.id_plantilla), 'parent': i.id_componente.id_componente, 'text': i.nombre + '<sub style="color:#CCCCCC"></sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla, 'data-rendername': i.nombre}}) 
+
+        return JsonResponse({'dirs':comps})     
