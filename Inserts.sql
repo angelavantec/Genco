@@ -1,4 +1,5 @@
-insert into admin_lenguaje_procesador(nombre, version, componente_binario, estado, creado_por, fecha_creacion) values ('cheetha', 5, 'cheetha','alta','admin', now());
+insert into admin_lenguaje_procesador(nombre, version, componente_binario, estado, id_icono, creado_por, fecha_creacion) values ('cheetha', 5, 'cheetha','alta',5,'admin', now());
+insert into admin_lenguaje_procesador(nombre, version, componente_binario, estado, id_icono, creado_por, fecha_creacion) values ('xsl', 3, 'xsl','alta',1,'admin', now());
 
 insert into genco_grupo(nombre, creado_por, fecha_creacion) values('default', 'admin', now());
 

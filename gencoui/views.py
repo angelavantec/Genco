@@ -600,7 +600,7 @@ class tmpl(APIView):
     def get(self, request, id_plantilla=None):
         context = {'error':'', 'fileContent':'', 'templateName':''}
         print 'get'
-        filename = os.path.join(id_plantilla)
+        filename = os.path.join('user_templates/'+id_plantilla)
         readFile(filename + '_rndr.tmpl', context)
         # obj = GencoPlantillas.objects.get(id_plantilla=id_plantilla)
         obj = GencoPlantillas.objects.get(id_plantilla=id_plantilla)
@@ -620,7 +620,7 @@ class tmpl(APIView):
         
         # # if request.POST.__contains__('editor'):
         content = request.data['editor']
-        filename = os.path.join(id_plantilla)
+        filename = os.path.join('user_templates/'+id_plantilla)
         #     # a = ['a', 'b', 'c', 'd']
         #     # print filename
         #     # filename = filename.join(id_plantilla,'_rndr.tmpl'])
@@ -671,10 +671,10 @@ def tmplx(request, id_plantilla=None):
         print (request)
         received_json_data=json.loads(request.body)
         print received_json_data
-        print 'receibed'
+        print 'received'
         if request.POST.__contains__('editor'):
             lines2 = request.POST['editor']
-            filename = os.path.join(id_plantilla)
+            filename = os.path.join('user_templates/'+id_plantilla)
             # a = ['a', 'b', 'c', 'd']
             print filename
             # filename = filename.join(id_plantilla,'_rndr.tmpl'])
@@ -689,7 +689,7 @@ def tmplx(request, id_plantilla=None):
         # print request.POST
     elif request.method == "GET":
         print 'get'
-        filename = os.path.join(id_plantilla)
+        filename = os.path.join('user_templates/'+id_plantilla)
         readFile(filename + '_rndr.tmpl', context)
         # obj = GencoPlantillas.objects.get(id_plantilla=id_plantilla)
         obj = GencoPlantillas.objects.get(id_plantilla=id_plantilla)
@@ -714,12 +714,21 @@ class tmpl_preview(APIView):
         t = Template(tmpl)
         t.title = 'Generics 2016'
 
-        cliente = type('Client', (object,), 
-                 {'surname':'render', 'firstname':'generic', 'email':'@gamial'})()
+        direccion = type('Direccion', (object,), 
+                 {'name':'1-90 street'})()
 
-        t.clients = [cliente,cliente,cliente,cliente,cliente]     
-        print t
-        context['fileContent'] = str(t);
+        cliente = type('Client', (object,), 
+                 {'surname':'render', 'firstname':'generic', 'email':'@gamial', 'direccion':direccion})()
+
+
+
+        t.clients = [cliente,cliente,cliente,cliente,cliente]
+        
+        try:
+            context['fileContent'] = str(t);
+        except Exception as e:
+            raise APIException('An error ocurred... ' + str(e))
+            #context['error'] = str(e);         
 
             # filename = os.path.join(id_plantilla)
             # print filename
@@ -957,3 +966,16 @@ class component_template_tree(APIView):
             comps.append( {'id': 'template'+str(i.id_plantilla), 'parent': i.id_componente.id_componente, 'text': i.nombre + '<sub style="color:#CCCCCC"></sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla, 'data-rendername': i.nombre}}) 
 
         return JsonResponse({'dirs':comps})     
+
+
+class processors(APIView):
+    
+    def get(self, request):
+
+        comp = AdminLenguajeProcesador.objects.filter(estado='ALTA').order_by('id_lenguajeprocesador')
+
+        comps = []        
+        for i  in comp:         
+            comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload)})
+
+        return JsonResponse({'processor':comps})        

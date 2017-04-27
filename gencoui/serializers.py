@@ -129,6 +129,7 @@ class GencoComponentesSerializer(serializers.ModelSerializer):
 
 
 class AdminLenguajeProcesadorSerializer(serializers.ModelSerializer):  
+    icon= AdminAppIconosSerializer(many=False, source="id_icono", read_only=True)
 
     class Meta:        
         model = AdminLenguajeProcesador
@@ -138,6 +139,7 @@ class AdminLenguajeProcesadorSerializer(serializers.ModelSerializer):
 
 class GencoPlantillasSerializer(serializers.ModelSerializer):  
     lang= GencoLenguajesSerializer(many=False, source="id_lenguaje", read_only=True)
+    proc= AdminLenguajeProcesadorSerializer(many=False, source="id_lenguajeprocesador", read_only=True)
     class Meta:        
         model = GencoPlantillas
         exclude = ('creado_por','fecha_creacion','modificado_por','fecha_modificacion', 'archivo')

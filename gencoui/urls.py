@@ -49,5 +49,6 @@ urlpatterns = patterns('',
 	url(r'^dir_item_tree/(?P<id_direlemento>\d+)/(?P<id_repositorio>\d+)$', dir_elemento_entidad_tree.as_view()),
 	url(r'^cmp_tmpl_tree/(?P<id_entorno>\d+)/$', component_template_tree.as_view()),	
 	url(r'^repo_tree/$', repo_tree.as_view()),
+	url(r'^processors/$', processors.as_view()),
 	# url(r'^template_entity/(?P<id_proyecto>\d+)$', template_entity.as_view()),
 )

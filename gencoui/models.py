@@ -10,12 +10,26 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+class AdminAppIconos(models.Model):
+    id_icono = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=50)
+    tipo = models.CharField(max_length=45)
+    creado_por = models.IntegerField()
+    fecha_creacion = models.DateTimeField()    
+    upload = models.FileField(upload_to='icons')
+
+    class Meta:
+        managed = False        
+        db_table = 'admin_app_iconos'
+        
+
 class AdminLenguajeProcesador(models.Model):
     id_lenguajeprocesador = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=200, blank=True, null=True)
     version = models.IntegerField()
     componente_binario = models.CharField(max_length=200)
+    id_icono = models.ForeignKey(AdminAppIconos, models.DO_NOTHING, db_column='id_icono')
     estado = models.CharField(max_length=15)
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
@@ -62,19 +76,6 @@ class AdminProyectoAlcance(models.Model):
     class Meta:
         managed = False
         db_table = 'admin_proyecto_alcance'
-
-
-class AdminAppIconos(models.Model):
-    id_icono = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50)
-    tipo = models.CharField(max_length=45)
-    creado_por = models.IntegerField()
-    fecha_creacion = models.DateTimeField()    
-    upload = models.FileField(upload_to='icons')
-
-    class Meta:
-        managed = False        
-        db_table = 'admin_app_iconos'
 
 
 class AuthGroup(models.Model):

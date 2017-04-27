@@ -242,32 +242,8 @@
 						
 		    	<div class="modal-header">
 
-					<div class="dropdown" style="display:inline;">
-					  <button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropEdtOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-					    Options
-					    <span class="caret"></span>
-					  </button>
-					  <ul class="dropdown-menu" aria-labelledby="dropEdtOptions">
-					    <li>
-					    	<a ng-click="submit()">					   					    	
-							Save
-					    	</a>
-					    </li>
-					    <li>
-					    	<a ng-click="preview()">									    	
-							Preview
-					    	</a>
-					    </li>
-					    <li role="separator" class="divider"></li>
-					    <li>
-					    	<a >
-					    		<!-- <img src="{% static 'gencoui/img/rndr/removeenv_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="24px" height="24px" style="display:inline;">
-								</img> -->
-					    		Remove
-					    	</a>
-					    </li>
-					  </ul>
-					</div>
+		    		<a class="btn btn-default btn-xs" ng-click="submit()">Save</a>
+		    		<a class="btn btn-default btn-xs" ng-click="preview()">Preview</a>
 
 		   <!--  		Options
 		    		<div style="display:inline">
@@ -319,57 +295,10 @@
 	    </div>	
 
 
-    <!-- Modal Templates -->
-	<div class="modal fade" id="template-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-	    <div class="modal-dialog">
-
-	        <div class="modal-content">
-		        <div class="modal-header">
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-			     {% verbatim %}
-		        <h4 class="modal-title">{{component_selected.nombre}} - add Template</h4>
-		        {% endverbatim %}
-			    </div>
-	          <!-- <div class="arrow-up"></div> -->
-	          	<div class="modal-body">
-	          		<form ng-submit="save_template()">
-			   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
-			   			{{ form_create_template.nombre.label_tag }}
-						{{ form_create_template.nombre }}
-						{{ form_create_template.descripcion.label_tag }}
-						{{ form_create_template.descripcion }}
-						{% verbatim %}
-						<label for="repeatSelectLang">Lenguaje: </label>
-						<select id="repeatSelectLang" ng-model="dataLang.repeatSelectLang" class="form-control">
-					      	<option ng-repeat="option in dataLang.availableOptions" value="{{option.id_lenguaje}}">{{ option.nombre }} {{ option.version }}</option>
-					    </select>	
-						{% endverbatim %}
-						{{ form_create_template.id_lenguajeprocesador.label_tag }}
-						{{ form_create_template.id_lenguajeprocesador }}
-						<button type="submit" hidden></button>
-					</form>	
-	          	</div>
-	          	<div class="modal-footer">
-	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="save_template()" data-placement="bottom"data-tt="tooltip" title="Save">
-							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
-						</a>
-					</div>	
-					<div style="display:inline">	
-						<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-						</a>
-					</div>	
-	          	</div>
-
-	        </div>
-	    </div>
-	</div>
-
+ 
 
     <!-- Modal Templates -->
-	<div class="modal fade" id="template-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal fade" id="template-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
 	    <div class="modal-dialog">
 
@@ -382,7 +311,7 @@
 			    </div>
 	          <!-- <div class="arrow-up"></div> -->
 	          	<div class="modal-body">
-	          		<form ng-submit="update_template()">
+	          		<form ng-submit="saveOrUpdate()">
 			   			<input type="hidden" ng-model="GencoPlantillas.id_componente" >
 			   			{{ form_create_template.nombre.label_tag }}
 						{{ form_create_template.nombre }}
@@ -395,11 +324,11 @@
 					      	</option>
 					    </select> -->	
 						{% endverbatim %}
-						{{ form_create_template.id_lenguajeprocesador.label_tag }}
-						{{ form_create_template.id_lenguajeprocesador }}
+						<!-- {{ form_create_template.id_lenguajeprocesador.label_tag }}
+						{{ form_create_template.id_lenguajeprocesador }} -->
 
 
-						<div>
+						<div class="well" style="margin-top: 20px">
 					
 							{% verbatim %}
 							<label>Lenguaje </label>
@@ -414,12 +343,26 @@
 							{% endverbatim %}	
 						</div>
 
+						<div class="well">
+					
+							{% verbatim %}
+							<label>Processor </label>
+							<img id="imgProcLang" src="" width="32px" height="32px" style="margin: 8px"/>
+							<div class="modal-footer">							
+								<div class="checkbox" ng-repeat="proc in processors" style="display:inline;margin: 8px">
+									<img class="rndr-scale" ng-src="{{proc.id_icono}}" width="32px" height="32px" ng-click="setProc(proc)"/>
+									
+								</div>
+							</div>	
+							{% endverbatim %}	
+						</div>
+
 						<button type="submit" hidden></button>
 					</form>
 			    </div>
 	          	<div class="modal-footer">
 	          		<div style="display:inline">
-		          		<a class="btn icon-btn btn-default" ng-click="update_template()" data-placement="bottom"data-tt="tooltip" title="Save">
+		          		<a class="btn icon-btn btn-default" ng-click="saveOrUpdate()" data-placement="bottom"data-tt="tooltip" title="Save">
 							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 						</a>
 					</div>	
@@ -603,9 +546,9 @@
     // editor.getSession().setMode("ace/mode/python");
     // editor.$blockScrolling = Infinity;
 
-    // var editor_preview = ace.edit("editor_preview");
-    // editor_preview.getSession().setMode("ace/mode/html");
-    // editor_preview.$blockScrolling = Infinity;
+    var editor_preview = ace.edit("editor_preview");
+    editor_preview.getSession().setMode("ace/mode/html");
+    editor_preview.$blockScrolling = Infinity;
 
     // var editor2 = ace.edit("editor2");
     // //editor2.setTheme("ace/theme/default");

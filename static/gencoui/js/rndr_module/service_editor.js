@@ -126,6 +126,17 @@ return $resource('http://localhost:8000/gencoui/cmp_tmpl_tree/:id',{id:'@id'},{
     }, 
   });
 
+}).factory('processors',function($resource){
+
+return $resource('http://localhost:8000/gencoui/processors\\/',{
+    get: {
+        isArray:true    
+    }, 
+    query: {
+        isArray:true    
+    }, 
+  });
+
 }).service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);
