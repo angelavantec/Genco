@@ -1307,6 +1307,26 @@ console.log($scope.components);
            $scope.ConfirmDeleteCallback();
         }
 
+    $scope.getDataError = function(error){
+       if(error.data['detail']!=null){
+        return error.data['detail'];
+       } if(error.data!=null){
+
+            var resp='';
+
+            if (error.data instanceof Array || error.data instanceof Object) {
+                angular.forEach(error.data, function(value, key){        
+                    resp += key + ' - ' + value + '<br/>';
+                });
+            }else{
+
+                resp = error.data;
+            }
+                        
+            return resp;
+       }
+    }
+
         // $scope.template_entities_load = function(id_plantilla){
 
         //     plantillas.get({id: id_plantilla},function(success){

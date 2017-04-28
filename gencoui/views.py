@@ -918,7 +918,7 @@ class langs_tree(APIView):
         id_padre = ''
 
         for i  in langs:         
-            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre, 'icon':"/static/gencoui/img/rndr/metadata18.png", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre}})
+            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre}})
        
 
         for i  in tipodatos:          
@@ -939,7 +939,7 @@ class repo_tree(APIView):
         id_padre = ''
 
         for i  in repo:         
-            repos.append({'id': i.id_repositorio, 'parent': '#', 'text': i.nombre, 'icon':"/static/gencoui/img/rndr/metadata18.png", 'li_attr':{'data-renderas':"repository",'data-renderid': i.id_repositorio, 'data-rendername':i.nombre}})
+            repos.append({'id': i.id_repositorio, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"repository",'data-renderid': i.id_repositorio, 'data-rendername':i.nombre}})
        
 
         for i  in entity:          

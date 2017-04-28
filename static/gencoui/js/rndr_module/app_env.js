@@ -283,15 +283,27 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     }
 
     $scope.getDataError = function(error){
-        console.log(error);
        if(error.data['detail']!=null){
         return error.data['detail'];
        } if(error.data!=null){
+
             var resp='';
-            angular.forEach(error.data, function(value, key){    
-                console.log(key + ' - ' + value);
-                resp += key + ' - ' + value + '<br/>';
-            });
+
+            if (error.data instanceof Array || error.data instanceof Object) {
+                angular.forEach(error.data, function(value, key){        
+                    resp += key + ' - ' + value + '<br/>';
+                });
+            }else{
+                var data = JSON.stringify(error.data);
+                console.log(error.data);
+                console.log(data.substring(1, 10));
+                console.log(data.substring(1, 6));
+                
+                if(data.substring(1, 10) == '<!DOCTYPE' || data.substring(1, 6) == 'html'){
+                    return error.data;
+                }
+            }
+                        
             return resp;
        }
     }

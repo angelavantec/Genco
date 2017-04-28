@@ -123,7 +123,7 @@
 					    <div style="display:inline; margin-bottom: 50px; ">				    	
 							<img src="{% static 'gencoui/img/rndr/repository.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"></img>
 					    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Metadata </h4>
-							<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#repository-create-modal" data-placement="bottom" data-tt="tooltip" title="Add Repository" ng-click="new_repository()">
+							<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-placement="bottom" data-tt="tooltip" title="Add Repository" ng-click="new_repository()">
 								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
 							</a>
 								<!-- <a style="left:250px" class="action-button shadow animate blue" data-toggle="modal" data-target="#repository-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Repository" ng-click="new_repository()"><span class="glyphicon glyphicon-plus" ></span></a> -->
@@ -139,8 +139,6 @@
 
 	    <div style="height: 100%;min-height: 200px; overflow-y: scroll;">
 
-
-	
 	    		{% verbatim %}
 		    <div class="container-fluid" style="margin-left:5%; margin-right: 5%;  margin-top:20px; margin-bottom:20px; padding-bottom:20px; background-color: white; padding-top: 10px;border-radius: 5px;"
 		    	ng-show="entity_selected.id!=null">
@@ -173,6 +171,7 @@
 						  		<tr style="background-color:rgba(220, 228, 236, 0.36);">
 						      		<td style="min-width:150px">{{form_add_entitydef.nombre}}</td>
 						      		<td style="min-width:150px">{{form_add_entitydef.id_tipodato}}</td>
+						      		<!-- <td style="min-width:150px">{{form_add_entitydef.types}}</td> -->
 						      		<td width="120px">{{form_add_entitydef.longitud}}</td>
 						      		<td>{{form_add_entitydef.es_pk}}</td>
 						      		<td>{{form_add_entitydef.obligatorio}}</td>
@@ -274,25 +273,26 @@
 	    <!-- <img src="{% static 'gencoui/img/rndr/metadata.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img> -->
 		</div>
 
-<div class="modal fade" id="repository-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="repository-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
     <div class="modal-dialog">
 
         <div class="modal-content">
 	        <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        <h4 class="modal-title">Create Repository</h4>
+		        <h4 class="modal-title">Repository</h4>
 		    </div>
           <!-- <div class="arrow-up"></div> -->
           	<div class="modal-body">
-          		<form ng-submit="save_repository()">
+          		<form ng-submit="saveOrUpdateRepo()">
+          		<input type="hidden" ng-model="GencoRepositorio.id_repositorio">
 				{{form_add_repository}}
 				<button type="submit" hidden></button>
 				</form>
           	</div>
           	<div class="modal-footer">
   				<div style="display:inline">
-  					<a class="btn icon-btn btn-default" ng-click="save_repository()" data-placement="bottom"data-tt="tooltip" title="Save">
+  					<a class="btn icon-btn btn-default" ng-click="saveOrUpdateRepo()" data-placement="bottom"data-tt="tooltip" title="Save">
 					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>
 					</a>
 				</div>
@@ -308,88 +308,23 @@
 
 </div>
 
-<div class="modal fade" id="repository-edit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-    <div class="modal-dialog">
-
-        <div class="modal-content">
-	        <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        <h4 class="modal-title">Edit Repository</h4>
-		    </div>
-          <!-- <div class="arrow-up"></div> -->
-          	<div class="modal-body">
-          		<form ng-submit="update_repository()">
-          		<input type="hidden" ng-model="GencoRepositorio.id_repositorio">
-				{{form_add_repository}}
-				<button type="submit" hidden></button>
-				</form>
-          	</div>
-          	<div class="modal-footer">
-  				<div style="display:inline">
-  					<a class="btn icon-btn btn-default" ng-click="update_repository()" data-placement="bottom"data-tt="tooltip" title="Save">
-					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>
-					</a>
-				</div>
-  				<div style="display:inline">
-  					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-					<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>
-				</a>		
-  				</div>	
-          	</div>
-
-        </div>
-  	</div>
-
-</div>
 
 
-<!-- Modal Templates -->
-<div class="modal fade" id="repository-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-    <div class="modal-dialog modal-sm">
-
-        <div class="modal-content">
-	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-	        	<h4 class="modal-title">Confirm</h4>
-		    </div>	     
-          	<div class="modal-body">
-          		{% verbatim %}
-          		Do you really want to delete {{repository_selected.nombre}} repository?
-          		{% endverbatim %}
-          	</div>
-          	<div class="modal-footer">
-          		<div style="display:inline">
-	          		<a class="btn icon-btn btn-default" ng-click="delete_repository()" data-placement="bottom"data-tt="tooltip" title="Save">
-						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
-					</a>
-				</div>
-				<div style="display:inline">
-					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-					</a>
-				</div>	
-          	</div>
-
-        </div>
-    </div>
-</div>
 
 
-<div class="modal fade" id="entity-create-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="entity-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
     <div class="modal-dialog">
 
         <div class="modal-content">
 	        <div class="modal-header" >
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        <h4 class="modal-title" style="display:inline">Create Entity</h4>
+		        <h4 class="modal-title" style="display:inline">Entity</h4>
 		    </div>
           <!-- <div class="arrow-up"></div> -->
           	<div class="modal-body">
 
-          		<form ng-submit="save_entity()">
+          		<form ng-submit="saveOrUpdateEntity()">
 				{{form_add_entity}}	
 				<button type="submit" hidden></button>
 				</form>
@@ -397,7 +332,7 @@
           	</div>
           	<div class="modal-footer">
   				<div style="display:inline">
-  					<a class="btn icon-btn btn-default" ng-click="save_entity()" data-placement="bottom"data-tt="tooltip" title="Save">
+  					<a class="btn icon-btn btn-default" ng-click="saveOrUpdateEntity()" data-placement="bottom"data-tt="tooltip" title="Save">
 					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>
 					</a>
 				</div>

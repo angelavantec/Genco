@@ -181,9 +181,34 @@ tree.get({id:$scope.environment_selected}, function(success){
 
                     if($node.li_attr['data-renderas'] === 'component')
                         return {
+                            "CreateTempl": {
+                                "label": "Create Template",
+                                "separator_before": true,                               
+                                "action": function (data) {
+                                    var inst = $.jstree.reference(data.reference),
+                                    obj = inst.get_node(data.reference);
+                                    //inst.edit(obj);
+                                    $scope.node_selected = obj;
+                                    
+                                    $scope.component_selected.nombre = obj.text;
+                                    $scope.component_selected.id = obj.id;
+                                    $scope.new_template($scope.component_selected.id);                                   
+                                    //Hago que la interfaz refresque el titulo con el valor de component_selected
+                                    angular.element($("#ctrl_editor")).scope().$apply();
+                                    $('#template-modal').modal('show').on('shown.bs.modal', function() {
+                                            $('#template-modal #id_nombre').focus();
+                                    });
+                                    //this.create(obj);
+                                //     //alert('render');
+                                //     //getCode();
+
+
+                                }
+                                
+                            },
 
                             "Rename": {
-                                "label": "Edit Component",
+                                "label": "Edit Component",                                
                                 "action": function (data) {
                                    // this.rename(obj);
                                     console.log(data);
@@ -220,31 +245,7 @@ tree.get({id:$scope.environment_selected}, function(success){
                                     
                                 }
                             },
-                            "CreateTempl": {
-                                "label": "Create Template",
-                                "separator_before": true,
-                                "action": function (data) {
-                                    var inst = $.jstree.reference(data.reference),
-                                    obj = inst.get_node(data.reference);
-                                    //inst.edit(obj);
-                                    $scope.node_selected = obj;
-                                    
-                                    $scope.component_selected.nombre = obj.text;
-                                    $scope.component_selected.id = obj.id;
-                                    $scope.new_template($scope.component_selected.id);                                   
-                                    //Hago que la interfaz refresque el titulo con el valor de component_selected
-                                    angular.element($("#ctrl_editor")).scope().$apply();
-                                    $('#template-modal').modal('show').on('shown.bs.modal', function() {
-                                            $('#template-modal #id_nombre').focus();
-                                    });
-                                    //this.create(obj);
-                                //     //alert('render');
-                                //     //getCode();
 
-
-                                }
-                                
-                            },
                         };
                     else{
                         return {
@@ -704,18 +705,18 @@ tree.get({id:$scope.environment_selected}, function(success){
        if(error.data['detail']!=null){
         return error.data['detail'];
        } if(error.data!=null){
-            var resp='';
-            console.log(error.data.substring(1, 10));
-            console.log(error.data.substring(1, 6));
-            console.log(error.data);
-            if(error.data.substring(1, 10) == '<!DOCTYPE' || error.data.substring(1, 6) == 'html'){
-                return error.data;
-            }
 
-            angular.forEach(error.data, function(value, key){
-                //console.log(key + ' - ' + value);
-                resp += key + ' - ' + value + '<br/>';
-            });
+            var resp='';
+
+            if (error.data instanceof Array || error.data instanceof Object) {
+                angular.forEach(error.data, function(value, key){        
+                    resp += key + ' - ' + value + '<br/>';
+                });
+            }else{
+
+                resp = error.data;
+            }
+                        
             return resp;
        }
     }
