@@ -77,7 +77,7 @@ class GencoTipodatoSerializer(serializers.ModelSerializer):
     # lang= GencoLenguajesSerializer(many=False, source="id_lenguaje", read_only=True)
     class Meta:        
         model = GencoTipodato
-        fields = ('id_tipodato', 'nombre', 'descripcion', 'id_lenguaje', 'contenedor', 'prefijo', 'longitud_maxima','creado_por','fecha_creacion','modificado_por','fecha_modificacion')
+        fields = ('id_tipodato', 'nombre', 'descripcion', 'id_lenguaje', 'contenedor', 'prefijo', 'longitud_maxima')
         read_only_fields = ('id_tipodato', 'creado_por','fecha_creacion','modificado_por','fecha_modificacion',)
 
 

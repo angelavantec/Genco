@@ -200,12 +200,14 @@ class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         obj = get_object_or_404(self.get_queryset(), id_direlemento=instance.id_direlemento)
 
+        obj = GencoElementoEntidad.objects.filter(id_direlemento=instance.id_direlemento)
         refElements = '';
+        
         for i  in obj:
-            refEntity += '<br><b>' + i.id_entidad.id_repositorio.nombre + '-</b>' + i.id_entidad.nombre
+            refElements += '<br><b>' + i.id_entidad.id_repositorio.nombre + '-</b>' + i.id_entidad.nombre
 
         if obj.exists():
-            raise APIException('This Element is referenced by ' + refEntity)
+            raise APIException('This Element is referenced by ' + refElements)
 
         instance.delete()
             
@@ -511,7 +513,7 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
     filter_fields = ('id_direlemento', 'id_entidad')
 
     def get_queryset(self):
-        return GencoEntidadDefinicion.objects.filter(creado_por=self.request.user.id)
+        return GencoElementoEntidad.objects.filter(creado_por=self.request.user.id)
 
     def perform_create(self, serializer):
         dict = {}
@@ -978,4 +980,17 @@ class processors(APIView):
         for i  in comp:         
             comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload)})
 
-        return JsonResponse({'processor':comps})        
+        return JsonResponse({'processor':comps}) 
+
+
+class getEntities(APIView):
+    
+    def get(self, request):
+
+        entities = GencoEntidad.objects.filter(creado_por=request.user.id).order_by('id_entidad')
+
+        comps = []        
+        for i  in comp:         
+            comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload)})
+
+        return JsonResponse({'processor':comps})                

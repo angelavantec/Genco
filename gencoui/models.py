@@ -236,7 +236,7 @@ class GencoDirectorioElementos(models.Model):
     id_directorio = models.ForeignKey('GencoDirectorios', models.DO_NOTHING, db_column='id_directorio')
     id_plantilla = models.ForeignKey('GencoPlantillas', models.DO_NOTHING, db_column='id_plantilla', blank=True, null=True)
     id_archivo = models.ForeignKey(GencoArchivos, models.DO_NOTHING, db_column='id_archivo', blank=True, null=True)
-    entidades_en_lista = models.IntegerField()
+    entidades_en_lista = models.IntegerField(blank=True, null=True)
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
 
