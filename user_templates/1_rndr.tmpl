@@ -3,9 +3,12 @@ dao hff
 $title
 
 <ul>
-    #for $person in $clients
+    #for $e in $entities
+        $e.name
+        #for $f in $e.fields
         <li>
-           $person.surname  - $person.email
+           $f.name  - f.typecnv
         </li>
+        #end for
     #end for
 </ul>

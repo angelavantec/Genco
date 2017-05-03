@@ -120,7 +120,7 @@
 							<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
 						</a>
 				    </div>	
-
+				    <a class="btn btn-default btn-xs" role="button" data-toggle="modal" data-target="#lang-clone-modal" data-placement="bottom" data-tt="tooltip" title="Create Lang" ng-click="clone_lang()" style="margin-bottom:20px">Clone Lang</a>
 				    <div id="jstree"></div>
 
 				</div>       
@@ -299,6 +299,84 @@
           	</div>
           	<div class="modal-footer">
           		<a class="btn icon-btn btn-default" ng-click="save_lang()" data-placement="bottom"data-tt="tooltip" title="Save">
+					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+				</a>
+				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+				</a>
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Environments -->
+<div class="modal fade" id="lang-clone-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Clone Lang</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   
+				  	<div class="form-group">		
+	  	
+		 	<div class="input-group">
+			    <input type="text" class="form-control" placeholder="Find Lang">
+			    <span class="input-group-btn">
+			      <button class="btn btn-default btn-sm" type="button" ng-click="searchLang()">
+			      	<i class="glyphicon glyphicon-search"></i>
+			      	Search
+			      </button>
+			    </span>
+		  	</div>
+		</div>
+
+		<div>
+
+			<table class="table table-hover" style="color: #6d758c;">
+			  <!-- <thead>
+			    <tr>
+			      <th>#</th>
+			      <th>Column heading</th>
+			      <th>Column heading</th>
+			      <th>Column heading</th>
+			    </tr>
+			  </thead> -->
+			  <tbody>
+			  	{% verbatim %}
+			    <tr ng-repeat="langsf in foundLangs">
+			    	{{langsf}}
+			      <td>{{langsf.nombre}}</td>
+			      <td>c</td>
+			      <td>c</td>
+			      <td>c</td>
+			    </tr>
+			    {% endverbatim %}
+		  	  </tbody>
+			</table> 
+			<div style="text-align:center">
+				<ul class="pagination" >
+				  <li class="disabled"><a href="#">&laquo;</a></li>
+				  <li class="active"><a href="#">1</a></li>
+				  <li><a href="#">2</a></li>
+				  <li><a href="#">3</a></li>
+				  <li><a href="#">4</a></li>
+				  <li><a href="#">5</a></li>
+				  <li><a href="#">&raquo;</a></li>
+				</ul>
+			</div>	
+		</div>	
+
+
+          	</div>
+          	<div class="modal-footer">
+          		<a class="btn icon-btn btn-default" ng-click="save_clone_lang()" data-placement="bottom"data-tt="tooltip" title="Clone">
 					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 				</a>
 				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">

@@ -89,24 +89,24 @@ $(function () {
             })
             .on('dnd_stop.vakata', function (e, data) {
                 var t = $(data.event.target);
-                console.log(data.data.obj[0].getAttribute('data-renderas'));
-                $(this).attr("data-id");
-                console.log(t);
+                //console.log(data.data.obj[0].getAttribute('data-renderas'));
+                //$(this).attr("data-id");
+                //console.log(t);
 
                 var isRenderas = data.data.obj[0].getAttribute('data-renderas');
                 if(isRenderas == undefined || isRenderas == null || isRenderas == 'component'){
                     return;
                 }
 
-                console.log(data.data.obj[0].id);
+                //console.log(data.data.obj[0].id);
                 var node = $('#jstree').jstree(true).get_node(data.data.obj[0].id);
                 var nodeParent = $('#jstree').jstree(true).get_node(node.parents[0]);
-                console.log(node);
-                console.log(nodeParent);
+                //console.log(node);
+                //console.log(nodeParent);
 
 
                 if(t[0].closest('.ace_content')) {
-                    console.log('append');
+                    //console.log('append');
                     $scope.insertKey(node, nodeParent);
                 }   
 
@@ -138,22 +138,24 @@ tree.get({id:$scope.environment_selected}, function(success){
                 "check_callback" : function (operation, node, node_parent, node_position, more) {
                         // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
                         // in case of 'rename_node' node_position is filled with the new node name                      
-                        
+                        return false;                        
 
                         if(operation == 'move_node'){
                             var validator;
-                            console.log('core check');
-                            console.log(node_parent);
+                            //console.log('core check');
+                            //console.log(node_parent);
                             if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
                                 return false;
                             }
                                 
 
-                            console.log(node_parent.li_attr['data-renderas']); 
-                            console.log(node_parent);
+                            //console.log(node_parent.li_attr['data-renderas']); 
+                            //console.log(node_parent);
                             var renderas = node_parent.li_attr['data-renderas'];
-                            console.log(renderas);
-                            console.log(node_parent);
+                            var renderidParent = node_parent.li_attr['data-renderid'];
+                            var renderid = node.li_attr['data-renderid'];
+                           // console.log(renderas);
+                           // console.log(node_parent);
 
                             if(typeof renderas == 'undefined'){
                                 return false;
@@ -164,7 +166,9 @@ tree.get({id:$scope.environment_selected}, function(success){
                             if(validator){
                                 //console.log(node_parent);
                                 //console.log(node);
-                                validator = node.li_attr['data-renderas'] === 'template' ? true : false; 
+                                validator = node.li_attr['data-renderas'] === 'template' ? true : false;
+                                
+
 
                             }   
                             return validator;
@@ -312,12 +316,7 @@ tree.get({id:$scope.environment_selected}, function(success){
 
                 }
             }
-            });
-
-
-            $.jstree.defaults.core.dblclick_toggle = false;
-
-            $("#jstree").bind("dblclick.jstree", function (event) {
+            }).bind("dblclick.jstree", function (event) {
                 event.preventDefault();
                 console.log('ress'); 
                var node = $(event.target).closest("li");
@@ -327,12 +326,42 @@ tree.get({id:$scope.environment_selected}, function(success){
                var id =node.data("renderid");
                // Do my action
                
+                console.log(node.data("data-rendername"));
+                $scope.template_selected.nombre = node.data("rendername");
+                $scope.template_selected.id = id;
+
                if(renderas === 'template'){
                 console.log(node.text()); 
                 $scope.addTab(id.toString(), node.text());
                }
                
-            });
+            }).bind("move_node.jstree", function(event, data) {
+
+                console.log('move');
+                var nodeParent = $(event.target).closest("li");
+                var idParent =nodeParent.data("renderid");
+                $scope.update_template_fromTree(data.node.li_attr['data-renderid'], idParent);
+               // console.log(data.node);
+                // var inst = $.jstree.reference(data.reference);
+                // obj = inst.get_node(data.reference);
+                // obj.text;
+                // obj.id;
+                // console.log(obj);
+                // console.log(obj.id);
+
+                // console.log("Drop node " + data.node.id + " to " + data.parent + " " + data.node.li_attr['data-renderid']);
+
+               // console.log(data.parent);
+                //$("#jstreeFolders").jstree(true).select_node(data.node.id);
+                //$scope.new_directorioelemento(data.parent,  data.node.li_attr['data-renderid'], null, data.node, null);
+
+                //$('#jstreeFolders').jstree(true).delete_node(data.node);
+            });;
+
+
+            $.jstree.defaults.core.dblclick_toggle = false;
+
+           
    
 
         $scope.new_component = function(){
@@ -453,6 +482,20 @@ tree.get({id:$scope.environment_selected}, function(success){
                 $scope.showMessage($scope.getDataError(error));
             });
 
+        }
+
+        $scope.update_template_fromTree = function(id_template, id_componente){
+
+            var data = plantillas.get({id:id_template});
+            $scope.GencoPlantillas = data;
+            $scope.GencoPlantillas.id_componente = id_componente
+            data.$promise.then(function(data){
+                $scope.GencoPlantillas.$update(function(success){
+                },function(error){
+                    $scope.showMessage($scope.getDataError(error));
+                });
+            });
+            
         }
 
         $scope.delete_template = function(){
@@ -612,9 +655,9 @@ tree.get({id:$scope.environment_selected}, function(success){
 
         $scope.insertKey = function(node, nodeParent) {
 
-            var session = editor.session
+            var session = editors[$scope.current_pos].session
             session.insert(
-               editor.selection.getCursor()
+               editors[$scope.current_pos].selection.getCursor()
             , '[@ ' + nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'] + ' ' + node.li_attr['data-renderid'] + '-' + guid() + ' @] ')
         }   
 

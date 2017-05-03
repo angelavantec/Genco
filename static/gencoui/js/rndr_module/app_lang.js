@@ -1,9 +1,11 @@
 angular.module('app_lang', ['ngResource','lang.services'])
 
-.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree) {
+.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs) {
 
     $scope.langs = [];
     $scope.langs=lang.query();
+
+    $scope.foundLangs = []
 
     $scope.types = [];
     //$scope.types=lang_tipodato.query({id:3});
@@ -436,9 +438,38 @@ angular.module('app_lang', ['ngResource','lang.services'])
             console.log('reload');
             callback(id_lang);
         }
+    }
 
-        
 
+    $scope.searchLang =  function(){
+        searchLangs.get({text: 'gen'}, function(success){
+            $scope.foundLangs = success.langs;
+            console.log('expand');
+            console.log(success);
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+    }
+
+
+    $scope.getDataError = function(error){
+       if(error.data['detail']!=null){
+        return error.data['detail'];
+       } if(error.data!=null){
+
+            var resp='';
+
+            if (error.data instanceof Array || error.data instanceof Object) {
+                angular.forEach(error.data, function(value, key){        
+                    resp += key + ' - ' + value + '<br/>';
+                });
+            }else{
+
+                resp = error.data;
+            }
+                        
+            return resp;
+       }
     }
 
     /*

@@ -1252,9 +1252,9 @@ console.log($scope.components);
         }
 
 
-        $scope.delete_elementoentidad = function(node){
+        $scope.delete_elementoentidad = function(id_elementoentidad, node){
 
-            var id_elementoentidad = obj.li_attr['data-renderid'];
+            //var id_elementoentidad = node.li_attr['data-renderid'];
 
             plantillaentidad.delete({id: id_elementoentidad},function(success){
                 $('#jstreeBuilds').jstree(true).delete_node(node); 

@@ -37,6 +37,9 @@ def updateDictTags(list, dict):
 	return dict		
 
 
+def ValuesQuerySetToDict(vqs):
+    return [item for item in vqs]
+
 dic = {}
 
 dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 

@@ -716,15 +716,17 @@ class tmpl_preview(APIView):
         t = Template(tmpl)
         t.title = 'Generics 2016'
 
-        direccion = type('Direccion', (object,), 
-                 {'name':'1-90 street'})()
+        # direccion = type('Direccion', (object,), 
+        #          {'name':'1-90 street'})()
 
-        cliente = type('Client', (object,), 
-                 {'surname':'render', 'firstname':'generic', 'email':'@gamial', 'direccion':direccion})()
+        # cliente = type('Client', (object,), 
+        #          {'surname':'render', 'firstname':'generic', 'email':'@gamial', 'direccion':direccion})()
 
 
 
-        t.clients = [cliente,cliente,cliente,cliente,cliente]
+        # t.clients = [cliente,cliente,cliente,cliente,cliente]
+
+        t.entities = getDataTest(1,1)
         
         try:
             context['fileContent'] = str(t);
@@ -735,6 +737,9 @@ class tmpl_preview(APIView):
             # filename = os.path.join(id_plantilla)
             # print filename
             # writeFile(request.POST['editor'], filename + '_rndr.tmpl', context)
+
+        # print cliente
+        
 
         return JsonResponse(context)   
 
@@ -994,3 +999,58 @@ class getEntities(APIView):
             comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload)})
 
         return JsonResponse({'processor':comps})                
+
+
+def getDataTest(tipo, id_lenguaje):
+    
+    a = []
+    f = []
+    dict = {}
+    # direccion = type('Direccion', (object,), 
+                  # {'name':'1-90 street'})()
+
+    # cliente = type('Client', (object,), 
+    #              {'surname':'render', 'firstname':'generic', 'email':'@gamial', 'direccion':direccion})()
+    
+    types = GencoTipodato.objects.filter(id_lenguaje=0).order_by('id_tipodato')
+    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=id_lenguaje)
+    
+    for i in typesCnv:
+        try:
+            dict[i.id_tipodato] = i
+        except ValueError:            
+            dict={}
+
+    if tipo == 1:
+        for i  in types:
+            cnv = dict.get(i.id_tipodato)
+            if cnv==None:
+                field = type('field', (object,),{'name':str(i.nombre), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
+            else:
+                field = type('field', (object,),{'name':str(i.nombre), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato, 'prefixcnv': str(i.prefijo)})()
+            
+            
+            # field = type('Foca', (object,),{'name':'f', 'type':'f', 'typecnv': 'f', 'prefixcnv': 'f'})()
+            f.append(field)
+            # direccion = type('Direccion', (object,), {'name':'1-90 street'})()
+
+        a.append(type('entity', (object,),{'name': 'Entity', 'fields': f})())
+
+    #     # print e
+
+    return a
+
+
+
+
+class searchLangs(APIView):
+    
+    def get(self, request, keysearch=None):
+
+        langs = GencoLenguajes.objects.filter(nombre__icontains=keysearch).exclude(creado_por=request.user.id)
+        resp = []        
+        for i  in langs:
+            print i.nombre      
+            resp.append({'id_lenguaje': i.id_lenguaje, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload), 'creador': i.creado_por})
+
+        return JsonResponse({'langs':resp})     
