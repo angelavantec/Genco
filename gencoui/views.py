@@ -1047,10 +1047,11 @@ class searchLangs(APIView):
     
     def get(self, request, keysearch=None):
 
-        langs = GencoLenguajes.objects.filter(nombre__icontains=keysearch).exclude(creado_por=request.user.id)
+        print request.user.id
+        langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch).exclude(creado_por=request.user.id)
         resp = []        
         for i  in langs:
             print i.nombre      
             resp.append({'id_lenguaje': i.id_lenguaje, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload), 'creador': i.creado_por})
 
-        return JsonResponse({'langs':resp})     
+        return JsonResponse({'langs':resp})       

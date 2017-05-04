@@ -472,18 +472,43 @@ angular.module('app_lang', ['ngResource','lang.services'])
        }
     }
 
+
+
+
     /*
     Inicializamos el UI
     */
+    
     $scope.getLangTree();
+    
 
-
-  });
+});
 
 angular.module('app_lang').config(function($httpProvider){
-
-    $httpProvider.defaults.headers.common['Authorization'] = 'Basic YWRtaW46YWRtaW4=';
+    console.log('config headers')
     $httpProvider.defaults.withCredentials = true;
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+    // $httpProvider.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken');
+
+    // $httpProvider.defaults.withCredentials = true;
+    // delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 })
+
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
