@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'corsheaders',
     'login',
     'widget_tweaks',
-    #'rest_framework.authtoken',
+    'rest_framework.authtoken',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -57,9 +57,9 @@ MIDDLEWARE_CLASSES = (
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        #'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -70,7 +70,8 @@ REST_FRAMEWORK = {
     # 'DEFAULT_RENDERER_CLASSES': (
     #     'rest_framework.renderers.JSONRenderer',
     # ),
-    'PAGINATE_BY': 10
+    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    #'PAGE_SIZE': 1
 }
 
 # REST_FRAMEWORK = {

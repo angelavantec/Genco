@@ -56,7 +56,7 @@ class GencoLenguajesSerializer(serializers.ModelSerializer):
 
     class Meta:        
         model = GencoLenguajes
-        fields = ('id_lenguaje', 'nombre', 'descripcion', 'version', 'icon','creado_por','fecha_creacion','modificado_por','fecha_modificacion')
+        fields = ('id_lenguaje', 'nombre', 'descripcion', 'version', 'id_icono', 'icon','creado_por','fecha_creacion','modificado_por','fecha_modificacion')
         read_only_fields = ('id_lenguaje', 'creado_por','fecha_creacion','modificado_por','fecha_modificacion',)
 
     # def create(self, validated_data):
@@ -69,6 +69,14 @@ class GencoLenguajesSerializer(serializers.ModelSerializer):
     # def create(self, validated_data):
     # 	print serializers.request.user.username
     # 	return GencoLenguajes.objects.create(creado_por='admin',fecha_creacion=timezone.now(), **validated_data)
+
+
+class CommentSerializer(serializers.Serializer):
+    user = serializers.CharField(max_length=30)
+    id_lenguaje = serializers.IntegerField()
+    descripcion = serializers.CharField(max_length=100)
+    id_icono = AdminAppIconosSerializer()
+
 
 class GencoTipodatoSerializer(serializers.ModelSerializer):  
     #groups = GencoGrupoSerializer(many=True, read_only=True)

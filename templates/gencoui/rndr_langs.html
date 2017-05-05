@@ -327,7 +327,7 @@
 				  	<div class="form-group">		
 	  	
 		 	<div class="input-group">
-			    <input type="text" class="form-control" placeholder="Find Lang">
+			    <input id="findLangKey" type="text" class="form-control" placeholder="Find Lang">
 			    <span class="input-group-btn">
 			      <button class="btn btn-default btn-sm" type="button" ng-click="searchLang()">
 			      	<i class="glyphicon glyphicon-search"></i>
@@ -353,9 +353,14 @@
 			    <tr ng-repeat="langsf in foundLangs">
 			    	{{langsf}}
 			      <td>{{langsf.nombre}}</td>
-			      <td>c</td>
-			      <td>c</td>
-			      <td>c</td>
+			      <td><img  ng-src="{{langsf.id_icono.id_icono.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px"/></td>
+			      <td>{{langsf.descripcion}}</td>
+			      <td>{{langsf.creador}}</td>
+			      <td>
+					<label class="btn btn-primary btn-xs active">
+					    <input type="checkbox" autocomplete="off">
+					</label>
+			      </td>			      
 			    </tr>
 			    {% endverbatim %}
 		  	  </tbody>

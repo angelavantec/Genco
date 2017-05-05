@@ -38,10 +38,10 @@ return $resource('http://127.0.0.1:8000/gencoui/langs/:id\\/',{id:'@id_lang'},{
         url: 'http://127.0.0.1:8000/gencoui/langs\\/',   
         isArray:true    
     }, 
-    // get: {
-    //     // url: 'http://127.0.0.1:8000/gencoui/envlangs\\/',   
-    //     isArray:false    
-    // }, 
+    get: {
+        url: 'http://127.0.0.1:8000/gencoui/langs\\/',   
+        isArray:true    
+    }, 
   });
 
 }).factory('conversion',function($resource){
@@ -69,7 +69,10 @@ return $resource('http://127.0.0.1:8000/gencoui/conversiontipodatos/:id\\/',{id:
 
 }).factory('searchLangs',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/searchlangs/:text',{text:'@text'},{ 
+return $resource('http://127.0.0.1:8000/gencoui/searchlangs\\/',{ 
+    update: {
+            method: 'PUT'
+    },
     query: {   
         isArray:true    
     }, 
@@ -80,7 +83,7 @@ return $resource('http://127.0.0.1:8000/gencoui/searchlangs/:text',{text:'@text'
 
 }).factory('langs_tree',function($resource){
 
-return $resource('http://localhost:8000/gencoui/langs_tree\\/',{
+return $resource('http://127.0.0.1:8000/gencoui/langs_tree\\/',{
     query: {
         isArray:true    
     }, 

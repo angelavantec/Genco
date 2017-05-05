@@ -331,9 +331,9 @@ angular.module('app_env').config(function($httpProvider){
     //     controller:'MovieEditController'
     // });
     $httpProvider.defaults.withCredentials = true;
-    // $httpProvider.defaults.xsrfCookieName = 'csrftoken';
-    // $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    $httpProvider.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken');
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $httpProvider.defaults.headers.post['X-CSRFToken'] = getCookie('csrftoken');
 
     // $httpProvider.defaults.headers.common['Authorization'] = 'Basic YWRtaW46YWRtaW4=';
     // $httpProvider.defaults.withCredentials = true;

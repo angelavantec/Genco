@@ -19,7 +19,6 @@ from forms import *
 from filters import *
 from django.shortcuts import render, render_to_response
 #from django.template.context_processors import csrf
-from django.views.decorators.csrf import csrf_protect
 from django.views.generic.edit import CreateView
 import datetime
 from django.utils import timezone
@@ -27,6 +26,8 @@ from django.forms.models import modelform_factory
 from django.forms.models import model_to_dict
 from serializers import * #GencoUsuarioGrupoSerializer, GencoGrupoSerializer, GencoLenguajesSerializer, GencoProyectosSerializer, GencoEntornoSerializer, GencoDirectoriosSerializer
 from django.template import Context, loader
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import difflib
 from django.core.files import File
@@ -236,11 +237,8 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
         obj = get_object_or_404(self.get_queryset(), id_lenguaje=instance.id_lenguaje)
         instance.delete()
             
-    # def list(self, request):
-    #     queryset = self.get_queryset()
-    #     serializer = GencoLenguajesSerializer(queryset, many=True)
-    #     return Response(serializer.data)   
 
+  
 
 class GencoTipodatoViewSet(viewsets.ModelViewSet):
     """
@@ -914,9 +912,12 @@ class dir_elemento_entidad_tree(APIView):
         return JsonResponse({'dirs':dirs})
 
 
+
 class langs_tree(APIView):
     
     def get(self, request):
+        # if request.user.IsAuthenticated:
+        #     print 'logueado'
 
         langs = GencoLenguajes.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
         tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
@@ -1043,7 +1044,7 @@ def getDataTest(tipo, id_lenguaje):
 
 
 
-class searchLangs(APIView):
+class searchLangsx(APIView):
     
     def get(self, request, keysearch=None):
 
@@ -1052,6 +1053,40 @@ class searchLangs(APIView):
         resp = []        
         for i  in langs:
             print i.nombre      
-            resp.append({'id_lenguaje': i.id_lenguaje, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload), 'creador': i.creado_por})
+            resp.append({'id_lenguaje': i.id_lenguaje, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload), 'creador': i.user})
 
-        return JsonResponse({'langs':resp})       
+        return JsonResponse({'langs':resp})
+
+class searchLangs(APIView):
+
+    def post(self, request):
+        
+        try:
+            page = request.data['page']        
+        except:
+            page=1
+
+        try:    
+            keysearch = request.data['keysearch']
+        except:
+            keysearch=''
+
+        langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch)#.exclude(creado_por=request.user.id)
+
+        paginator = Paginator(langs, 1)
+        #page = request.GET.get('page')
+
+        try:
+            langs = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            langs = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            langs = paginator.page(paginator.num_pages)
+
+        print 'start fire'    
+        print paginator.num_pages
+            
+        serializer = CommentSerializer(langs, many=True)
+        return Response(serializer.data)

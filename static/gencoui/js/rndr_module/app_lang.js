@@ -3,7 +3,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
 .controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs) {
 
     $scope.langs = [];
-    $scope.langs=lang.query();
+    //$scope.langs=lang.get();
 
     $scope.foundLangs = []
 
@@ -12,10 +12,10 @@ angular.module('app_lang', ['ngResource','lang.services'])
     console.log($scope.langs);
     $scope.types_types = [];
 
-    $scope.data = {
-    repeatSelect: null,
-    availableOptions: $scope.langs,
-    };
+    // $scope.data = {
+    // repeatSelect: null,
+    // availableOptions: $scope.langs,
+    // };
 
     $scope.datad = [];
     $scope.selectedCnv = [];
@@ -153,6 +153,13 @@ angular.module('app_lang', ['ngResource','lang.services'])
                             console.log('ERR');
                             console.log(error);  
                         });
+
+        //$scope.langs=lang.get({});
+        lang.get({}, function(success){
+            console.log(success);
+        }, function(error){
+            console.log(error);
+        });
     }
 
 
@@ -442,8 +449,18 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
 
     $scope.searchLang =  function(){
-        searchLangs.get({text: 'gen'}, function(success){
-            $scope.foundLangs = success.langs;
+        var searchKey = $('#findLangKey').val();
+        console.log(searchKey);
+
+        if(searchKey.trim().length==0 || searchKey.trim()=='' || searchKey==undefined || searchKey==null){
+            $scope.showMessage('Invalid text for search');
+            return;
+        }
+
+        var sl = new searchLangs({keysearch: searchKey, page:1})
+        console.log(sl);
+        sl.$save(function(success){
+            //$scope.foundLangs = success;
             console.log('expand');
             console.log(success);
         }, function(error){
@@ -485,15 +502,14 @@ angular.module('app_lang', ['ngResource','lang.services'])
 });
 
 angular.module('app_lang').config(function($httpProvider){
-    console.log('config headers')
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-    // $httpProvider.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken');
+    //$httpProvider.defaults.headers.common['Cookie'] = 'sessionid=oczdutsobiqkrrtccvn8p5rlcwxoe7n9; csrftoken=h7v1ZIKZcshdiNUcdd5e3LBPIEUXjCfO'//'csrftoken='+getCookie('csrftoken');
 
     // $httpProvider.defaults.withCredentials = true;
-    // delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 })
 
