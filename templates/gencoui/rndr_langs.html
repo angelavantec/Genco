@@ -1,5 +1,6 @@
 {% extends "admin/base.html" %}
 {% load staticfiles %}
+{% load absolute_media_uri %}
 <!-- {% block title %}Render Developer{% endblock %} -->
 
 {% block extrastyle %}
@@ -112,7 +113,6 @@
 	    	<div id="dragbar"></div>			    
 
 	    		<div class="container-fluid" style="margin-top:70px;">
-
 				    <div style="margin-bottom: 15px;">
 				    	<img src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"></img>  	
 				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Languages </h4>
@@ -325,57 +325,70 @@
           	<div class="modal-body">
    
 				  	<div class="form-group">		
-	  	
-		 	<div class="input-group">
-			    <input id="findLangKey" type="text" class="form-control" placeholder="Find Lang">
-			    <span class="input-group-btn">
-			      <button class="btn btn-default btn-sm" type="button" ng-click="searchLang()">
-			      	<i class="glyphicon glyphicon-search"></i>
-			      	Search
-			      </button>
-			    </span>
-		  	</div>
+	  		<span style="color:#cccccc">
+	  			<i class="glyphicon glyphicon-asterisk"></i>
+	  			for all
+	  		</span>
+
+	  		<form ng-submit="serachLang()">
+				 	<div class="input-group">
+					    <input id="findLangKey" type="text" class="form-control" placeholder="Find Lang">
+					    <span class="input-group-btn">
+					      <button class="btn btn-default btn-sm" type="button" ng-click="searchLang(1)">
+					      	<i class="glyphicon glyphicon-search"></i>
+					      	Search
+					      </button>
+					    </span>			    
+				  	</div>
+		  		<button type="submit" hidden></button>
+			</form>	
 		</div>
 
 		<div>
-
+			{% verbatim %}
 			<table class="table table-hover" style="color: #6d758c;">
-			  <!-- <thead>
+			  <thead>
 			    <tr>
-			      <th>#</th>
-			      <th>Column heading</th>
-			      <th>Column heading</th>
-			      <th>Column heading</th>
+			      <th>Name</th>
+			      <th>Logo</th>
+			      <th>Description</th>
+			      <th>Creator</th>
+			      <th></th>
 			    </tr>
-			  </thead> -->
+			  </thead>
 			  <tbody>
-			  	{% verbatim %}
-			    <tr ng-repeat="langsf in foundLangs">
-			    	{{langsf}}
+			  	
+			    <tr ng-repeat="langsf in pageFoundLangs.langs">
 			      <td>{{langsf.nombre}}</td>
-			      <td><img  ng-src="{{langsf.id_icono.id_icono.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px"/></td>
+			      <td><img  ng-src="{{langsf.id_icono.upload}}" onerror="this.onerror=null; this.src='../static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px"/></td>
 			      <td>{{langsf.descripcion}}</td>
-			      <td>{{langsf.creador}}</td>
+			      <td>{{langsf.user}}</td>
 			      <td>
-					<label class="btn btn-primary btn-xs active">
-					    <input type="checkbox" autocomplete="off">
-					</label>
+					
+					<input type="checkbox" autocomplete="off">
+					
 			      </td>			      
 			    </tr>
-			    {% endverbatim %}
+			   
 		  	  </tbody>
 			</table> 
 			<div style="text-align:center">
-				<ul class="pagination" >
+				<ul class="pagination" ng-if="pageFoundLangs.next > pageFoundLangs.current">
 				  <li class="disabled"><a href="#">&laquo;</a></li>
-				  <li class="active"><a href="#">1</a></li>
-				  <li><a href="#">2</a></li>
-				  <li><a href="#">3</a></li>
-				  <li><a href="#">4</a></li>
-				  <li><a href="#">5</a></li>
-				  <li><a href="#">&raquo;</a></li>
+
+				  
+				  <li class="active" ><a href="#" ng-click="searchLang(1)">1</a></li>
+				  <li><a href="#" ng-click="searchLang(2)">2</a></li>
+				  <li><a href="#" ng-click="searchLang(3)">3</a></li>
+				  <li><a href="#" ng-click="searchLang(4)">4</a></li>
+				  <li><a href="#" ng-click="searchLang(5)">5</a></li>
+
+				  <li ng-class="{'disabled': pageFoundLangs.next == pageFoundLangs.current}"><a href="#">&raquo;</a></li>
 				</ul>
-			</div>	
+			</div>
+
+			 {% endverbatim %}
+
 		</div>	
 
 

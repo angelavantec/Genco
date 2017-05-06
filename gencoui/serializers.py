@@ -7,10 +7,10 @@ import json
 
 
 class AdminAppIconosSerializer(serializers.ModelSerializer):
-
+    
     class Meta:
         model = AdminAppIconos
-        read_only_fields = ('creado_por','fecha_creacion',)   
+        read_only_fields = ('creado_por','fecha_creacion')   
 
 
 class GencoUsuarioGrupoSerializer(serializers.ModelSerializer):
@@ -71,9 +71,16 @@ class GencoLenguajesSerializer(serializers.ModelSerializer):
     # 	return GencoLenguajes.objects.create(creado_por='admin',fecha_creacion=timezone.now(), **validated_data)
 
 
-class CommentSerializer(serializers.Serializer):
+# class PageSearchLangSerializer(serializers.Serializer):    
+#     current = serializers.IntegerField()
+#     next = serializers.IntegerField()
+#     offset = serializers.IntegerField()
+#     langs = SearchLangSerializer()
+
+class SearchLangSerializer(serializers.Serializer):
     user = serializers.CharField(max_length=30)
     id_lenguaje = serializers.IntegerField()
+    nombre = serializers.CharField(max_length=100)
     descripcion = serializers.CharField(max_length=100)
     id_icono = AdminAppIconosSerializer()
 

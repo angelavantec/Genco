@@ -69,10 +69,7 @@ return $resource('http://127.0.0.1:8000/gencoui/conversiontipodatos/:id\\/',{id:
 
 }).factory('searchLangs',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/searchlangs\\/',{ 
-    update: {
-            method: 'PUT'
-    },
+return $resource('http://127.0.0.1:8000/gencoui/searchlangs/:keysearch/:page',{keysearch:'@keysearch', page:'@page'},{ 
     query: {   
         isArray:true    
     }, 

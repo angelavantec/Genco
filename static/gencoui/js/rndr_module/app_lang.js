@@ -5,7 +5,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
     $scope.langs = [];
     //$scope.langs=lang.get();
 
-    $scope.foundLangs = []
+    $scope.pageFoundLangs = {}
 
     $scope.types = [];
     //$scope.types=lang_tipodato.query({id:3});
@@ -448,7 +448,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
     }
 
 
-    $scope.searchLang =  function(){
+    $scope.searchLang =  function(pagenum){
         var searchKey = $('#findLangKey').val();
         console.log(searchKey);
 
@@ -457,12 +457,13 @@ angular.module('app_lang', ['ngResource','lang.services'])
             return;
         }
 
-        var sl = new searchLangs({keysearch: searchKey, page:1})
-        console.log(sl);
-        sl.$save(function(success){
-            //$scope.foundLangs = success;
-            console.log('expand');
-            console.log(success);
+        // var sl = new searchLangs({keysearch: searchKey, page:1})
+        // console.log(sl);
+        searchLangs.get({keysearch: searchKey, page:pagenum}, function(success){
+            console.log(success.langs);
+            $scope.pageFoundLangs = success;
+            //console.log('expand');
+            
         }, function(error){
             $scope.showMessage($scope.getDataError(error));
         });

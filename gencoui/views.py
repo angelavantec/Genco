@@ -59,7 +59,7 @@ class AdminAppIconosViewSet(viewsets.ModelViewSet):
     serializer_class = AdminAppIconosSerializer
 
     def get_queryset(self):
-        return AdminAppIconos.objects.filter(creado_por=self.request.user.id)
+        return AdminAppIconos.objects.all() #.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -774,8 +774,14 @@ class GencoGrupoListView(ListView):
         if (self.search_value != ''):
             return GencoGrupo.objects.filter(nombre__icontains=self.search_value)
         else:
-            return GencoGrupo.objects.all() 
-   
+            return GencoGrupo.objects.all()
+
+
+class AdminAppIconosListView(ListView):
+
+    model = AdminAppIconos
+    queryset = AdminAppIconos.objects.all() 
+
 
 # Path for the files used by file handler
 def getNewFileName():
@@ -1059,21 +1065,30 @@ class searchLangsx(APIView):
 
 class searchLangs(APIView):
 
-    def post(self, request):
+    def get(self, request, keysearch=None, page=None):
         
-        try:
-            page = request.data['page']        
-        except:
-            page=1
+        next='0'
+        prev='0'
+        offset='0'
+        rangepag = []
+        npages=3
+        nrange=2
+        # try:
+        #     page = request.data['page']        
+        # except:
+        #     page=1
 
-        try:    
-            keysearch = request.data['keysearch']
-        except:
-            keysearch=''
+        # try:    
+        #     keysearch = request.data['keysearch']
+        # except:
+        #     keysearch=''
+        if keysearch=='*':
+            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'})#.exclude(creado_por=request.user.id)
+        else:   
+            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch)#.exclude(creado_por=request.user.id)
 
-        langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch)#.exclude(creado_por=request.user.id)
 
-        paginator = Paginator(langs, 1)
+        paginator = Paginator(langs, npages)
         #page = request.GET.get('page')
 
         try:
@@ -1085,8 +1100,46 @@ class searchLangs(APIView):
             # If page is out of range (e.g. 9999), deliver last page of results.
             langs = paginator.page(paginator.num_pages)
 
-        print 'start fire'    
-        print paginator.num_pages
+        offset = str(paginator.num_pages)
+        serializer = SearchLangSerializer(langs, many=True, context={'request': request})
+
+        if langs.has_next():
+            next = str(langs.next_page_number())
+        else:
+            next = offset
+            page = offset
+
+        if langs.has_previous():
+            prev = str(langs.previous_page_number())
+        else:
+            prev = page
+
+        limit=0
+        inirange=0
+        endrange=nrange
+        if int(page)+npages < offset:
+            limit = int(page)+npages
+            if int(page)%nrange==0:
+                inirange = int(page)
+                endrange = inirange + nrange
             
-        serializer = CommentSerializer(langs, many=True)
-        return Response(serializer.data)
+        else:
+            limit = int(offset)
+
+        
+        for x in range(int(page), limit):
+            rangepag.append(x)
+
+        # print str(rangepag)
+        # #type(langs.page_range)
+        # print paginator.page_range
+        # #print langs.start_index()
+        # #print langs.end_index()
+
+        # print int(page)%2
+       
+        # print ('%s - %s'% (inirange, endrange))
+
+        print page_range(int(page), int(offset), npages)
+
+        return Response({'current': page, 'next': next, 'previous': prev, 'offset':offset, 'langs' :serializer.data})
