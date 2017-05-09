@@ -724,7 +724,7 @@ class tmpl_preview(APIView):
 
         # t.clients = [cliente,cliente,cliente,cliente,cliente]
 
-        t.entities = getDataTest(1,1)
+        t.entities = getDataTest(2,4)
         
         try:
             context['fileContent'] = str(t);
@@ -1011,39 +1011,59 @@ class getEntities(APIView):
 def getDataTest(tipo, id_lenguaje):
     
     a = []
+    b = []
     f = []
     dict = {}
+    counter=0
     # direccion = type('Direccion', (object,), 
                   # {'name':'1-90 street'})()
 
     # cliente = type('Client', (object,), 
     #              {'surname':'render', 'firstname':'generic', 'email':'@gamial', 'direccion':direccion})()
     
-    types = GencoTipodato.objects.filter(id_lenguaje=0).order_by('id_tipodato')
-    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=id_lenguaje)
+    types = GencoTipodato.objects.filter(id_lenguaje=7).order_by('id_tipodato')
+    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=7, id_tipodato_cnv__id_lenguaje=4)
     
     for i in typesCnv:
         try:
-            dict[i.id_tipodato] = i
-        except ValueError:            
+            dict[i.id_tipodato.id_tipodato] = i
+        except ValueError as e:
+            print str(e)            
             dict={}
 
-    if tipo == 1:
+    # if tipo == 1:
+    for i  in types:
+        counter = counter+1
+        cnv = dict.get(i.id_tipodato)
+
+        if cnv==None:
+            field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
+        else:
+            field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo)})()
+        
+        f.append(field)
+
+    if tipo==1:    
+        a.append(type('entity', (object,),{'name': 'A', 'fields': f})())
+
+    if tipo == 2:
+        b.append(type('entity', (object,),{'name': 'B', 'fields': f})())
+        f=[]
+        counter=0
         for i  in types:
+            counter = counter+1
             cnv = dict.get(i.id_tipodato)
+
             if cnv==None:
-                field = type('field', (object,),{'name':str(i.nombre), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
+                field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
             else:
-                field = type('field', (object,),{'name':str(i.nombre), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato, 'prefixcnv': str(i.prefijo)})()
+                field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo)})()
             
-            
-            # field = type('Foca', (object,),{'name':'f', 'type':'f', 'typecnv': 'f', 'prefixcnv': 'f'})()
             f.append(field)
-            # direccion = type('Direccion', (object,), {'name':'1-90 street'})()
 
-        a.append(type('entity', (object,),{'name': 'Entity', 'fields': f})())
+        a.append(type('main', (object,),{'name': 'A', 'fields': f, 'links': b})())
 
-    #     # print e
+    
 
     return a
 
