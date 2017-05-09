@@ -78,6 +78,14 @@ return $resource('http://127.0.0.1:8000/gencoui/searchlangs/:keysearch/:page',{k
     }, 
   });
 
+}).factory('cloneLang',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/clonelang\\/',{
+    save: {        
+        method: 'POST'
+    }, 
+  });
+
 }).factory('langs_tree',function($resource){
 
 return $resource('http://127.0.0.1:8000/gencoui/langs_tree\\/',{
@@ -92,3 +100,5 @@ return $resource('http://127.0.0.1:8000/gencoui/langs_tree\\/',{
     }
 })
 ;
+
+

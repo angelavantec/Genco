@@ -1,21 +1,22 @@
 angular.module('app_lang', ['ngResource','lang.services'])
 
-.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs) {
+.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs, cloneLang) {
 
     $scope.langs = [];
     //$scope.langs=lang.get();
 
     $scope.pageFoundLangs = {}
+    $scope.langsToClone = []
 
     $scope.types = [];
     //$scope.types=lang_tipodato.query({id:3});
     console.log($scope.langs);
     $scope.types_types = [];
 
-    // $scope.data = {
-    // repeatSelect: null,
-    // availableOptions: $scope.langs,
-    // };
+    $scope.data = {
+    repeatSelect: null,
+    availableOptions: null,
+    };
 
     $scope.datad = [];
     $scope.selectedCnv = [];
@@ -39,7 +40,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
     /* Para que el arbol permita manipular(create, rename, delete) los nodos check_callback debe ser true*/
     $('#jstree').jstree({        
         'core':{check_callback : true, dblclick_toggle : false},
-        "plugins" : [ "contextmenu", "sort", "dnd" ],
+        "plugins" : [ "sort", "dnd" ],
         // "contextmenu": {
         //         "items": function ($node) {
 
@@ -167,6 +168,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
         $scope.types=lang_tipodato.query({id:id_lang});
         $scope.data.repeatSelect = null;
+        $scope.data.availableOptions =  lang.query();
         $scope.types_types = [];
         $scope.Conversions = [];
         //$scope.lang_selected = $scope.langs[$scope.langs.map(function(x) {return x.id_lenguaje}).indexOf(id_lang)].nombre;
@@ -186,8 +188,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
     $scope.new_type = function(id_lang){
 
         $scope.GencoTipodato= new lang_tipodato();
-        console.log($scope.GencoTipodato);
-        $scope.GencoTipodato.id_lenguaje = undefined; //""+$scope.language_selected;
+        $scope.GencoTipodato.id_lenguaje = $scope.language_selected.id;
         console.log('new');
 
   
@@ -212,10 +213,10 @@ angular.module('app_lang', ['ngResource','lang.services'])
         console.log($scope.GencoTipodato);
         $scope.GencoTipodato.$save(function(success){   
             $scope.load_lang($scope.GencoTipodato.id_lenguaje);       
-            $scope.new_type($scope.GencoTipodato.id_lenguaje);
-            //$('#type-add-modal').modal('hide')
+            //$scope.new_type($scope.GencoTipodato.id_lenguaje);
+            $('#type-add-modal').modal('hide')
         },function(error){
-                $scope.showMessage(error.data['detail']);
+                $scope.showMessage($scope.getDataError(error));
 
         });
         
@@ -461,6 +462,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
         // console.log(sl);
         searchLangs.get({keysearch: searchKey, page:pagenum}, function(success){
             console.log(success.langs);
+            $scope.setChecktoSearchLangs(success.langs);          
             $scope.pageFoundLangs = success;
             //console.log('expand');
             
@@ -490,6 +492,74 @@ angular.module('app_lang', ['ngResource','lang.services'])
        }
     }
 
+
+    $scope.save_clone_lang = function(){
+
+        if($scope.langsToClone.length<=0){
+            $scope.showMessage('Please select a Lanaguage for clone');
+            return;
+        }
+
+        var cloneLangs = '[' + $scope.langsToClone.map(function(x) {return x.id_lenguaje}).toString() + ']'
+        console.log(cloneLangs);
+
+        clone = new cloneLang({langs: cloneLangs});
+        clone.$save(function(success){
+            console.log(success);
+            $scope.langsToClone = [];
+            $scope.pageFoundLangs = {};
+            $scope.getLangTree();
+            $('#lang-clone-modal').modal('hide')
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+         
+    }
+
+    $scope.addToCloneLangs = function(index){
+        var pos=0;
+        //console.log('index ' + index);
+        //console.log($scope.langsToClone.map(function(x) {return x.id_lenguaje}));
+
+        pos = $scope.langsToClone.map(function(x) {return x.id_lenguaje}).indexOf($scope.pageFoundLangs.langs[index].id_lenguaje);
+
+        //console.log('pos ' + pos);
+
+        if(pos>=0) {
+            $scope.langsToClone.splice(pos,1);
+        }else{
+            $scope.langsToClone.push($scope.pageFoundLangs.langs[index]);
+        } 
+
+        // angular.forEach($scope.langsToClone, function(value, key){
+        //     console.log(value.nombre);
+        // });
+
+        console.log($scope.langsToClone);
+         
+    }
+
+
+    $scope.setChecktoSearchLangs = function(langs){
+        var pos=0;
+
+        angular.forEach($scope.langsToClone, function(value, key){
+
+            pos = langs.map(function(x) {return x.id_lenguaje}).indexOf(value.id_lenguaje);
+
+            if(pos>=0) {
+                (langs[pos])['checked']=true;
+            }    
+            // }else{
+            //     ($scope.pageFoundLangs.langs[pos])['checked']=false;
+            // }  
+        
+        });
+
+        return langs;
+  
+         
+    }
 
 
 

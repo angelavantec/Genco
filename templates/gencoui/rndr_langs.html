@@ -116,7 +116,7 @@
 				    <div style="margin-bottom: 15px;">
 				    	<img src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"></img>  	
 				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Languages </h4>
-				    	<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#lang-add-modal" data-placement="bottom" data-tt="tooltip" title="Create Lang" ng-click="new_lang()">
+				    	<a class="btn icon-btn btn-default" role="button" data-toggle="modal" data-target="#lang-modal" data-placement="bottom" data-tt="tooltip" title="Create Lang" ng-click="new_lang()">
 							<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
 						</a>
 				    </div>	
@@ -224,20 +224,18 @@
         <div class="modal-content">
 	        <div class="modal-header">
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        {% verbatim %}
-		        <h4 class="modal-title">{{language_selected.nombre}} - add type</h4>
-		        {% endverbatim %}
+		        <h4 class="modal-title">add type</h4>
 		    </div>
           <!-- <div class="arrow-up"></div> -->
-          	<div class="modal-body">
-   			<input type="hidden" ng-model="GencoTipodato.id_lenguaje" >
+          	<div class="modal-body">   			
 			<form ng-submit="save_type()">
+				<input type="hidden" ng-model="GencoTipodato.id_lenguaje" >
 				{{ form_add_type }}
-				<button type="submit"></button>
+				<button type="submit" hidden></button>
 			</form>
           	</div>
           	<div class="modal-footer">
-          		<a class="btn icon-btn btn-default" ng-submit="save_type()" data-placement="bottom"data-tt="tooltip" title="Save">
+          		<a class="btn icon-btn btn-default" ng-click="save_type()" data-placement="bottom"data-tt="tooltip" title="Save">
 					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 				</a>
 				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
@@ -282,7 +280,7 @@
 </div>
 
 <!-- Modal Environments -->
-<div class="modal fade" id="lang-add-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="lang-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
     <div class="modal-dialog">
 
@@ -365,7 +363,7 @@
 			      <td>{{langsf.user}}</td>
 			      <td>
 					
-					<input type="checkbox" autocomplete="off">
+					<input type="checkbox" autocomplete="off" ng-click="addToCloneLangs($index)" ng-checked="langsf.checked">
 					
 			      </td>			      
 			    </tr>
@@ -373,17 +371,20 @@
 		  	  </tbody>
 			</table> 
 			<div style="text-align:center">
-				<ul class="pagination" ng-if="pageFoundLangs.next > pageFoundLangs.current">
-				  <li class="disabled"><a href="#">&laquo;</a></li>
+				<ul class="pagination" ng-if="pageFoundLangs.next >= pageFoundLangs.current" >
+				  <li><a ng-class="{'disabled': pageFoundLangs.next == pageFoundLangs.current}" href="#" ng-click="searchLang(pageFoundLangs.pagerange[0])">&laquo;</a></li>
 
-				  
-				  <li class="active" ><a href="#" ng-click="searchLang(1)">1</a></li>
-				  <li><a href="#" ng-click="searchLang(2)">2</a></li>
+				  <li ng-class="{'active':npage==pageFoundLangs.current}" ng-repeat="npage in pageFoundLangs.pagerange"><a href="#" ng-click="searchLang(npage)">{{npage}}</a></li>
+
+
+			<!-- 	  <li ng-class="{'active':npage[$index]==pageFoundLangs.current}" ><a href="#" ng-click="searchLang(npage[$index])">1</a></li>	 -->			  
+	<!-- 			  <li><a href="#" ng-click="searchLang(2)">2</a></li>
 				  <li><a href="#" ng-click="searchLang(3)">3</a></li>
 				  <li><a href="#" ng-click="searchLang(4)">4</a></li>
-				  <li><a href="#" ng-click="searchLang(5)">5</a></li>
+				  <li><a href="#" ng-click="searchLang(5)">5</a></li> -->
 
-				  <li ng-class="{'disabled': pageFoundLangs.next == pageFoundLangs.current}"><a href="#">&raquo;</a></li>
+				  <li><a ng-class="{'disabled': pageFoundLangs.next == pageFoundLangs.current}" href="#" ng-click="searchLang(pageFoundLangs.pagerange[pageFoundLangs.pagerange.length - 1])">&raquo;</a></li>
+
 				</ul>
 			</div>
 
@@ -394,12 +395,16 @@
 
           	</div>
           	<div class="modal-footer">
-          		<a class="btn icon-btn btn-default" ng-click="save_clone_lang()" data-placement="bottom"data-tt="tooltip" title="Clone">
-					<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
-				</a>
-				<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
+          		<div style="display:inline; float:left">
+          			<a class="btn btn-default" ng-click="save_clone_lang()" data-placement="bottom"data-tt="tooltip" title="Clone">Clone
+					<!-- <span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					 -->
+					</a>
+				</div>
+				<div style="display:inline">	
+					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
 						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-				</a>
+					</a>
+				</div>	
           	</div>
 
         </div>
@@ -437,104 +442,6 @@
 
 {% block extrafooter %}
  
-  <script>
-        
-        $(function () {
-            $("#jstree").jstree({
-                "core" : {
-                "check_callback" : function (operation, node, node_parent, node_position, more) {
-			            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-			            // in case of 'rename_node' node_position is filled with the new node name			            
-			            console.log(operation);
-
-			            var validator;
-
-			            //console.log(typeof node_parent.data);	
-			            if(typeof node_parent.data == 'undefined'){
-			            	return false;
-			            }
-			           // console.log(node.data['renderas']);
-			           // console.log(node_parent.data['renderas']);			           
-			            validator = node_parent.data['renderas'] === 'component' ? true : false;	
-			            if(validator && operation == 'move_node'){
-			            	
-			            	validator = node.data['renderas'] === 'archive' ? true : false;	
-
-			            }	
-			            return validator;
-			            
-			        }
-            },
-            "plugins" : [  "contextmenu","dnd" ],
-            "contextmenu": {
-		        "items": function ($node) {
-		            return {
-		                "Create": {
-		                    "label": "Add Template",
-		                    "action": function (obj) {
-		                        // this.create(obj);
-		                        //alert('render');
-		                        getCode();
-		                    }
-		                },
-		                "Rename": {
-		                    "label": "Rename Template",
-		                    "action": function (data) {
-		                       // this.rename(obj);
-		                       	var inst = $.jstree.reference(data.reference),
-								obj = inst.get_node(data.reference);
-								inst.edit(obj);
-								console.log(data);
-		                    }
-		                },
-		                "Delete": {
-		                    "label": "Delete Template",
-		                    "action": function (obj) {
-		                        this.remove(obj);
-		                    }
-		                }
-		            };
-		        }
-		    }
-            });
-        });
-
-
-  $(function () {
-    // 6 create an instance when the DOM is ready
-    $('#jstree').jstree();
-    $('#jstree1').jstree();
-    $('#jstree2').jstree();
-    // 7 bind to events triggered on the tree
-    $('#jstree').on("changed.jstree", function (e, data) {
-      // console.log(data.selected);
-
-		// $.get( "http://localhost:8000/gencoui/code", function( data ) {
-		//   editor.setValue(data);
-		// });
-
-      //editor.setValue(data.selected.toString());
-    });
-    // 8 interact with the tree - either way is OK
-    // $('button').on('click', function () {
-    //   $('#jstree').jstree(true).select_node('child_node_1');
-    //   $('#jstree').jstree('select_node', 'child_node_1');
-    //   $.jstree.reference('#jstree').select_node('child_node_1');
-    // });
-
-  });
-
-
-
-
-	function getConversion(){
-		angular.element($("#ctrl_lang")).scope().print();
-		console.log('render');
-
-	};
-
-
-  </script>
 
 {% endblock %}
 

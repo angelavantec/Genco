@@ -1,5 +1,16 @@
 import re
 import ast
+from django.db import models
+from django.db import connection
+
+
+class MY_UTIL():
+	
+    def exeCloneProc(self, cloneLangs, user_id):
+        cursor = connection.cursor()
+        ret = cursor.callproc("cloneLangs", (cloneLangs, user_id))# calls PROCEDURE named LOG_MESSAGE which resides in MY_UTIL Package
+        cursor.close()
+        return ret
 
 
 def getTagsTemplate(text, token):
@@ -52,20 +63,25 @@ def page_range(page, last, span=5):
     return range(max(min(page - (span - 1) // 2, last - span + 1), 1),
                  min(max(page + span // 2, span), last) + 1)
 
-dic = {}
 
-dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 
-dic['UI/abm e460864b-bb5b-96b8'] = 2
-dic['DAL/dao e948b17d-68f4-658e'] = 3
 
-# lista = getIterableFromTags("[u'UI/abm 636a3dbd-1d9e-8f78', u'UI/abm e460864b-bb5b-96b8']")
+
+
+# dic = {}
+
+# dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 
+# dic['UI/abm e460864b-bb5b-96b8'] = 2
+# dic['DAL/dao e948b17d-68f4-658e'] = 3
+
+lista = getIterableFromTags("[u'UI/abm 636a3dbd-1d9e-8f78', u'UI/abm e460864b-bb5b-96b8']")
+print str(lista)
 # print updateDictTags(lista, dic)
 
 
-print getIterableFromTags('{"DAL/dao 1-f8855815-1381-2b03":"1", "DAL/dao 1-936091e3-aa77-7566":"1", "UI/abm 2-40cc9bc4-b9de-be66":"2"}')
+# print getIterableFromTags('{"DAL/dao 1-f8855815-1381-2b03":"1", "DAL/dao 1-936091e3-aa77-7566":"1", "UI/abm 2-40cc9bc4-b9de-be66":"2"}')
 
-for key, value in dic.items():
-	print "llave %s  valor %s" % (key, value)
+# for key, value in dic.items():
+# 	print "llave %s  valor %s" % (key, value)
 
 
 # print dic

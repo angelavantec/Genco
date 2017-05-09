@@ -383,6 +383,9 @@ class GencoLenguajes(models.Model):
         managed = False
         db_table = 'genco_lenguajes'
 
+    def __unicode__(self):
+        return '%s' % (self.nombre)        
+
 
 class GencoParametros(models.Model):
     id_parametro = models.AutoField(primary_key=True)
