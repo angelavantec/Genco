@@ -225,7 +225,7 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
     serializer_class = GencoLenguajesSerializer
 
     def get_queryset(self):
-        return GencoLenguajes.objects.filter(creado_por=self.request.user.id)
+        return GencoLenguajes.objects.filter(creado_por=self.request.user.id, id_lenguaje__gt=1)
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -250,7 +250,7 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoTipodatoSerializer
 
     def get_queryset(self):
-        return GencoTipodato.objects.filter(creado_por=self.request.user.id)
+        return GencoTipodato.objects.filter(creado_por=self.request.user.id, )
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -925,7 +925,7 @@ class langs_tree(APIView):
         # if request.user.IsAuthenticated:
         #     print 'logueado'
 
-        langs = GencoLenguajes.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
+        langs = GencoLenguajes.objects.filter(creado_por=request.user.id, id_lenguaje__gt=1).order_by('id_lenguaje')
         tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
 
         dirs = []
@@ -1069,20 +1069,6 @@ def getDataTest(tipo, id_lenguaje):
 
 
 
-
-class searchLangsx(APIView):
-    
-    def get(self, request, keysearch=None):
-
-        print request.user.id
-        langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch).exclude(creado_por=request.user.id)
-        resp = []        
-        for i  in langs:
-            print i.nombre      
-            resp.append({'id_lenguaje': i.id_lenguaje, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload), 'creador': i.user})
-
-        return JsonResponse({'langs':resp})
-
 class searchLangs(APIView):
 
     def get(self, request, keysearch=None, page=None):
@@ -1102,9 +1088,9 @@ class searchLangs(APIView):
         # except:
         #     keysearch=''
         if keysearch=='*':
-            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'})#.exclude(creado_por=request.user.id)
+            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(id_lenguaje__gt=1).exclude(creado_por=request.user.id)
         else:   
-            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch)#.exclude(creado_por=request.user.id)
+            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch, id_lenguaje__gt=1).exclude(creado_por=request.user.id)
 
 
         paginator = Paginator(langs, npages)
@@ -1195,7 +1181,7 @@ class CloneLang(APIView):
         #     print str(e)
         
 
-        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr)
+        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=1)
 
         for lang in langs:
             cloneIdlang = lang.id_lenguaje
@@ -1258,3 +1244,14 @@ class CloneLang(APIView):
         #     print str(e)
         
         return JsonResponse(context)
+
+
+
+class GencoDatatype(APIView):
+
+    def get(self, request):
+        
+        tipos = GencoTipodato.objects.filter(id_lenguaje=1)
+        serializer = GencoTipodatoSerializer(tipos, many=True)
+
+        return Response(serializer.data)

@@ -1,16 +1,13 @@
 angular.module('app_lang', ['ngResource','lang.services'])
 
-.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs, cloneLang) {
-
+.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs, cloneLang, genco_tipodato) {
+    $scope.idGencolang = 1;
     $scope.langs = [];
-    //$scope.langs=lang.get();
 
     $scope.pageFoundLangs = {}
     $scope.langsToClone = []
 
     $scope.types = [];
-    //$scope.types=lang_tipodato.query({id:3});
-    console.log($scope.langs);
     $scope.types_types = [];
 
     $scope.data = {
@@ -29,7 +26,6 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     $scope.conversionsObj = [];
 
-    //$scope.lang_selected;
     $scope.language_selected = {
         id: null,
         nombre: null,
@@ -165,12 +161,25 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
 
     $scope.load_lang = function(id_lang){
-
-        $scope.types=lang_tipodato.query({id:id_lang});
-        $scope.data.repeatSelect = null;
-        $scope.data.availableOptions =  lang.query();
+        $scope.data.repeatSelect = id_lang;
+        $scope.data.availableOptions =  $scope.lang_selected; //lang.query();
         $scope.types_types = [];
         $scope.Conversions = [];
+ 
+        // lang_tipodato.query({id:$scope.idGencolang}, function(success){
+        //     $scope.types = success;
+        //     $scope.getTypesCombos(id_lang);
+        // }, function(error){
+        //     $scope.showMessage($scope.getDataError(error));
+        // });
+
+        genco_tipodato.query(function(success){
+            $scope.types = success;
+            $scope.getTypesCombos(id_lang);
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+        
         //$scope.lang_selected = $scope.langs[$scope.langs.map(function(x) {return x.id_lenguaje}).indexOf(id_lang)].nombre;
 
   //       var data = lang.get({id:id_lang});
@@ -248,39 +257,40 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     $scope.getTypesCombos = function(id_lang){
         var id_lang_cnv = $scope.data.repeatSelect;
-        console.log('lenguje conversion '+id_lang_cnv+" lenguaje origen " + id_lang);
-        $scope.types_types=lang_tipodato.query({id:id_lang_cnv});
-        $scope.Conversions = [];
-        $scope.selectedCnv = conversion.query({id_tipodato__id_lenguaje:id_lang, id_tipodato_cnv__id_lenguaje:id_lang_cnv});
-        
+        console.log('lenguje conversion '+id_lang_cnv+" lenguaje origen " + $scope.idGencolang);
+        //$scope.Conversions = [];
+        lang_tipodato.query({id:id_lang}, function(success){
+            $scope.types_types = success;
+            
+            conversion.query({id_tipodato__id_lenguaje:$scope.idGencolang, id_tipodato_cnv__id_lenguaje:id_lang},
+                function(success){
+                    $scope.selectedCnv = success;
+                    load_types();
+                }, function(error){
+                    $scope.showMessage($scope.getDataError(error));
+            });
 
-        load_types();
+        }, function(error){
+                $scope.showMessage($scope.getDataError(error));
+        });
 
-        //$scope.Conversions = tmpConversions;
-        console.log('3 trmina carga combo');
-        console.log($scope.Conversions);
     }
 
 
 
     function load_types(){
         var tmpConversions = [];
-        
-        //convArr = [];
-        //conversionArr = [];
         var tmpConversionsObj = [];
         var tmpConvObj = null;
-
-        console.log($scope.types);
-
 
         angular.forEach($scope.types, function(value, key){
 
             $scope.selectedCnv.$promise.then(function (data) {
+
                 //console.log(data.map(function(x) {return x.id_tipodato}).indexOf(value.id_tipodato));
 
                 pos = data.map(function(x) {return x.id_tipodato}).indexOf(value.id_tipodato);
-                console.log(pos);
+
 
                 if(pos>=0) {
                     // $scope.Conversions.push(conversionArr[pos]); 
@@ -295,11 +305,6 @@ angular.module('app_lang', ['ngResource','lang.services'])
                 }
 
             })
-
-        //     setTimeout(function(){
-            
-
-        // }, 3000)
         
 
         });
@@ -315,9 +320,9 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
         $scope.GencoLenguajes= new lang();
         console.log($scope.GencoLenguajes);
-        //$scope.GencoTipodato.id_lenguaje = ""+id_lang;
-        console.log('new lang');
-
+        $('#lang-modal').modal('show').on('shown.bs.modal', function() {
+                $('#lang-modal #id_nombre').focus();
+        });
   
     } 
 
@@ -325,9 +330,20 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
 
         console.log($scope.GencoLenguajes);
-        $scope.GencoLenguajes.$save(function(){   
-            $scope.langs=lang.query();
-            $('#lang-add-modal').modal('hide')
+        $scope.GencoLenguajes.$save(function(success){   
+            var nodeDef = {'id': success.id_lenguaje, 
+              'parent': '#', 
+              'text': success.nombre, 
+              'icon':"glyphicon glyphicon-folder-open", 
+              'li_attr':{'data-renderas':"language",
+                          'data-renderid': success.id_lenguaje, 
+                          'data-rendername':success.nombre
+                      }
+            }
+            $scope.addTreeNode($('#jstree').jstree(true).get_node('#'), nodeDef, $('#jstree').jstree(true));
+            $('#lang-modal').modal('hide')
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
         });
         
     } 
@@ -431,7 +447,16 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     //callback(3);
 
-  };
+    };
+
+
+    $scope.renameTreeNode = function(node, newText){
+        $('#jstree').jstree('set_text', node, newText); 
+    }
+
+    $scope.addTreeNode = function(node, newNode, jsTree){
+        jsTree.create_node(node.id,newNode);                    
+    }
 
     $scope.showMessage = function(message){
         $('#imConfirm').html(message);

@@ -53,5 +53,6 @@ urlpatterns = patterns('',
 	url(r'^processors/$', processors.as_view()),
 	url(r'^searchlangs/(?P<keysearch>.+)/(?P<page>\d+)$', searchLangs.as_view()),
 	url(r'^clonelang/$', CloneLang.as_view()),
+	url(r'^gencodatatype/$', GencoDatatype.as_view()),
 	# url(r'^template_entity/(?P<id_proyecto>\d+)$', template_entity.as_view()),
 )

@@ -80,7 +80,7 @@ class GencoEntidadForm(ModelForm):
 class GencoEntidadDefinicionForm(ModelForm):
     es_pk = forms.BooleanField(required=True)
     obligatorio = forms.BooleanField(required=False)
-    id_tipodato = forms.ModelChoiceField(queryset=GencoTipodato.objects.filter(id_lenguaje=0))
+    id_tipodato = forms.ModelChoiceField(queryset=GencoTipodato.objects.filter(id_lenguaje=1))
 
     class Meta:
         model = GencoEntidadDefinicion

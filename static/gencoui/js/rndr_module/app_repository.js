@@ -603,14 +603,9 @@ angular.module('app_entities', ['ngResource','repository.services'])
 
 angular.module('app_entities').config(function($httpProvider){
 
-    $httpProvider.defaults.headers.common['Authorization'] = 'Basic YWRtaW46YWRtaW4=';
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    // $httpProvider.defaults.headers.common['Authorization'] = 'Basic YWRtaW46YWRtaW4=';
-    // $httpProvider.defaults.withCredentials = true;
-    // delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 })
 

@@ -23,6 +23,16 @@ return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id',{id:
     // }, 
   });
 
+}).factory('genco_tipodato',function($resource){
+return $resource('http://127.0.0.1:8000/gencoui/gencodatatype\\/',{
+    query: { 
+        isArray:true    
+    }, 
+    get: {
+        isArray:true    
+    }, 
+  });
+
 }).factory('lang',function($resource){
 
 return $resource('http://127.0.0.1:8000/gencoui/langs/:id\\/',{id:'@id_lang'},{
