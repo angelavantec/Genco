@@ -137,7 +137,7 @@
 					      	<div class="panel-body" ng-if="language_selected.nombre!=null">
 					      		
 												<h3 style="display:inline">{{ language_selected.nombre }}</h3>
-												<a class="btn btn-default btn-xs" role="button" data-toggle="modal" data-target="#type-add-modal" data-placement="bottom" data-tt="tooltip" title="Add Type" ng-click="new_type(lang.id_lenguaje)">
+												<a class="btn btn-default btn-xs" role="button" data-toggle="modal" data-placement="bottom" data-tt="tooltip" title="Add Type" ng-click="new_type(lang.id_lenguaje)">
 													<!-- <span class="glyphicon btn-glyphicon glyphicon-plus" ></span> -->
 													+ Datatype			
 												</a>			
@@ -299,14 +299,14 @@
 		    </div>
           <!-- <div class="arrow-up"></div> -->
           	<div class="modal-body">
-          		<form ng-submit="save_lang()">
+          		<form ng-submit="saveOrUpdateEntity()">
           			{{ form_add_lang }}	
           			<button type="submit" hidden></button>
           		</form>				
           	</div>
           	<div class="modal-footer">
           		<div style="display:inline">
-	          		<a class="btn icon-btn btn-default" ng-click="save_lang()" data-placement="bottom"data-tt="tooltip" title="Save">
+	          		<a class="btn icon-btn btn-default" ng-click="saveOrUpdateEntity()" data-placement="bottom"data-tt="tooltip" title="Save">
 						<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
 					</a>
 				</div>	
@@ -446,7 +446,35 @@
         </div>
     </div>
 </div>
-      	
+
+<div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ffb612;">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Confirm</h4>
+		    </div>	     
+          	<div id="tedmConfirm" class="modal-body">
+
+          	</div>
+          	<div class="modal-footer">
+          		<div style="display:inline">
+	          		<a class="btn icon-btn btn-default" ng-click="confirm_delete()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+					</a>
+				</div>
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>	
 
 </div>
 {% endblock %}

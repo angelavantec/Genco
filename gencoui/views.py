@@ -235,6 +235,16 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
     
     def perform_destroy(self, instance):
         obj = get_object_or_404(self.get_queryset(), id_lenguaje=instance.id_lenguaje)
+
+        obj = GencoTipodato.objects.filter(id_lenguaje=instance.id_lenguaje)
+        refElements = '';
+        
+        for i  in obj:
+            refElements += '<br><b>' + i.nombre + '</b> datatype'
+
+        if obj.exists():
+            raise APIException('This Element contains ' + refElements)
+
         instance.delete()
             
 
@@ -244,7 +254,7 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    filter_backends = (filters.DjangoFilterBackend,)    
+    filter_backends = (filters.DjangoFilterBackend,)
     filter_class = GencoTipodatoFilter
     #filter_fields = ('id_lang')
     serializer_class = GencoTipodatoSerializer

@@ -12,7 +12,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     $scope.data = {
     repeatSelect: null,
-    availableOptions: null,
+    //availableOptions: null,
     };
 
     $scope.datad = [];
@@ -31,81 +31,133 @@ angular.module('app_lang', ['ngResource','lang.services'])
         nombre: null,
     }
 
+    $scope.datatype_selected = {
+        id: null,
+        nombre: null,
+    }
+  $scope.node_item_selected;
+  $scope.ConfirmDeleteCallback;
+  $scope.wdnMode=0; /* 1=save, 2=update*/
+
     /*Instancia del arbol de la seccion de ENTITIES*/
     /*IMPORTANTE*/
     /* Para que el arbol permita manipular(create, rename, delete) los nodos check_callback debe ser true*/
     $('#jstree').jstree({        
         'core':{check_callback : true, dblclick_toggle : false},
-        "plugins" : [ "sort", "dnd" ],
-        // "contextmenu": {
-        //         "items": function ($node) {
+        "plugins" : [ "sort", "contextmenu" ],
+        "contextmenu": {
+                "items": function ($node) {
 
-        //             console.log($node.li_attr['data-renderas'] );
+                console.log($node.li_attr['data-renderas'] );
 
-        //             if($node.li_attr['data-renderas'] === 'template')
-        //                 return {
+                if($node.li_attr['data-renderas'] === 'language')
+                    return {
+                        "CreateTempl": {
+                            "label": "Create Datatype",
+                            "separator_after": true,
+                            "action": function (data) {
 
-        //                     "Rename": {
-        //                         "label": "Change Entity",
-        //                         "action": function (data) {
+                              var inst = $.jstree.reference(data.reference),
+                              obj = inst.get_node(data.reference);
+                              $scope.node_selected = obj;
+                              
+                              $scope.language_selected.nombre = obj.text;
+                              $scope.language_selected.id = obj.id;
+                              $scope.new_type($scope.language_selected.id);
+                             //$scope.repo_selected = obj;
 
-        //                             var inst = $.jstree.reference(data.reference),
-        //                             obj = inst.get_node(data.reference);
-        //                             var renderId = obj.li_attr['data-renderid'];                                    
-        //                             $scope.elementoentidad_selected = {id:renderId, nombre:obj.li_attr['data-rendername']};    
-        //                             $scope.node_item_selected = obj;                            
-                                    
-        //                             //cargar combobox entidades
-        //                             //$scope.template_entities_load(renderId);
-        //                             angular.element($("#ctrl_editor")).scope().$apply();
-        //                             $('#template-entities-modal').modal('show');
-                                    
-        
-        //                         }
-        //                     },
-        //                     "Delete": {
-        //                         "label": "Detach Entity",
-        //                         "action": function (data) {
-                                    
-        //                             var inst = $.jstree.reference(data.reference),
-        //                             obj = inst.get_node(data.reference);
-        //                             $scope.node_item_selected = obj;
-        //                             $scope.showConfirmDelete("Do you really want to detach " + obj['text'] + " Link?");
-        //                             $scope.ConfirmDeleteCallback = function(){$scope.delete_elementoentidad(obj.li_attr['data-renderid'], obj)};
-        //                             //borrar direlementoentidad   
-        //                             //$scope.delete_directorioelemento(obj.li_attr['data-renderiddirtemplate'], obj);
-        //                             //$scope.delete_elementoentidad(obj.li_attr['data-renderid'], obj);
-        
-        //                         }
-        //                     },
+                              // $scope.language_selected.id = obj.li_attr['data-renderid']; 
+                              // $scope.language_selected.nombre = obj.li_attr['data-rendername']; 
 
-        //                 };
-        //             else{
+                              //Hago que la interfaz refresque el titulo con el valor de component_selected
+                              //angular.element($("#ctrl_entities")).scope().$apply();                         
 
-        //                 return {
-        //                     "Rename": {
-        //                         "label": "Change Entity",
-        //                         "action": function (data) {
+                            }
+                            
+                        },
 
-        //                             var inst = $.jstree.reference(data.reference),
-        //                             obj = inst.get_node(data.reference);
+                        "Rename": {
+                            "label": "Edit language",                        
+                            "action": function (data) {
+                              console.log(data);
+                              
+                              var inst = $.jstree.reference(data.reference),
+                              obj = inst.get_node(data.reference);
+                              $scope.node_selected = obj;
+                              
+                              $scope.language_selected.nombre = obj.text;
+                              $scope.language_selected.id = obj.id;                              
+                              //$scope.load_lang(obj.id);
+                              $scope.edit_lang(obj.id)
+                              //Hago que la interfaz refresque el titulo con el valor de component_selected
+                              // angular.element($("#ctrl_entities")).scope().$apply();
+                              // $('#lang-modal').modal('show').on('shown.bs.modal', function() {
+                              //                   $('#repository-modal #id_nombre').focus();
+                              // });
+                            }
+                        },
+                        "Delete": {
+                            "label": "Delete Language",
+                            "action": function (data) {
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $scope.node_selected = obj;
+                                
+                                $scope.language_selected.nombre = obj.text;
+                                $scope.language_selected.id = obj.id;
+                                
+                                $scope.node_item_selected = obj;
+                                $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> language?");
+                                $scope.ConfirmDeleteCallback = function(){$scope.delete_lang( $scope.node_item_selected)};
+                            }
+                        },
 
-        //                             var nodeParent = $('#jstreeBuilds').jstree(true).get_node(''+obj.parent)
-        //                             var renderId = nodeParent.li_attr['data-renderid'];
-        //                             $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
-        //                             $scope.node_item_selected = obj;                            
-        //                             angular.element($("#ctrl_editor")).scope().$apply();
-        //                             $('#template-entities-tag-modal').modal('show');
-        
-        //                         }
-        //                     },
-                        
-   
-        //                 }
-        //             }    
+                    };
+                else{
+                    return {
+                        "CreateTempl": {
+                            "label": "Edit Datatype",
+                            "separator_after": true,
+                            "action": function (data) {
 
-        //         }
-        // }
+                              var inst = $.jstree.reference(data.reference),
+                              obj = inst.get_node(data.reference);
+                              $scope.node_selected = obj;
+                              $scope.datatype_selected.nombre = obj.li_attr['data-rendername'];
+                              $scope.datatype_selected.id = obj.li_attr['data-renderid'];
+                              $scope.edit_type($scope.datatype_selected.id);
+                              //$scope.node_item_selected = obj;
+                              //$scope.load_entity($scope.entity_selected.id);                          
+                              //$scope.edit_entity($scope.entity_selected.id);
+                    
+                              //Hago que la interfaz refresque el titulo con el valor de component_selected
+                              //angular.element($("#ctrl_entities")).scope().$apply();                         
+
+                            }
+                            
+                        },
+                        "Delete": {
+                            "label": "Delete Datatype",
+                            "action": function (data) {
+                                var inst = $.jstree.reference(data.reference),
+                                obj = inst.get_node(data.reference);
+                                $scope.node_selected = obj;
+                                
+                                $scope.entity_selected.nombre = obj.li_attr['data-rendername'];
+                                $scope.entity_selected.id = obj.li_attr['data-renderid'];
+                                $scope.node_item_selected = obj;
+                                $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> entity?");
+                                $scope.ConfirmDeleteCallback = function(){$scope.delete_entity($scope.node_item_selected)};
+                                //$scope.new_template(obj.id);
+                                //angular.element($("#ctrl_entities")).scope().$apply();
+                                //$('#entity-delete-modal').modal('show');
+                            }
+                        }
+                    };
+                }  
+
+            }
+        }
     }).bind("dblclick.jstree", function(e) {
 
         var tree = $(this).jstree(); 
@@ -152,17 +204,17 @@ angular.module('app_lang', ['ngResource','lang.services'])
                         });
 
         //$scope.langs=lang.get({});
-        lang.get({}, function(success){
-            console.log(success);
-        }, function(error){
-            console.log(error);
-        });
+        // lang.get({}, function(success){
+        //     console.log(success);
+        // }, function(error){
+        //     console.log(error);
+        // });
     }
 
 
     $scope.load_lang = function(id_lang){
         $scope.data.repeatSelect = id_lang;
-        $scope.data.availableOptions =  $scope.lang_selected; //lang.query();
+        //$scope.data.availableOptions =  $scope.lang_selected; //lang.query();
         $scope.types_types = [];
         $scope.Conversions = [];
  
@@ -198,29 +250,53 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
         $scope.GencoTipodato= new lang_tipodato();
         $scope.GencoTipodato.id_lenguaje = $scope.language_selected.id;
-        console.log('new');
-
+        $('#type-add-modal').modal('show').on('shown.bs.modal', function() {
+            $('#type-add-modal #id_nombre').focus();
+        });
   
     } 
 
-    $scope.edit_type = function(index){
+    $scope.edit_type_ongrid = function(index){
 
         console.log($scope.types[index].id_tipodato);
         $scope.GencoTipodato= $scope.types[index];
         $scope.GencoTipodato.id_lenguaje = $scope.GencoTipodato.id_lenguaje.toString();
-        // console.log($scope.GencoTipodato);
-        // $scope.GencoTipodato.id_lenguaje = ""+id_lang;
-        // console.log('new');
-
+        $('#type-edit-modal').modal('show').on('shown.bs.modal', function() {
+            $('#type-edit-modal #id_nombre').focus();
+        });
   
     } 
 
+
+    $scope.edit_type = function(id_type){
+
+        lang_tipodato.get({id_tipodato:id_type}, function(success){
+            console.log(success)
+            $scope.GencoTipodato = success;
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+        $('#type-edit-modal').modal('show').on('shown.bs.modal', function() {
+            $('#type-edit-modal #id_nombre').focus();
+        });
+  
+    }
 
     $scope.save_type = function(){
 
 
         console.log($scope.GencoTipodato);
         $scope.GencoTipodato.$save(function(success){   
+            var nodeDef = {'id': 'type' + success.id_tipodato, 
+                            'parent': success.id_lenguaje, 
+                            'text': success.nombre, 
+                            'icon':"glyphicon glyphicon-file", 
+                            'li_attr':{'data-renderas':"datatype",
+                                        'data-renderid': success.id_tipodato, 
+                                        'data-rendername':success.nombre
+                                    }
+                        }
+            $scope.addTreeNode($scope.language_selected, nodeDef, $('#jstree').jstree(true));
             $scope.load_lang($scope.GencoTipodato.id_lenguaje);       
             //$scope.new_type($scope.GencoTipodato.id_lenguaje);
             $('#type-add-modal').modal('hide')
@@ -233,9 +309,11 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     $scope.update_type = function(){
         console.log($scope.GencoTipodato);
-        $scope.GencoTipodato.$update(function(){
+        $scope.GencoTipodato.$update(function(success){
             $scope.load_lang($scope.GencoTipodato.id_lenguaje);       
             $('#type-edit-modal').modal('hide')
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
         });
 
     }
@@ -317,17 +395,44 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
 
     $scope.new_lang = function(id_lang){
-
+        $scope.wdnMode = 1;
         $scope.GencoLenguajes= new lang();
         console.log($scope.GencoLenguajes);
         $('#lang-modal').modal('show').on('shown.bs.modal', function() {
                 $('#lang-modal #id_nombre').focus();
         });
   
+    }
+
+
+    $scope.edit_lang = function(id_lang){
+        $scope.wdnMode = 2;
+        console.log(id_lang)
+
+        lang.get({id_lenguaje:id_lang}, function(success){
+            console.log(success)
+            $scope.GencoLenguajes = success;
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+        $('#lang-modal').modal('show').on('shown.bs.modal', function() {
+            $('#lang-modal #id_nombre').focus();
+        });
+    }
+
+
+
+    $scope.saveOrUpdateEntity = function(){
+        var mode = $scope.wdnMode;
+        if(mode==1){
+            $scope.save_lang();
+        }else if(mode==2){
+            $scope.update_lang();
+        }
+        
     } 
 
     $scope.save_lang = function(){
-
 
         console.log($scope.GencoLenguajes);
         $scope.GencoLenguajes.$save(function(success){   
@@ -349,7 +454,27 @@ angular.module('app_lang', ['ngResource','lang.services'])
     } 
 
 
- 
+    $scope.update_lang = function(){
+
+        $scope.GencoLenguajes.$update(function(success){
+          $scope.renameTreeNode($scope.node_selected, success.nombre);
+          $('#lang-modal').modal('hide')
+        },function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+        
+    } 
+
+
+    $scope.delete_lang = function(node){
+
+        lang.delete({id_lenguaje: $scope.language_selected.id},function(success){          
+            $('#jstree').jstree(true).delete_node(node); 
+        },function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+
+    } 
 
 
     $scope.save_conversion = function(id_lang){
@@ -449,20 +574,6 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     };
 
-
-    $scope.renameTreeNode = function(node, newText){
-        $('#jstree').jstree('set_text', node, newText); 
-    }
-
-    $scope.addTreeNode = function(node, newNode, jsTree){
-        jsTree.create_node(node.id,newNode);                    
-    }
-
-    $scope.showMessage = function(message){
-        $('#imConfirm').html(message);
-        $('#info-modal').modal('show');
-
-    }
 
     function conversion_validator(proccess, id_lang, callback){
 
@@ -586,6 +697,30 @@ angular.module('app_lang', ['ngResource','lang.services'])
          
     }
 
+
+    $scope.renameTreeNode = function(node, newText){
+        $('#jstree').jstree('set_text', node, newText); 
+    }
+
+    $scope.addTreeNode = function(node, newNode, jsTree){
+        jsTree.create_node(node.id,newNode);                    
+    }
+
+    $scope.showMessage = function(message){
+        $('#imConfirm').html(message);
+        $('#info-modal').modal('show');
+
+    }
+
+    $scope.showConfirmDelete = function(message){
+        $('#tedmConfirm').html(message);
+        $('#confirm-delete-modal').modal('show');
+    }
+
+    $scope.confirm_delete = function(){
+        $('#confirm-delete-modal').modal('hide');
+       $scope.ConfirmDeleteCallback();
+    }
 
 
     /*

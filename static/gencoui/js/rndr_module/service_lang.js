@@ -4,9 +4,9 @@
 
 angular.module('lang.services',[]).factory('lang_tipodato',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id',{id:'@id'},{
+return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id_tipodato',{id_tipodato:'@id_tipodato'},{
     update: {
-            //url: 'http://127.0.0.1:9000/demo/movies/:id\\/',
+        url: 'http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',
             method: 'PUT'
         },
     save: {
@@ -17,10 +17,9 @@ return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id',{id:
         url: 'http://127.0.0.1:8000/gencoui/tipodatos/?id_lang=:id',   
         isArray:true    
     }, 
-    // get: {
-    //     // url: 'http://127.0.0.1:8000/gencoui/envlangs\\/',   
-    //     isArray:true    
-    // }, 
+    get: {
+        'http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',    
+    }, 
   });
 
 }).factory('genco_tipodato',function($resource){
@@ -35,9 +34,9 @@ return $resource('http://127.0.0.1:8000/gencoui/gencodatatype\\/',{
 
 }).factory('lang',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/langs/:id\\/',{id:'@id_lang'},{
+return $resource('http://127.0.0.1:8000/gencoui/langs/:id_lenguaje\\/',{id_lang:'@id_lang'},{
     update: {
-            //url: 'http://127.0.0.1:9000/demo/movies/:id\\/',
+           //url: 'http://127.0.0.1:8000/gencoui/langs\\/',
             method: 'PUT'
         },
     save: {
@@ -48,10 +47,10 @@ return $resource('http://127.0.0.1:8000/gencoui/langs/:id\\/',{id:'@id_lang'},{
         url: 'http://127.0.0.1:8000/gencoui/langs\\/',   
         isArray:true    
     }, 
-    get: {
-        url: 'http://127.0.0.1:8000/gencoui/langs\\/',   
-        isArray:true    
-    }, 
+    // get: {
+    //     url: 'http://127.0.0.1:8000/gencoui/langs\\/',   
+    //     //isArray:true    
+    // }, 
   });
 
 }).factory('conversion',function($resource){
