@@ -4,9 +4,10 @@
 
 angular.module('lang.services',[]).factory('lang_tipodato',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id_tipodato',{id_tipodato:'@id_tipodato'},{
+//return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id_tipodato',{id_tipodato:'@id_tipodato'},{
+return $resource('http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',{id_tipodato:'@id_tipodato'},{
     update: {
-        url: 'http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',
+        //url: 'http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',
             method: 'PUT'
         },
     save: {
@@ -17,9 +18,10 @@ return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id_tipod
         url: 'http://127.0.0.1:8000/gencoui/tipodatos/?id_lang=:id',   
         isArray:true    
     }, 
-    get: {
-        'http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',    
-    }, 
+    // get: {
+    //     'http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',
+    //     isArray:false
+    // }, 
   });
 
 }).factory('genco_tipodato',function($resource){
