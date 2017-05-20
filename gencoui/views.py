@@ -934,7 +934,8 @@ class langs_tree(APIView):
     def get(self, request):
         # if request.user.IsAuthenticated:
         #     print 'logueado'
-
+        print 'usuario'
+        print request.user.id
         langs = GencoLenguajes.objects.filter(creado_por=request.user.id, id_lenguaje__gt=1).order_by('id_lenguaje')
         tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
 
@@ -1167,7 +1168,8 @@ class CloneLang(APIView):
         clonetypes=[]
         datatypes=None
         dataconversions=None
-        cloneIdlang=0       
+        cloneIdlang=0 
+        typeorigin=0     
         # my_util = MY_UTIL()
 
         context = {'status':'' ,'error':'', 'response':''}
@@ -1206,6 +1208,7 @@ class CloneLang(APIView):
                 print lang.id_lenguaje
                 datatypes = GencoTipodato.objects.filter(id_lenguaje=cloneIdlang)
                 for datatype in datatypes:
+                    typeorigin = datatype
                     print datatype.id_tipodato
                     datatype.pk = None
                     datatype.id_lenguaje = lang
@@ -1215,17 +1218,23 @@ class CloneLang(APIView):
                     datatype.fecha_modificacion = None
                     try:
                         datatype.save()
-                        # dataconversions = GencoConversionTipodato.objects.filter(id_tipodato=datatype.id_tipodato)
-                        # for dataconversion in dataconversions:
+                        dataconversions = GencoConversionTipodato.objects.filter(id_tipodato_cnv=typeorigin.id_tipodato)
+                        for dataconversion in dataconversions:
                         #     print dataconversion.id_conversion
-                        #     dataconversion.pk = None
-                        #     dataconversion.id_tipodato = dataconversion.id_tipodato
-                        #     dataconversion.creado_por = request.user.id
-                        #     dataconversion.creado_el = now()
-                        #     dataconversion.modificado_por = None
-                        #     dataconversion.fecha_modificacion = None
-                        #     try:
-                        #         dataconversion.save()
+                            dataconversion.pk = None
+                            #dataconversion.id_tipodato = datatype.id_tipodato
+                            #la conversion debe ser hacia el nuevo id que creamos
+                            dataconversion.id_tipodato_cnv = dataconversion.id_tipodato
+                            dataconversion.creado_por = request.user.id
+                            dataconversion.creado_el = now()
+                            dataconversion.modificado_por = None
+                            dataconversion.fecha_modificacion = None
+                            try:
+                                dataconversion.save()
+                            except Exception as e:
+                                print str(e)
+                                raise APIException('An error ocurred cloning type conversion. Please contatct support. ' + str(e))       
+
                     except Exception as e:
                         print str(e)
                         raise APIException('An error ocurred cloning datatype(s). Please contatct support. ' + str(e))

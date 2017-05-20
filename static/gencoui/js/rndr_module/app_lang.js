@@ -143,11 +143,11 @@ angular.module('app_lang', ['ngResource','lang.services'])
                                 obj = inst.get_node(data.reference);
                                 $scope.node_selected = obj;
                                 
-                                $scope.entity_selected.nombre = obj.li_attr['data-rendername'];
-                                $scope.entity_selected.id = obj.li_attr['data-renderid'];
+                                $scope.datatype_selected.nombre = obj.li_attr['data-rendername'];
+                                $scope.datatype_selected.id = obj.li_attr['data-renderid'];
                                 $scope.node_item_selected = obj;
-                                $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> entity?");
-                                $scope.ConfirmDeleteCallback = function(){$scope.delete_entity($scope.node_item_selected)};
+                                $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> datatype?");
+                                $scope.ConfirmDeleteCallback = function(){$scope.delete_type($scope.node_item_selected)};
                                 //$scope.new_template(obj.id);
                                 //angular.element($("#ctrl_entities")).scope().$apply();
                                 //$('#entity-delete-modal').modal('show');
@@ -318,6 +318,16 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     }
 
+    $scope.delete_type = function(node){
+
+        lang_tipodato.delete({id_tipodato: $scope.datatype_selected.id},function(success){          
+            $('#jstree').jstree(true).delete_node(node); 
+        },function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+
+    } 
+
 
     $scope.print = function(message){
        // $scope.lang-selected = lang_selected
@@ -326,11 +336,11 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
     }
 
-    $scope.cancel = function(){
-        $('#type-add-modal').modal('hide');
-        $('#type-edit-modal').modal('hide');
-        $('#lang-add-modal').modal('hide');
-    }
+    // $scope.cancel = function(){
+    //     $('#type-add-modal').modal('hide');
+    //     $('#type-edit-modal').modal('hide');
+    //     $('#lang-add-modal').modal('hide');
+    // }
 
 
     $scope.getTypesCombos = function(id_lang){
