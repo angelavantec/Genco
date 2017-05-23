@@ -1,6 +1,6 @@
 angular.module('app_entities', ['ngResource','repository.services'])
 
-.controller('ctrl_entities', function($scope, repository, entity_repo, entity, entitydef, repo_tree, popupService) {
+.controller('ctrl_entities', function($scope, repository, entity_repo, entity, entitydef, repo_tree, popupService, searchRepo, cloneRepo) {
 
   $scope.fields = [];
   $scope.repositories = [];
@@ -16,6 +16,11 @@ angular.module('app_entities', ['ngResource','repository.services'])
   $scope.field_selected;
   $scope.repoEntities = [];
   $scope.node_selected;
+
+
+  $scope.pageFoundRepos = {}
+  $scope.reposToClone = []
+
 
   $scope.repository_selected = {
       id: null,
@@ -545,6 +550,95 @@ angular.module('app_entities', ['ngResource','repository.services'])
         $('#field-delete-modal').modal('hide'); 
         $('#field-edit-modal').modal('hide');       
     } 
+
+    /*
+    Cloning repository 
+    */
+    $scope.searchRepos =  function(pagenum){
+        var searchKey = $('#findRepoKey').val();
+        console.log(searchKey);
+
+        if(searchKey.trim().length==0 || searchKey.trim()=='' || searchKey==undefined || searchKey==null){
+            $scope.showMessage('Invalid text for search');
+            return;
+        }
+
+        // var sl = new searchLangs({keysearch: searchKey, page:1})
+        // console.log(sl);
+        searchRepo.get({keysearch: searchKey, page:pagenum}, function(success){
+            console.log(success.repos);
+            $scope.setChecktoSearchRepos(success.langs);          
+            $scope.pageFoundRepos = success;
+            //console.log('expand');
+            
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+    }
+
+
+    $scope.addToCloneRepos = function(index){
+        var pos=0;
+
+        pos = $scope.reposToClone.map(function(x) {return x.id_lenguaje}).indexOf($scope.pageFoundRepos.repos[index].id_lenguaje);
+
+
+        if(pos>=0) {
+            $scope.reposToClone.splice(pos,1);
+        }else{
+            $scope.reposToClone.push($scope.pageFoundRepos.repos[index]);
+        } 
+
+
+        console.log($scope.reposToClone);
+         
+    }
+
+
+    $scope.setChecktoSearchRepos = function(repos){
+        var pos=0;
+
+        angular.forEach($scope.repoToClone, function(value, key){
+
+            pos = repos.map(function(x) {return x.id_repositorio}).indexOf(value.id_repositorio);
+
+            if(pos>=0) {
+                (repos[pos])['checked']=true;
+            }    
+            // }else{
+            //     ($scope.pageFoundLangs.langs[pos])['checked']=false;
+            // }  
+        
+        });
+
+        return repos;
+  
+         
+    }
+
+
+    $scope.save_clone_repo = function(){
+
+        if($scope.reposToClone.length<=0){
+            $scope.showMessage('Please select a Lanaguage for clone');
+            return;
+        }
+
+        var cloneRepos = '[' + $scope.reposToClone.map(function(x) {return x.id_lenguaje}).toString() + ']'
+        console.log(cloneLangs);
+
+        clone = new cloneRepo({repos: cloneRepos});
+        clone.$save(function(success){
+            console.log(success);
+            $scope.reposToClone = [];
+            $scope.pageFoundRepos = {};
+            // $scope.getLangTree();
+            $('#repo-clone-modal').modal('hide')
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+         
+    }
 
     /*
     * data: datos del nodo seleccionado que activa el menu, de esta se puede obtener el nodo seleccionado, y una instancia para 

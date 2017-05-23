@@ -84,6 +84,12 @@ class SearchLangSerializer(serializers.Serializer):
     descripcion = serializers.CharField(max_length=100)
     id_icono = AdminAppIconosSerializer()
 
+class SearchRepoSerializer(serializers.Serializer):
+    user = serializers.CharField(max_length=30)
+    id_repositorio = serializers.IntegerField()
+    nombre = serializers.CharField(max_length=100)
+    descripcion = serializers.CharField(max_length=100)
+    # id_icono = AdminAppIconosSerializer()
 
 class GencoTipodatoSerializer(serializers.ModelSerializer):  
     #groups = GencoGrupoSerializer(many=True, read_only=True)

@@ -94,6 +94,25 @@ return $resource('http://127.0.0.1:8000/gencoui/repo_tree\\/',{
     }, 
   });
 
+}).factory('searchRepo',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/searchrepo/:keysearch/:page',{keysearch:'@keysearch', page:'@page'},{ 
+    query: {   
+        isArray:true    
+    }, 
+    get: {
+        isArray:false    
+    }, 
+  });
+
+}).factory('cloneRepo',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/clonerepo\\/',{
+    save: {        
+        method: 'POST'
+    }, 
+  });
+
 }).service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);

@@ -1169,7 +1169,7 @@ class CloneLang(APIView):
         datatypes=None
         dataconversions=None
         cloneIdlang=0 
-        typeorigin=0     
+        typeoriginId=0     
         # my_util = MY_UTIL()
 
         context = {'status':'' ,'error':'', 'response':''}
@@ -1208,7 +1208,7 @@ class CloneLang(APIView):
                 print lang.id_lenguaje
                 datatypes = GencoTipodato.objects.filter(id_lenguaje=cloneIdlang)
                 for datatype in datatypes:
-                    typeorigin = datatype
+                    typeoriginId = datatype.id_tipodato
                     print datatype.id_tipodato
                     datatype.pk = None
                     datatype.id_lenguaje = lang
@@ -1218,15 +1218,16 @@ class CloneLang(APIView):
                     datatype.fecha_modificacion = None
                     try:
                         datatype.save()
-                        dataconversions = GencoConversionTipodato.objects.filter(id_tipodato_cnv=typeorigin.id_tipodato)
+                        print typeoriginId
+                        dataconversions = GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_tipodato=typeoriginId)
                         for dataconversion in dataconversions:
                         #     print dataconversion.id_conversion
                             dataconversion.pk = None
                             #dataconversion.id_tipodato = datatype.id_tipodato
                             #la conversion debe ser hacia el nuevo id que creamos
-                            dataconversion.id_tipodato_cnv = dataconversion.id_tipodato
+                            dataconversion.id_tipodato_cnv = datatype
                             dataconversion.creado_por = request.user.id
-                            dataconversion.creado_el = now()
+                            dataconversion.creado_el = timezone.now()
                             dataconversion.modificado_por = None
                             dataconversion.fecha_modificacion = None
                             try:
@@ -1264,6 +1265,128 @@ class CloneLang(APIView):
         
         return JsonResponse(context)
 
+
+class searchRepo(APIView):
+
+    def get(self, request, keysearch=None, page=None):
+        
+        next='0'
+        prev='0'
+        offset='0'
+        npages=3
+        pagerange=''
+
+        if keysearch=='*':
+            repos = GencoRepositorio.objects.extra(tables=('auth_user',),where=('genco_repositorio.creado_por=auth_user.id',),select={'user':'username'}).exclude(creado_por=request.user.id)
+        else:   
+            repos = GencoRepositorio.objects.extra(tables=('auth_user',),where=('genco_repositorio.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch).exclude(creado_por=request.user.id)
+
+        paginator = Paginator(repos, npages)
+
+        try:
+            repos = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            repos = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            repos = paginator.page(paginator.num_pages)
+
+        offset = str(paginator.num_pages)
+        serializer = SearchRepoSerializer(repos, many=True, context={'request': request})
+
+        if repos.has_next():
+            next = str(repos.next_page_number())
+        else:
+            next = offset
+            page = offset
+
+        if repos.has_previous():
+            prev = str(repos.previous_page_number())
+        else:
+            prev = page
+
+        pagerange = page_range(int(page), int(offset), npages)
+
+        return Response({'current': page, 'next': next, 'previous': prev, 'offset':offset, 'pagerange':pagerange,'repos' :serializer.data})
+
+
+
+class CloneRepo(APIView):
+    
+    def post(self, request):
+        clonelangs=[]
+        clonetypes=[]
+        datatypes=None
+        dataconversions=None
+        cloneIdlang=0 
+        typeoriginId=0     
+
+        context = {'status':'' ,'error':'', 'response':''}
+        langsclone = request.data['langs']
+        print langsclone
+       
+        if langsclone: 
+            langsItr = getIterableFromTags(langsclone)
+
+    
+        print langsItr
+
+
+        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=1)
+
+        for lang in langs:
+            cloneIdlang = lang.id_lenguaje
+            lang.pk = None
+            lang.creado_por = request.user.id
+            lang.creado_el = timezone.now()
+            lang.modificado_por = None
+            lang.fecha_modificacion = None
+            print lang.id_lenguaje
+            try:
+                lang.save()
+                print lang.id_lenguaje
+                datatypes = GencoTipodato.objects.filter(id_lenguaje=cloneIdlang)
+                for datatype in datatypes:
+                    typeoriginId = datatype.id_tipodato
+                    print datatype.id_tipodato
+                    datatype.pk = None
+                    datatype.id_lenguaje = lang
+                    datatype.creado_por = request.user.id
+                    datatype.creado_el = timezone.now()
+                    datatype.modificado_por = None
+                    datatype.fecha_modificacion = None
+                    try:
+                        datatype.save()
+                        print typeoriginId
+                        dataconversions = GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_tipodato=typeoriginId)
+                        for dataconversion in dataconversions:
+                        #     print dataconversion.id_conversion
+                            dataconversion.pk = None
+                            #dataconversion.id_tipodato = datatype.id_tipodato
+                            #la conversion debe ser hacia el nuevo id que creamos
+                            dataconversion.id_tipodato_cnv = datatype
+                            dataconversion.creado_por = request.user.id
+                            dataconversion.creado_el = timezone.now()
+                            dataconversion.modificado_por = None
+                            dataconversion.fecha_modificacion = None
+                            try:
+                                dataconversion.save()
+                            except Exception as e:
+                                print str(e)
+                                raise APIException('An error ocurred cloning type conversion. Please contatct support. ' + str(e))       
+
+                    except Exception as e:
+                        print str(e)
+                        raise APIException('An error ocurred cloning datatype(s). Please contatct support. ' + str(e))
+
+
+            except Exception as e:
+                print str(e)
+                raise APIException('An error ocurred cloning language(s). Please contatct support.' + str(e))   
+
+        
+        return JsonResponse(context)
 
 
 class GencoDatatype(APIView):
