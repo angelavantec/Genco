@@ -364,6 +364,7 @@
 			      <th>Logo</th>
 			      <th>Description</th>
 			      <th>Creator</th>
+			      <th>Add</th>
 			      <th></th>
 			    </tr>
 			  </thead>
@@ -376,9 +377,12 @@
 			      <td>{{langsf.user}}</td>
 			      <td>
 					
-					<input type="checkbox" autocomplete="off" ng-click="addToCloneLangs($index)" ng-checked="langsf.checked">
+					<input type="checkbox" autocomplete="off" ng-click="addToCloneLangs($index)" ng-checked="langsf.checked">					
 					
-			      </td>			      
+			      </td>		
+			      <td>
+			      	<a class="btn btn-default btn-xs" role="button" style="margin-bottom:20px" ng-click="openViewWindow($index)" >View</a>	
+			      </td>	      
 			    </tr>
 			   
 		  	  </tbody>

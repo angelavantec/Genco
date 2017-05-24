@@ -602,6 +602,43 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
     # context = {'form_add_env': GencoEntornoForm, 'user': request.user.username}
     # return render(request,switcher.get(id_module),context)
 
+@login_required
+def get_view(request, id_module=None, key_lang=None, key_env=None, key_project=None):
+
+    # switcher = {
+    #     'env': 'gencoui/rndr_env.html',
+    #     'builds': 'gencoui/rndr_builds.html',
+    #     'entities': 'gencoui/rndr_entities.html'
+    # }
+
+    if id_module == 'env':
+        context = {'form_add_env': GencoEntornoForm, 'user': request.user}
+        return render(request,'gencoui/rndr_environments.html',context)
+    elif id_module == 'editor':
+        obj = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
+        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': obj, 'icon': obj.id_icono.upload}    
+        return render(request,'gencoui/rndr_editor.html',context)
+    elif id_module == 'entities':
+        context = {'form_add_repository': GencoRepositorioForm, 
+                    'form_add_entity': GencoEntidadForm, 
+                    'form_add_entitydef': GencoEntidadDefinicionForm,                     
+                    'form_edit_entitydef': GencoEntidadDefinicionFormEdit,                     
+                    'user': request.user}    
+        return render(request,'gencoui/rndr_repository.html',context)        
+    elif id_module == 'langs':
+        context = {'key_lang': key_lang, 'user': request.user}    
+        return render(request,'gencoui/rndr_langs_view.html',context)
+    elif id_module == 'builds':
+        env = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
+        prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
+        
+
+        context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_element_entity': GencoElementoEntidadForm,
+                    'user': request.user, 'key_module':key_env, 'entorno': env, 'proyecto': prj, 'icon': env.id_icono.upload}    
+        return render(request,'gencoui/rndr_builds.html',context)            
+    else:
+        raise Http404
+
 
 
 class tmpl(APIView):
@@ -932,8 +969,7 @@ class dir_elemento_entidad_tree(APIView):
 class langs_tree(APIView):
     
     def get(self, request):
-        # if request.user.IsAuthenticated:
-        #     print 'logueado'
+
         print 'usuario'
         print request.user.id
         langs = GencoLenguajes.objects.filter(creado_por=request.user.id, id_lenguaje__gt=1).order_by('id_lenguaje')
@@ -952,6 +988,26 @@ class langs_tree(APIView):
 
         return JsonResponse({'dirs':dirs})
 
+
+class langs_tree_view(APIView):
+    
+    def get(self, request, id_lenguaje=None):
+
+        langs = GencoLenguajes.objects.filter(id_lenguaje=id_lenguaje, id_lenguaje__gt=1)
+        tipodatos = GencoTipodato.objects.filter(id_lenguaje__id_lenguaje=id_lenguaje)
+
+        dirs = []
+        id_padre = ''
+
+        for i  in langs:         
+            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre}})
+       
+
+        for i  in tipodatos:          
+            dirs.append( {'id': 'type'+str(i.id_tipodato), 'parent': i.id_lenguaje.id_lenguaje, 'text': i.nombre + '<sub style="color:#CCCCCC"></sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"datatype", 'data-renderid': i.id_tipodato, 'data-rendername': i.nombre}})
+        print dirs    
+
+        return JsonResponse({'dirs':dirs})
 
 class repo_tree(APIView):
     
@@ -988,7 +1044,7 @@ class component_template_tree(APIView):
        
 
         for i  in template:          
-            comps.append( {'id': 'template'+str(i.id_plantilla), 'parent': i.id_componente.id_componente, 'text': i.nombre + '<sub style="color:#CCCCCC"></sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla, 'data-rendername': i.nombre}}) 
+            comps.append( {'id': 'template'+str(i.id_plantilla), 'parent': i.id_componente.id_componente, 'text': i.nombre + '<sub style="color:#CCCCCC">'+ i.id_lenguaje.nombre +'</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla, 'data-rendername': i.nombre}}) 
 
         return JsonResponse({'dirs':comps})     
 
@@ -1315,75 +1371,66 @@ class searchRepo(APIView):
 class CloneRepo(APIView):
     
     def post(self, request):
-        clonelangs=[]
-        clonetypes=[]
-        datatypes=None
-        dataconversions=None
-        cloneIdlang=0 
-        typeoriginId=0     
+        clonerepos=[]
+        cloneentities=[]
+        entities=None
+        cloneIdrepo=0 
+        entityOriginId=0     
 
         context = {'status':'' ,'error':'', 'response':''}
-        langsclone = request.data['langs']
-        print langsclone
+        reposclone = request.data['repos']
        
-        if langsclone: 
-            langsItr = getIterableFromTags(langsclone)
-
-    
-        print langsItr
+        if reposclone: 
+            reposItr = getIterableFromTags(reposclone)
 
 
-        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=1)
+        repos = GencoRepositorio.objects.filter(id_repositorio__in=reposItr)
 
-        for lang in langs:
-            cloneIdlang = lang.id_lenguaje
-            lang.pk = None
-            lang.creado_por = request.user.id
-            lang.creado_el = timezone.now()
-            lang.modificado_por = None
-            lang.fecha_modificacion = None
-            print lang.id_lenguaje
+        for repo in repos:
+            cloneIdrepo = repo.id_repositorio
+            repo.pk = None
+            repo.creado_por = request.user.id
+            repo.creado_el = timezone.now()
+            repo.modificado_por = None
+            repo.fecha_modificacion = None
+
             try:
-                lang.save()
-                print lang.id_lenguaje
-                datatypes = GencoTipodato.objects.filter(id_lenguaje=cloneIdlang)
-                for datatype in datatypes:
-                    typeoriginId = datatype.id_tipodato
-                    print datatype.id_tipodato
-                    datatype.pk = None
-                    datatype.id_lenguaje = lang
-                    datatype.creado_por = request.user.id
-                    datatype.creado_el = timezone.now()
-                    datatype.modificado_por = None
-                    datatype.fecha_modificacion = None
+                repo.save()
+                entities = GencoEntidad.objects.filter(id_repositorio=cloneIdrepo)
+                for entity in entities:
+                    entityOriginId = entity.id_entidad
+                    entity.pk = None
+                    entity.id_repositorio = repo
+                    entity.creado_por = request.user.id
+                    entity.creado_el = timezone.now()
+                    entity.modificado_por = None
+                    entity.fecha_modificacion = None
                     try:
-                        datatype.save()
-                        print typeoriginId
-                        dataconversions = GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_tipodato=typeoriginId)
-                        for dataconversion in dataconversions:
-                        #     print dataconversion.id_conversion
-                            dataconversion.pk = None
-                            #dataconversion.id_tipodato = datatype.id_tipodato
+                        entity.save()
+         
+                        entidaddefs = GencoEntidadDefinicion.objects.filter(id_entidad__id_entidad=entityOriginId)
+                        for entidaddef in entidaddefs:
+                            entidaddef.pk = None
                             #la conversion debe ser hacia el nuevo id que creamos
-                            dataconversion.id_tipodato_cnv = datatype
-                            dataconversion.creado_por = request.user.id
-                            dataconversion.creado_el = timezone.now()
-                            dataconversion.modificado_por = None
-                            dataconversion.fecha_modificacion = None
+                            entidaddef.id_entidad = entity
+                            entidaddef.creado_por = request.user.id
+                            entidaddef.creado_el = timezone.now()
+                            entidaddef.modificado_por = None
+                            entidaddef.fecha_modificacion = None
                             try:
-                                dataconversion.save()
+                                entidaddef.save()
                             except Exception as e:
                                 print str(e)
-                                raise APIException('An error ocurred cloning type conversion. Please contatct support. ' + str(e))       
+                                raise APIException('An error ocurred cloning type entity definition. Please contatct support. ' + str(e))       
 
                     except Exception as e:
                         print str(e)
-                        raise APIException('An error ocurred cloning datatype(s). Please contatct support. ' + str(e))
+                        raise APIException('An error ocurred cloning entities. Please contatct support. ' + str(e))
 
 
             except Exception as e:
                 print str(e)
-                raise APIException('An error ocurred cloning language(s). Please contatct support.' + str(e))   
+                raise APIException('An error ocurred cloning repositories. Please contatct support.' + str(e))   
 
         
         return JsonResponse(context)

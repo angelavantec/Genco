@@ -580,7 +580,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
     $scope.addToCloneRepos = function(index){
         var pos=0;
 
-        pos = $scope.reposToClone.map(function(x) {return x.id_lenguaje}).indexOf($scope.pageFoundRepos.repos[index].id_lenguaje);
+        pos = $scope.reposToClone.map(function(x) {return x.id_repositorio}).indexOf($scope.pageFoundRepos.repos[index].id_repositorio);
 
 
         if(pos>=0) {
@@ -598,7 +598,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
     $scope.setChecktoSearchRepos = function(repos){
         var pos=0;
 
-        angular.forEach($scope.repoToClone, function(value, key){
+        angular.forEach($scope.reposToClone, function(value, key){
 
             pos = repos.map(function(x) {return x.id_repositorio}).indexOf(value.id_repositorio);
 
@@ -624,14 +624,15 @@ angular.module('app_entities', ['ngResource','repository.services'])
             return;
         }
 
-        var cloneRepos = '[' + $scope.reposToClone.map(function(x) {return x.id_lenguaje}).toString() + ']'
-        console.log(cloneLangs);
+        var cloneRepos = '[' + $scope.reposToClone.map(function(x) {return x.id_repositorio}).toString() + ']'
+        
 
         clone = new cloneRepo({repos: cloneRepos});
         clone.$save(function(success){
             console.log(success);
             $scope.reposToClone = [];
             $scope.pageFoundRepos = {};
+            $scope.load_repositories();
             // $scope.getLangTree();
             $('#repo-clone-modal').modal('hide')
         }, function(error){

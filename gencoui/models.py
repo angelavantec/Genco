@@ -203,7 +203,7 @@ class GencoArchivos(models.Model):
 
 class GencoComponentes(models.Model):
     id_componente = models.AutoField(primary_key=True)
-    nombre = models.CharField(unique=True, max_length=50)
+    nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=200, blank=True, null=True)
     id_entorno = models.ForeignKey('GencoEntorno', models.DO_NOTHING, db_column='id_entorno')
     creado_por = models.IntegerField()
@@ -459,7 +459,7 @@ class GencoProyectos(models.Model):
 
 class GencoRepositorio(models.Model):
     id_repositorio = models.AutoField(primary_key=True)
-    nombre = models.CharField(unique=True, max_length=50)
+    nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
     url_ext_repositorio = models.CharField(max_length=300, blank=True, null=True)
     token_ext_repositorio = models.CharField(max_length=256, blank=True, null=True)

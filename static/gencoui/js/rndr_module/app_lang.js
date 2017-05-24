@@ -703,9 +703,15 @@ angular.module('app_lang', ['ngResource','lang.services'])
         });
 
         return langs;
-  
          
     }
+
+
+    $scope.openViewWindow = function(index){
+
+        window.open('http://127.0.0.1:8000/gencoui/view/langs/' + $scope.pageFoundLangs.langs[index].id_lenguaje, '_blank');
+    }
+
 
 
     $scope.renameTreeNode = function(node, newText){

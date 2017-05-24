@@ -1,0 +1,232 @@
+{% extends "admin/base.html" %}
+{% load staticfiles %}
+{% load absolute_media_uri %}
+<!-- {% block title %}Render Developer{% endblock %} -->
+
+{% block extrastyle %}
+    <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+{% endblock %}
+
+{% block extrajs %}
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_lang_view.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+
+		$('#example').popover('show');
+	</script>
+{% endblock %}
+
+{% block extrahead %}
+
+    <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
+        <script>
+    
+		$(document).ready(function () {
+		    var i = 0;
+		    var dragging = false;
+		    var dragging1 = false;
+		    $('#dragbar').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging = true;
+		        var main = $('#main');
+		        var sidebar = $('#sidebar');
+		        var ghostbar = $('<div>', {
+		            id: 'ghostbar',
+		            css: {
+		                height: sidebar.outerHeight(),
+		                top: main.offset().top,
+		                left: main.offset().left
+		            }
+		        }).appendTo('body');
+		        $(document).mousemove(function (e) {
+		            ghostbar.css("left", e.pageX + 5);
+		        });
+		    });
+
+		    $('#dragbar1').mousedown(function (e) {
+		        e.preventDefault();
+		        dragging1 = true;
+		        var main1 = $('#main1');
+		        var sidebar = $('#sidebar'); 
+		        console.log('first ' + sidebar.width());		     
+		        var ghostbar1 = $('<div>', {
+		            id: 'ghostbar1',
+		            css: {
+		                // height: main1.outerHeight(),
+		                height: '90%',
+		                top: main1.offset().top,
+		                left: main1.offset().left
+		            }
+		        }).appendTo('body');
+		        console.log(e);
+		        console.log(e.pageX);
+		        $(document).mousemove(function (e) {
+		        	console.log(e.pageX);		     
+		            ghostbar1.css("left", e.pageX + 5);
+		        });
+
+		        
+		    });
+
+
+		    $(document).mouseup(function (e) {
+		        if (dragging) {
+		            $('#sidebar').css("width", e.pageX + 2);
+		            $('#main').css("left", e.pageX + 2);
+		            $('#ghostbar').remove();
+		            $(document).unbind('mousemove');
+		            dragging = false;
+		        }
+
+		        if (dragging1) {
+		        	var sidebar = $('#sidebar'); 
+		        	console.log('width ' + sidebar.width());
+		            $('#sidebar1').css("width", e.pageX-sidebar.width() + 2);
+		            $('#main1').css("left", e.pageX -sidebar.width() + 2);
+		            $('#ghostbar1').remove();
+		            $(document).unbind('mousemove');
+		            dragging1 = false;
+		        }
+		    });
+		
+		   
+		});
+
+    </script>
+
+{% endblock %}
+
+
+{% block content %}
+<div id="ctrl_lang" ng-app="app_lang" ng-controller="ctrl_lang">
+	<input hidden id="key_lang" value="{{key_lang}}"/>
+
+	    <div id="sidebar" >
+	    	<span id="position"></span>
+	    	<div id="dragbar"></div>			    
+
+	    		<div class="container-fluid" style="margin-top:70px;">
+				    <div style="margin-bottom: 15px;">
+				    	<img src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"></img>  	
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Languages </h4>
+				    </div>	
+
+				    <div id="jstree"></div>
+
+				</div>       
+	    	
+		</div>
+
+	    <div id="main">
+	    	<div id="tree" style="margin-top:70px;height:85%;">
+
+	    	
+
+			    		<div class="container-fluid">
+			    			{% verbatim %}
+					      	<div class="panel-body" ng-if="language_selected.nombre!=null">
+					      		
+												<h3 style="display:inline">{{ language_selected.nombre }}</h3>
+							
+												<table class="table-bordered render-table" style="margin-top: 20px; width:90%">
+												  	
+												  		
+												  		<thead>
+												  			<th style="min-width: 250px; background-color: #ffffff"><span>Genco</span>
+												  			</th>
+												  			<th style="background-color: #ECF0F1; min-width: 300px;">
+												  				<span>{{language_selected.nombre}}</span>
+								   	
+
+												  			</th>
+												  			
+												  		</thead>
+												  		<tbody >	
+												  			<!-- item in <code>{{ types | json }}</code> -->
+															<tr  ng-repeat="type in types">
+													      		<td>{{ type.nombre}}<sub style="color:#cccccc">{{type.descripcion}}</sub></td>						      		
+<!-- 													      		<td width="100px" >
+
+													      			<div>
+																		<a class="btn btn-sm" data-toggle="modal" data-target="#type-edit-modal" data-placement="bottom" data-tt="tooltip" title="Edit Type" ng-click="edit_type($index)" style="padding: 6px 2px;">
+																			<span class="glyphicon btn-glyphicon glyphicon-pencil" ></span>					
+																		</a>
+																		<a class="btn btn-sm" data-toggle="modal" data-target="#type-remove-modal" data-placement="bottom" data-tt="tooltip" title="Remove Type" ng-click="remove()" style="padding: 6px 2px;">
+																			<span class="glyphicon btn-glyphicon glyphicon-minus" ></span>					
+																		</a>
+													      			</div>
+													      			
+																</td> -->
+													      		<td>
+													      			<select  ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_tipodato as types_cnv.nombre for types_cnv in types_types">
+													      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
+													      				<option value=''>Select</option>
+															      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
+															    	</select>	
+															    	<!-- {{Conversions[$index]}} -->
+															    	<!-- <tt>repeatSelect = {{type.id_tipodato}}</tt><br/> -->
+													      		</td>
+													      		<!-- <td width="15px">
+																	<a class="btn icon-btn btn-default" href="#">
+																	<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
+																	</a>
+													      		</td> -->
+													      	</tr>
+												      	{% endverbatim %}	
+
+												      	<!-- <tfoot> -->
+											          		
+											  	  		<!-- </tfoot> -->
+											  	  	</tbody>
+
+												</table>
+
+									      </div>
+							</div>
+			    		
+	    	</div>
+	    </div>
+
+
+
+<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog" >
+
+        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Information</h4>
+		    </div>	     
+          	<div id="imConfirm" class="modal-body">
+          	</div>
+          	<div class="modal-footer">
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+
+</div>
+{% endblock %}
+
+
+
+{% block extrafooter %}
+ 
+
+{% endblock %}
+

@@ -36,7 +36,7 @@ return $resource('http://127.0.0.1:8000/gencoui/gencodatatype\\/',{
 
 }).factory('lang',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/langs/:id_lenguaje\\/',{id_lang:'@id_lang'},{
+return $resource('http://127.0.0.1:8000/gencoui/langs/:id_lenguaje\\/',{id_lenguaje:'@id_lenguaje'},{
     update: {
            //url: 'http://127.0.0.1:8000/gencoui/langs\\/',
             method: 'PUT'
@@ -100,6 +100,14 @@ return $resource('http://127.0.0.1:8000/gencoui/clonelang\\/',{
 }).factory('langs_tree',function($resource){
 
 return $resource('http://127.0.0.1:8000/gencoui/langs_tree\\/',{
+    query: {
+        isArray:true    
+    }, 
+  });
+
+}).factory('langs_tree_view',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/langs_tree_view/:id_lenguaje\\/',{id_lenguaje: '@id_lenguaje'},{
     query: {
         isArray:true    
     }, 

@@ -117,7 +117,7 @@ return $resource('http://127.0.0.1:8000/gencoui/tmpl/:id_plantilla',{id_plantill
 
 }).factory('tree',function($resource){
 
-return $resource('http://localhost:8000/gencoui/cmp_tmpl_tree/:id',{id:'@id'},{
+return $resource('http://127.0.0.1:8000/gencoui/cmp_tmpl_tree/:id',{id:'@id'},{
     update: {
             method: 'PUT'
         },
@@ -128,7 +128,7 @@ return $resource('http://localhost:8000/gencoui/cmp_tmpl_tree/:id',{id:'@id'},{
 
 }).factory('processors',function($resource){
 
-return $resource('http://localhost:8000/gencoui/processors\\/',{
+return $resource('http://127.0.0.1:8000/gencoui/processors\\/',{
     get: {
         isArray:true    
     }, 

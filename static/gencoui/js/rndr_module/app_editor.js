@@ -138,7 +138,7 @@ tree.get({id:$scope.environment_selected}, function(success){
                 "check_callback" : function (operation, node, node_parent, node_position, more) {
                         // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
                         // in case of 'rename_node' node_position is filled with the new node name                      
-                        return false;                        
+                                            
 
                         if(operation == 'move_node'){
                             var validator;
@@ -388,8 +388,9 @@ tree.get({id:$scope.environment_selected}, function(success){
                                             'data-rendername':success.nombre
                                         }
                             }
+                console.log('agregar nodo')
                 $scope.addTreeNode($('#jstree').jstree(true).get_node('#'), nodeDef, $('#jstree').jstree(true));
-                $('#component-create-modal').modal('hide')
+                $('#component-create-modal').modal('hide');
             }, function(error){
                 $scope.showMessage($scope.getDataError(error));
             });
@@ -636,6 +637,11 @@ tree.get({id:$scope.environment_selected}, function(success){
 
         $scope.preview = function() {
 
+            if(editors[$scope.current_pos]==null || editors[$scope.current_pos]==undefined){
+                return;
+            }
+                
+
             var content = editors[$scope.current_pos].getValue();
             editor_preview.setValue('');
 
@@ -650,7 +656,7 @@ tree.get({id:$scope.environment_selected}, function(success){
                                     $scope.showMessage($scope.getDataError(error));
                                 })
 
-         };
+        };
 
 
         $scope.insertKey = function(node, nodeParent) {
@@ -771,10 +777,8 @@ tree.get({id:$scope.environment_selected}, function(success){
 
 angular.module('app_editor').config(function($httpProvider){
 
-    $httpProvider.defaults.headers.common['Authorization'] = 'Basic YWRtaW46YWRtaW4=';
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 })
