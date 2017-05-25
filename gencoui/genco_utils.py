@@ -2,7 +2,13 @@ import re
 import ast
 from django.db import models
 from django.db import connection
+from models import GencoGrupoAccess 
 
+
+def getAccessFilters(id_grupo, id_tipo, user_id):
+	#id_grupo = id del workspace
+	GencoGrupoAccess.objects.filter(auth_user_id=user_id, id_grupo__id_grupo=id_grupo, id_tipo=id_tipo)
+	
 
 class MY_UTIL():
 	
@@ -73,8 +79,8 @@ def page_range(page, last, span=5):
 # dic['UI/abm e460864b-bb5b-96b8'] = 2
 # dic['DAL/dao e948b17d-68f4-658e'] = 3
 
-lista = getIterableFromTags("[u'UI/abm 636a3dbd-1d9e-8f78', u'UI/abm e460864b-bb5b-96b8']")
-print str(lista)
+# lista = getIterableFromTags("[u'UI/abm 636a3dbd-1d9e-8f78', u'UI/abm e460864b-bb5b-96b8']")
+# print str(lista)
 # print updateDictTags(lista, dic)
 
 

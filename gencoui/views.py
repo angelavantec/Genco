@@ -39,6 +39,8 @@ from django.shortcuts import get_object_or_404
 
 from genco_utils import *
 
+from django.db.models import Q
+
 
 from rest_framework.exceptions import APIException
 
@@ -260,7 +262,7 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoTipodatoSerializer
 
     def get_queryset(self):
-        return GencoTipodato.objects.filter(creado_por=self.request.user.id, )
+        return GencoTipodato.objects.filter(creado_por=self.request.user.id )
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -790,6 +792,7 @@ class tmpl_preview(APIView):
 
 @login_required
 def index(request):  
+    request.session['workspace'] = "Snippets"
     context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user}
     return render(request, 'gencoui/menu.html', context)    
 
@@ -1008,6 +1011,8 @@ class langs_tree_view(APIView):
         print dirs    
 
         return JsonResponse({'dirs':dirs})
+
+
 
 class repo_tree(APIView):
     

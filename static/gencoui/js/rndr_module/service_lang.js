@@ -113,6 +113,20 @@ return $resource('http://127.0.0.1:8000/gencoui/langs_tree_view/:id_lenguaje\\/'
     }, 
   });
 
+}).factory('lang_tipodato_view',function($resource){
+
+//return $resource('http://127.0.0.1:8000/gencoui/tipodatos/?id_tipodato=:id_tipodato',{id_tipodato:'@id_tipodato'},{
+return $resource('http://127.0.0.1:8000/gencoui/tipodatos_view/:id_tipodato\\/',{id_tipodato:'@id_tipodato'},{
+    query: {
+        url: 'http://127.0.0.1:8000/gencoui/tipodatos/?id_lang=:id',   
+        isArray:true    
+    }, 
+    // get: {
+    //     'http://127.0.0.1:8000/gencoui/tipodatos/:id_tipodato\\/',
+    //     isArray:false
+    // }, 
+  });
+
 }).service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);

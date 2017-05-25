@@ -22,6 +22,18 @@ class AdminAppIconos(models.Model):
         managed = False        
         db_table = 'admin_app_iconos'
         
+class AdminGrupoAccesos(models.Model):
+    id_grupoaccesos = models.AutoField(primary_key=True)
+    auth_user_id = models.IntegerField()
+    id_grupo = models.ForeignKey('GencoGrupo', models.DO_NOTHING, db_column='id_grupo')
+    id_elemento = models.IntegerField()
+    id_tipo = models.IntegerField()
+    creado_por = models.IntegerField()
+    fecha_creacion = models.DateTimeField()  
+
+    class Meta:
+        managed = False
+        db_table = 'admin_grupo_accesos'
 
 class AdminLenguajeProcesador(models.Model):
     id_lenguajeprocesador = models.AutoField(primary_key=True)
@@ -64,7 +76,7 @@ class AdminOrigendatos(models.Model):
         db_table = 'admin_origendatos'
 
 
-class AdminProyectoAlcance(models.Model):
+class AdminGrupoAlcance(models.Model):
     id_alcance = models.IntegerField(primary_key=True)
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
@@ -75,7 +87,7 @@ class AdminProyectoAlcance(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'admin_proyecto_alcance'
+        db_table = 'admin_grupo_alcance'
 
 
 class AuthGroup(models.Model):
@@ -325,7 +337,7 @@ class GencoEntorno(models.Model):
     id_entorno = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
-    id_grupo = models.ForeignKey('GencoGrupo', models.DO_NOTHING, db_column='id_grupo')
+    # id_grupo = models.ForeignKey('GencoGrupo', models.DO_NOTHING, db_column='id_grupo')
     version = models.CharField(max_length=10, blank=True, null=True)
     id_icono = models.ForeignKey(AdminAppIconos, models.DO_NOTHING, db_column='id_icono')
     creado_por = models.IntegerField()
@@ -355,6 +367,7 @@ class GencoGrupo(models.Model):
     id_grupo = models.AutoField(primary_key=True)
     nombre = models.CharField(unique=True, max_length=100)
     descripcion = models.CharField(max_length=200, blank=True, null=True)
+    id_alcance = models.ForeignKey(AdminGrupoAlcance, models.DO_NOTHING, db_column='id_alcance')
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
@@ -446,7 +459,7 @@ class GencoProyectos(models.Model):
     empaquetado = models.CharField(max_length=45, blank=True, null=True)
     url = models.CharField(max_length=100, blank=True, null=True)
     version = models.CharField(max_length=45, blank=True, null=True)
-    id_alcance = models.ForeignKey(AdminProyectoAlcance, models.DO_NOTHING, db_column='id_alcance')
+    # id_alcance = models.ForeignKey(AdminProyectoAlcance, models.DO_NOTHING, db_column='id_alcance')
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
@@ -494,6 +507,7 @@ class GencoTipodato(models.Model):
         return '%s' % (self.nombre) 
 
 class GencoUsuarioGrupo(models.Model):
+    id_usuariogrupo = models.AutoField(primary_key=True)
     auth_user_id = models.IntegerField()
     id_grupo = models.ForeignKey(GencoGrupo, models.DO_NOTHING, db_column='id_grupo')
     creado_por = models.IntegerField()
@@ -502,4 +516,3 @@ class GencoUsuarioGrupo(models.Model):
     class Meta:
         managed = False
         db_table = 'genco_usuario_grupo'
-        unique_together = (('auth_user_id', 'id_grupo'),)

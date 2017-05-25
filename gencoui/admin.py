@@ -51,7 +51,7 @@ class GencoConversionTipodatoAdmin(admin.ModelAdmin):
 
 admin.site.register(AdminLenguajeProcesador)
 admin.site.register(AdminOrigendatos)
-admin.site.register(AdminProyectoAlcance)
+# admin.site.register(AdminProyectoAlcance)
 admin.site.register(GencoComponentes)
 admin.site.register(GencoConversionTipodato)
 admin.site.register(GencoDirectorios)
