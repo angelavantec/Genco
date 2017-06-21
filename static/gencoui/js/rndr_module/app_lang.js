@@ -755,7 +755,7 @@ angular.module('app_lang').config(function($httpProvider){
 
     //$httpProvider.defaults.headers.common['Cookie'] = 'sessionid=oczdutsobiqkrrtccvn8p5rlcwxoe7n9; csrftoken=h7v1ZIKZcshdiNUcdd5e3LBPIEUXjCfO'//'csrftoken='+getCookie('csrftoken');
 
-    // $httpProvider.defaults.withCredentials = true;
+    $httpProvider.defaults.withCredentials = true;
     //delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 })

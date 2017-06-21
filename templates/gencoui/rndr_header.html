@@ -11,13 +11,13 @@
         </div>
         <div style="float: right; margin-top:20px">
             {% if user.is_authenticated %}
-                <p style="color:white; display:inline;">{{ user.get_username }}</p>
+                <p style="color:white; display:inline;">{{request.session.wsname}} - {{ user.get_username }}</p>
                 <div class="dropdown" style="color:white; display:inline;">
                   <button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="glyphicon glyphicon-menu-hamburger" ></span>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                    <li><a href="#">Switch Workspace</a></li>
+                    <li><a href="/gencoui">Switch Workspace</a></li>
                     <li role="separator" class="divider"></li>
                     <li><a href="/login/logout">logout</a></li>
                   </ul>

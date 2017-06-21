@@ -110,7 +110,7 @@
 										    	</a>
 										    </li>
 										    <li>
-										    	<a id="lnkToBuildsFull" href="#">						    	
+										    	<a id="lnkToBuildsFull" href="#" ng-click="chooseBuild()">						    	
 										    		<img src="{% static 'gencoui/img/rndr/build_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline;">
 													</img>
 													Build
@@ -354,6 +354,44 @@
 							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 					</a>
 				</div>
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="choose-build-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ffb612;">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Confirm</h4>
+		    </div>	     
+          	<div class="modal-body">
+          		{% verbatim %}
+     
+				  <div ng-repeat="prj in envProjects">
+				  	<a class="btn btn-default" href="module/builds/{{prj.id_entorno}}/{{prj.id_proyecto}}">
+				    {{prj.nombre}}
+				    </a>
+				  </div>
+
+				{% endverbatim %}
+          	</div>
+          	<div class="modal-footer">
+          		<div style="display:inline">
+	          		<a class="btn icon-btn btn-default" ng-click="confirm_delete()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
+					</a>
+				</div>
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
           	</div>
 
         </div>

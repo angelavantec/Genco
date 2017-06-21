@@ -39,7 +39,7 @@ return $resource('http://127.0.0.1:8000/gencoui/directorioelemento/:id\\/',{id:'
 
 }).factory('tree',function($resource){
 
-return $resource('http://localhost:8000/gencoui/tree/:id',{id:'@id'},{
+return $resource('http://127.0.0.1:8000/gencoui/tree/:id',{id:'@id'},{
     update: {
             method: 'PUT'
         },
@@ -50,7 +50,7 @@ return $resource('http://localhost:8000/gencoui/tree/:id',{id:'@id'},{
 
 }).factory('dir_item_tree',function($resource){
 
-return $resource('http://localhost:8000/gencoui/dir_item_tree/:id_direlemento/:id_repositorio',{id_direlemento:'@id_direlemento',id_repositorio:'@id_repositorio'},{
+return $resource('http://127.0.0.1:8000/gencoui/dir_item_tree/:id_direlemento/:id_repositorio',{id_direlemento:'@id_direlemento',id_repositorio:'@id_repositorio'},{
     update: {
             method: 'PUT'
         },
@@ -61,7 +61,7 @@ return $resource('http://localhost:8000/gencoui/dir_item_tree/:id_direlemento/:i
 
 }).factory('repotree',function($resource){
 
-return $resource('http://localhost:8000/gencoui/repotree/:id',{id:'@id'},{
+return $resource('http://127.0.0.1:8000/gencoui/repotree/:id',{id:'@id'},{
     update: {
             method: 'PUT'
         },
@@ -117,7 +117,7 @@ return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@i
         fd.append('upload', file);
         fd.append('nombre', gencoArchivos.nombre);
         fd.append('descripcion', gencoArchivos.descripcion);
-        uploadUrl = "http://localhost:8000/gencoui/archivo/";
+        uploadUrl = "http://127.0.0.1:8000/gencoui/archivo/";
 
 
             $http.post(uploadUrl, fd, {
@@ -158,7 +158,7 @@ return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@i
         fd.append('upload', file);
         fd.append('nombre', gencoArchivos.nombre);
         fd.append('descripcion', gencoArchivos.descripcion);
-        uploadUrl = "http://localhost:8000/gencoui/archivo/" + gencoArchivos.id_archivo + "/";
+        uploadUrl = "http://127.0.0.1:8000/gencoui/archivo/" + gencoArchivos.id_archivo + "/";
 
 
             $http.put(uploadUrl, fd, {

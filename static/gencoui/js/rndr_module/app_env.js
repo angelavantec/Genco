@@ -1,6 +1,6 @@
 angular.module('app_env', ['ngResource','env.services','lang.services'])
 
-.controller('ctrl_env', function($scope, env_lang, env, lang, icons) {
+.controller('ctrl_env', function($scope, env_lang, env, lang, icons, env_projects) {
 
     $scope.langIconos =  icons.get({id:'env'});
     $scope.iconSelected;
@@ -22,6 +22,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     $scope.icono = '';
     $scope.wdnMode=0; /* 1=save, 2=update*/
     $scope.ConfirmDeleteCallback = null;
+    $scope.envProjects = null;
 
     $scope.all_langs=lang.query();
    
@@ -39,9 +40,14 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
             $scope.langs=env_lang.get({id:id_env});
             $('#dropEnvOptions').attr('disabled', false);
             $('#lnkToEditorFull').attr('href', 'module/editor/' + id_env);
-            $('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
+            //$('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
         });
     } 
+
+    $scope.chooseBuild = function(){
+        $scope.envProjects = env_projects.get({id_entorno:$scope.GencoEntorno.id_entorno});
+        $('#choose-build-modal').modal('show')        
+    }
 
     
     $scope.saveOrUpdate = function(){
@@ -134,7 +140,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     $scope.edit = function(){
         $scope.wdnMode = 2;
         $scope.tmpGencoEntorno =  $scope.GencoEntorno;
-        $scope.GencoEntorno.id_grupo = $scope.GencoEntorno.id_grupo.toString();
+        //$scope.GencoEntorno.id_grupo = $scope.GencoEntorno.id_grupo.toString();
         $scope.setEnvIcon($scope.GencoEntorno.icon);
         $('#env-modal').modal('show').on('shown.bs.modal', function() {
                     $('#id_nombre').focus();

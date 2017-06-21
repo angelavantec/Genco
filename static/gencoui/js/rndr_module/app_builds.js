@@ -1,6 +1,6 @@
-angular.module('app_editor', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
+angular.module('app_builds', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef) {
+.controller('ctrl_builds', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -1432,17 +1432,15 @@ console.log($scope.components);
 
   });
 
-angular.module('app_editor').config(function($httpProvider){
+angular.module('app_builds').config(function($httpProvider){
 
-    $httpProvider.defaults.headers.common['Authorization'] = 'Basic YWRtaW46YWRtaW4=';
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
 
 })
 
-angular.module('app_editor').directive('emitLastRepeaterElement', function($timeout) {
+angular.module('app_builds').directive('emitLastRepeaterElement', function($timeout) {
  var itr_plantillas = 0;   
 
     return {
@@ -1471,7 +1469,7 @@ angular.module('app_editor').directive('emitLastRepeaterElement', function($time
 });
 
 
-angular.module('app_editor').directive('fileModel', ['$parse', function ($parse) {
+angular.module('app_builds').directive('fileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {

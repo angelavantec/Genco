@@ -111,7 +111,7 @@
 
 
 {% block content %}
-<div id="ctrl_editor" ng-app="app_editor" data-ng-init="init()" ng-controller="ctrl_editor">
+<div id="ctrl_builds" ng-app="app_builds" data-ng-init="init()" ng-controller="ctrl_builds">
 	<input hidden id="key_module" value="{{entorno.id_entorno}}"/>
 	<input hidden id="key_project" value="{{proyecto.id_proyecto}}"/>
 	
@@ -601,8 +601,8 @@
 
 
 	function openFile(id_template){
-		angular.element($("#ctrl_editor")).scope().addTab(id_template);
-		angular.element($("#ctrl_editor")).scope().$apply();
+		angular.element($("#ctrl_builds")).scope().addTab(id_template);
+		angular.element($("#ctrl_builds")).scope().$apply();
 		console.log(id_template);
 
 	};

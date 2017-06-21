@@ -5,6 +5,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
+from gencoui.models import GencoGrupo, AdminGrupoAlcance, GencoProyectos
+from django.utils import timezone
 
 
 @csrf_protect
@@ -16,6 +18,13 @@ def register(request):
             username=form.cleaned_data['username'],
             password=form.cleaned_data['password1'],
             email=form.cleaned_data['email']
+            )
+            workspace = GencoGrupo.objects.create(
+            nombre=form.cleaned_data['username'] + 'WS',
+            descripcion='Default Workspace',
+            id_alcance=AdminGrupoAlcance.objects.get(pk=1),
+            creado_por=user.id,
+            fecha_creacion=timezone.now()
             )
             return HttpResponseRedirect('/gencoui/')
     else:

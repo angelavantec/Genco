@@ -75,4 +75,11 @@ class GencoElementoEntidadFilter(filters.FilterSet):
 
     class Meta:
         model = GencoElementoEntidad
-        fields = ['id_direlemento', 'id_entidad']        
+        fields = ['id_direlemento', 'id_entidad']
+
+class GencoProyectosFilter(filters.FilterSet):
+    id_env = django_filters.CharFilter(name="id_entorno")
+
+    class Meta:
+        model = GencoProyectos
+        fields = ['id_env']

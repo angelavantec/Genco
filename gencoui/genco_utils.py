@@ -2,13 +2,37 @@ import re
 import ast
 from django.db import models
 from django.db import connection
-from models import GencoGrupoAccess 
+from models import AdminGrupoAccesos, GencoLenguajes, GencoEntorno
+from itertools import chain
 
 
 def getAccessFilters(id_grupo, id_tipo, user_id):
 	#id_grupo = id del workspace
-	GencoGrupoAccess.objects.filter(auth_user_id=user_id, id_grupo__id_grupo=id_grupo, id_tipo=id_tipo)
-	
+	ownAccess = None
+	sharedAccess = None
+	allAccess = []
+
+	if id_tipo == 'lang':
+		ownAccess = GencoLenguajes.objects.filter(creado_por=user_id)
+
+		for i in ownAccess.iterator():
+			allAccess.append(i.id_lenguaje)
+
+	elif id_tipo == 'env':
+		ownAccess = GencoEntorno.objects.filter(creado_por=user_id)
+
+		for i in ownAccess.iterator():
+			allAccess.append(i.id_entorno)
+		
+	sharedAccess = AdminGrupoAccesos.objects.filter(auth_user_id=user_id, id_grupo__id_grupo=id_grupo, id_tipo=id_tipo)
+
+	for i in sharedAccess.iterator():
+		allAccess.append(i.id_elemento)
+
+	print user_id
+	print 'Accesos !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1'
+	print allAccess	
+	return allAccess
 
 class MY_UTIL():
 	

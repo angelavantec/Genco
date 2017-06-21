@@ -48,6 +48,17 @@ return $resource('http://127.0.0.1:8000/gencoui/entornos/:id\\/',{id:'@id_entorn
     // }, 
   });
 
+}).factory('env_projects',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/projects/?id_env=:id_env',{id_entorno:'@id_entorno'},{
+    get: {
+        isArray:true
+    },
+    query: {
+        isArray:true    
+    },  
+  });
+
 }).factory('icons',function($resource){
 
 return $resource('http://127.0.0.1:8000/gencoui/icono/?tipo=:id',{id:'@_id'},{

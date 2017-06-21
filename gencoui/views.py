@@ -35,7 +35,7 @@ from django.core.files import File
 
 from Cheetah.Template import Template
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 from genco_utils import *
 
@@ -78,6 +78,9 @@ class GencoProyectosViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+    filter_backends = (filters.DjangoFilterBackend,)    
+    filter_class = GencoProyectosFilter
+    filter_fields = ('id_env')
     serializer_class = GencoProyectosSerializer
 
     def get_queryset(self):
@@ -109,7 +112,15 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
         return GencoEntorno.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        instance = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        print instance.id_entorno
+        project = GencoProyectos.objects.create(
+        nombre='Default Project',
+        descripcion='Default Project',
+        id_entorno = instance,
+        creado_por=self.request.user.id,
+        fecha_creacion=timezone.now()
+        )
 
     def perform_update(self, serializer):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
@@ -226,11 +237,14 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
     """
     serializer_class = GencoLenguajesSerializer
 
-    def get_queryset(self):
-        return GencoLenguajes.objects.filter(creado_por=self.request.user.id, id_lenguaje__gt=1)
-    
-    def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+    def get_queryset(self):   
+        idWS=self.request.session.get('wskey', False)
+        return GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS, 'lang', self.request.user.id))
+        #return GencoLenguajes.objects.filter(creado_por=self.request.user.id, id_lenguaje__gt=1)
+
+    def perform_create(self, serializer):        
+        obj = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        # GencoGrupoAcceso(id_grupo=self.request.session.workspace, id_elemento= obj.id_lenguaje, id_tipo=1, id_user=self.request.user.id)
 
     def perform_update(self, serializer):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
@@ -262,7 +276,7 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoTipodatoSerializer
 
     def get_queryset(self):
-        return GencoTipodato.objects.filter(creado_por=self.request.user.id )
+        return GencoTipodato.objects.filter(id_lenguaje__in=getAccessFilters(1, 'lang', self.request.user.id))
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -318,7 +332,8 @@ class GencoConversionTipodatoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoConversionTipodatoSerializer
 
     def get_queryset(self):
-        return GencoConversionTipodato.objects.filter(creado_por=self.request.user.id)
+        #return GencoConversionTipodato.objects.filter(creado_por=self.request.user.id)
+        return GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_lenguaje__in=getAccessFilters(1,'lang',self.request.user.id))
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -791,10 +806,25 @@ class tmpl_preview(APIView):
         return JsonResponse(context)   
 
 @login_required
-def index(request):  
-    request.session['workspace'] = "Snippets"
+def index(request, id_ws=None):  
+    
+    if id_ws == None:
+        # ws=GencoGrupo.objects.filter(creado_por=request.user.id)
+        ws = get_list_or_404(GencoGrupo, creado_por=request.user.id)
+        for item in ws:
+            request.session['wskey'] = item.id_grupo
+            request.session['wsname'] = item.nombre
+    else:
+        # ws=GencoGrupo.objects.filter(id_grupo=id_ws, creado_por=request.user.id)
+        ws = get_object_or_404(GencoGrupo, creado_por=request.user.id, pk=id_ws)
+        request.session['wskey'] = ws.id_grupo
+        request.session['wsname'] = ws.nombre
+
+    
+
     context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user}
-    return render(request, 'gencoui/menu.html', context)    
+    return render(request, 'gencoui/menu.html', context)  
+
 
 class GencoGrupoListView(ListView):
 
@@ -975,8 +1005,14 @@ class langs_tree(APIView):
 
         print 'usuario'
         print request.user.id
-        langs = GencoLenguajes.objects.filter(creado_por=request.user.id, id_lenguaje__gt=1).order_by('id_lenguaje')
-        tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
+        idWS=request.session.get('wskey', False)
+        print idWS
+        if not idWS:  
+            raise Http404
+        # langs = GencoLenguajes.objects.filter(creado_por=request.user.id, id_lenguaje__gt=1).order_by('id_lenguaje')
+        # tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
+        langs = GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS,'lang',request.user.id)).order_by('id_lenguaje')
+        tipodatos = GencoTipodato.objects.filter(id_lenguaje__in=langs).order_by('id_lenguaje')
 
         dirs = []
         id_padre = ''

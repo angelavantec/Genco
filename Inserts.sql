@@ -18,3 +18,10 @@ insert into genco_tipodato(nombre, descripcion, id_lenguaje, creado_por, fecha_c
 insert into genco_tipodato(nombre, descripcion, id_lenguaje, creado_por, fecha_creacion) values('boolean', 'boolean values', 1, 1, now());		
 
 insert into genco_tipodato(nombre, descripcion, id_lenguaje, creado_por, fecha_creacion) values('entity', 'entity reference', 1, 1, now());
+
+
+
+insert into admin_app_iconos (nombre, tipo, upload, creado_por, fecha_creacion) values('java', 'lang', 'icons/java.svg', 1,now());
+insert into admin_app_iconos (nombre, tipo, upload, creado_por, fecha_creacion) values('javascript', 'lang', 'icons/javascript.svg', 1,now());
+insert into admin_app_iconos (nombre, tipo, upload, creado_por, fecha_creacion) values('GWT', 'env', 'icons/gwt.svg', 1,now());
+insert into admin_app_iconos (nombre, tipo, upload, creado_por, fecha_creacion) values('ZK', 'env', 'icons/zk.svg', 1,now());
