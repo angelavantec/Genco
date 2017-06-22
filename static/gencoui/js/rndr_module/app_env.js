@@ -1,6 +1,6 @@
 angular.module('app_env', ['ngResource','env.services','lang.services'])
 
-.controller('ctrl_env', function($scope, env_lang, env, lang, icons, env_projects) {
+.controller('ctrl_env', function($scope, env_lang, env, lang, icons, env_projects, $window) {
 
     $scope.langIconos =  icons.get({id:'env'});
     $scope.iconSelected;
@@ -39,17 +39,33 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
             $scope.tmpGencoEntorno =  $scope.GencoEntorno;
             $scope.langs=env_lang.get({id:id_env});
             $('#dropEnvOptions').attr('disabled', false);
-            $('#lnkToEditorFull').attr('href', 'module/editor/' + id_env);
-            //$('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
+
+            //$('#lnkToEditorFull').attr('href', 'module/editor/' + id_env);
+                //$('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
+
         });
     } 
 
     $scope.chooseBuild = function(){
-        $scope.envProjects = env_projects.get({id_entorno:$scope.GencoEntorno.id_entorno});
-        $('#choose-build-modal').modal('show')        
+        $scope.envProjects = env_projects.get({id_entorno:$scope.GencoEntorno.id_entorno}, 
+            function(success){                
+                $('#choose-build-modal').modal('show');
+            }, function(error){
+                $scope.showMessage($scope.getDataError(error));
+            });        
     }
 
-    
+
+    $scope.goEditor = function(){
+        console.log('goEditor')
+        if ($scope.langs.length > 0 ) {           
+            $window.location.href = 'module/editor/' + $scope.GencoEntorno.id_entorno;
+        }else{
+            $scope.showMessage('There isn\'t a language for this environment');
+        }
+    }
+
+
     $scope.saveOrUpdate = function(){
         var mode = $scope.wdnMode;
         if(mode==1){

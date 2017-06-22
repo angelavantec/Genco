@@ -12,17 +12,17 @@ def getAccessFilters(id_grupo, id_tipo, user_id):
 	sharedAccess = None
 	allAccess = []
 
-	if id_tipo == 'lang':
-		ownAccess = GencoLenguajes.objects.filter(creado_por=user_id)
+	# if id_tipo == 'lang':
+	# 	ownAccess = GencoLenguajes.objects.filter(creado_por=user_id)
 
-		for i in ownAccess.iterator():
-			allAccess.append(i.id_lenguaje)
+	# 	for i in ownAccess.iterator():
+	# 		allAccess.append(i.id_lenguaje)
 
-	elif id_tipo == 'env':
-		ownAccess = GencoEntorno.objects.filter(creado_por=user_id)
+	# elif id_tipo == 'env':
+	# 	ownAccess = GencoEntorno.objects.filter(creado_por=user_id)
 
-		for i in ownAccess.iterator():
-			allAccess.append(i.id_entorno)
+	# 	for i in ownAccess.iterator():
+	# 		allAccess.append(i.id_entorno)
 		
 	sharedAccess = AdminGrupoAccesos.objects.filter(auth_user_id=user_id, id_grupo__id_grupo=id_grupo, id_tipo=id_tipo)
 

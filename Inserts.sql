@@ -1,4 +1,4 @@
-insert into admin_app_iconos (nombre, tipo, upload, creado_por, fecha_creacion) values('genco', 'lang', 'icons/cheetha.svg', 1,now());
+insert into admin_app_iconos (nombre, tipo, upload, creado_por, fecha_creacion) values('genco', 'lang', 'icons/cheetah.svg', 1,now());
 
 insert into admin_lenguaje_procesador(nombre, version, componente_binario, estado, id_icono, creado_por, fecha_creacion) values ('cheetha', 5, 'cheetha','alta',1,1, now());
 

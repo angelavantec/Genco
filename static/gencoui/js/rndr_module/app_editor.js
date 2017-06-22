@@ -508,15 +508,15 @@ tree.get({id:$scope.environment_selected}, function(success){
             
         } 
 
-        $scope.cancel = function(){
-            $scope.GencoEntorno = $scope.tmpGencoEntorno;
-            $('#template-preview-modal').modal('hide');
-            $('#component-create-modal').modal('hide');
-            $('#component-edit-modal').modal('hide');
-            $('#template-modal').modal('hide');
-            $('#template-delete-modal').modal('hide');
-            $('#component-delete-modal').modal('hide');            
-        } 
+        // $scope.cancel = function(){
+        //     //$scope.GencoEntorno = $scope.tmpGencoEntorno;
+        //     // $('#template-preview-modal').modal('hide');
+        //     // $('#component-create-modal').modal('hide');
+        //     // $('#component-edit-modal').modal('hide');
+        //     // $('#template-modal').modal('hide');
+        //     // $('#template-delete-modal').modal('hide');
+        //     // $('#component-delete-modal').modal('hide');            
+        // } 
 
         //$scope.counter = 1;
         /** Function to add a new tab **/

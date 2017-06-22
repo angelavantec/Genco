@@ -434,7 +434,7 @@ $scope.dataLang = {
                                     
                                     //cargar combobox entidades
                                     //$scope.template_entities_load(renderId);
-                                    angular.element($("#ctrl_editor")).scope().$apply();
+                                    angular.element($("#ctrl_builds")).scope().$apply();
                                     $('#template-entities-modal').modal('show');
                                     
         
@@ -487,18 +487,28 @@ $scope.dataLang = {
 
         var tree = $(this).jstree(); 
         var obj = tree.get_node(e.target); 
+
+
+        // if(obj.li_attr['data-renderas']=='template'){
+        //     return;
+        // }
+        console.log(obj.parent);    
+        var nodeParent = tree.get_node(''+obj.parent);
+        console.log(nodeParent);
+        //si el length es mayo a cero es un tag sino es un template
+        if(nodeParent.parents.length>0){
+            $scope.elementoentidad_selected = {id:nodeParent.li_attr['data-renderid'], nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};
+            $scope.node_item_selected = obj;                            
+            angular.element($("#ctrl_builds")).scope().$apply();
+            $('#template-entities-tag-modal').modal('show');
+        }else{
+            $scope.elementoentidad_selected = {id: null,nombre: null,nombre_padre: null,tag: null,};
+            $scope.node_item_selected = obj;
+            angular.element($("#ctrl_builds")).scope().$apply();
+            $('#template-entities-modal').modal('show');
+        }        
         
 
-        if(obj.li_attr['data-renderas']=='template'){
-            return;
-        }
-            
-        var nodeParent = tree.get_node(''+obj.parent)
-        var renderId = nodeParent.li_attr['data-renderid'];
-        $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
-        $scope.node_item_selected = obj;                            
-        angular.element($("#ctrl_editor")).scope().$apply();
-        $('#template-entities-tag-modal').modal('show');
     });
 
 
@@ -1104,7 +1114,7 @@ console.log($scope.components);
                                 'parent': '#', 
                                 'text': nodeName, 
                                 'icon':"glyphicon glyphicon-folder-open", 
-                                'li_attr':{'data-renderas':"component",
+                                'li_attr':{'data-renderas':"direlemento",
                                             'data-renderid': success.id_elementoentidad, 
                                             'data-rendername':$scope.direlemento_selected.nombre,
                                             'data-renderentity': success.id_entidad
@@ -1127,7 +1137,7 @@ console.log($scope.components);
                                     'parent': success.id_elementoentidad, 
                                     'text': key + '<sub style="color:#CCCCCC">@</sub>' + '<b></b>', 
                                     'icon':"glyphicon glyphicon-file", 
-                                    'li_attr':{'data-renderas':"file", 
+                                    'li_attr':{'data-renderas':"tagelemento", 
                                                 'data-renderid': key, 
                                                 'data-rendername': key,
                                                 'data-renderentity': -1

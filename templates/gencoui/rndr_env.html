@@ -82,7 +82,7 @@
 									<div class="" style=""> 
 
 										{% verbatim %}
-										<img ng-src="{{icono}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px"/ ng-if="nombre!=''">
+										<img ng-src="{{icono}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px" ng-if="nombre!=''">
 										{% endverbatim %}
 										<div class="rndr_title" style="display:inline">
 											<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
@@ -103,13 +103,13 @@
 										    	</a>
 										    </li>
 										    <li>
-										    	<a id="lnkToEditorFull" href="#">
+										    	<a id="lnkToEditorFull" href="#" ng-click="goEditor()">
 										    		<img src="{% static 'gencoui/img/rndr/design_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline;">
 													</img>	
 													Templates
 										    	</a>
 										    </li>
-										    <li>
+										    <li >
 										    	<a id="lnkToBuildsFull" href="#" ng-click="chooseBuild()">						    	
 										    		<img src="{% static 'gencoui/img/rndr/build_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline;">
 													</img>

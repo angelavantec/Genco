@@ -44,6 +44,12 @@ from django.db.models import Q
 
 from rest_framework.exceptions import APIException
 
+ACCESS_TYPE_LANG='LANG'
+ACCESS_TYPE_ENV='ENV'
+ACCESS_TYPE_REPO='REPO'
+ACCESS_TYPE_PROJECT='PROJECT'
+
+
 
 def current_datetime(request):
     now = datetime.datetime.now()
@@ -118,6 +124,13 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
         nombre='Default Project',
         descripcion='Default Project',
         id_entorno = instance,
+        creado_por=self.request.user.id,
+        fecha_creacion=timezone.now()
+        )
+        dirRoot = GencoDirectorios.objects.create(
+        nombre='Root Folder',
+        descripcion='Root Folder',
+        id_proyecto=project,
         creado_por=self.request.user.id,
         fecha_creacion=timezone.now()
         )
@@ -239,14 +252,26 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):   
         idWS=self.request.session.get('wskey', False)
-        return GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS, 'lang', self.request.user.id))
+        return GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, self.request.user.id))
         #return GencoLenguajes.objects.filter(creado_por=self.request.user.id, id_lenguaje__gt=1)
 
     def perform_create(self, serializer):        
-        obj = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        obj = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now())
+        #registramos el permiso
+        idWS=self.request.session.get('wskey', False)        
+        access = AdminGrupoAccesos.objects.create(        
+        auth_user_id = self.request.user.id,
+        id_grupo=GencoGrupo.objects.get(pk=idWS),
+        id_elemento=obj.pk,
+        id_tipo=ACCESS_TYPE_LANG,
+        creado_por = self.request.user.id,
+        fecha_creacion=timezone.now()
+        )
         # GencoGrupoAcceso(id_grupo=self.request.session.workspace, id_elemento= obj.id_lenguaje, id_tipo=1, id_user=self.request.user.id)
 
     def perform_update(self, serializer):
+        idWS=self.request.session.get('wskey', False)
+        obj = get_list_or_404(GencoUsuarioGrupo, id_grupo=idWS)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
@@ -276,12 +301,15 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoTipodatoSerializer
 
     def get_queryset(self):
-        return GencoTipodato.objects.filter(id_lenguaje__in=getAccessFilters(1, 'lang', self.request.user.id))
+        idWS=self.request.session.get('wskey', False)
+        return GencoTipodato.objects.filter(id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, self.request.user.id))
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        idWS=self.request.session.get('wskey', False)
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now())
 
     def perform_update(self, serializer):
+        obj = get_object_or_404(self.get_queryset(), id_lenguaje=instance.id_lenguaje)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
@@ -333,7 +361,8 @@ class GencoConversionTipodatoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         #return GencoConversionTipodato.objects.filter(creado_por=self.request.user.id)
-        return GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_lenguaje__in=getAccessFilters(1,'lang',self.request.user.id))
+        idWS=self.request.session.get('wskey', False)
+        return GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, self.request.user.id))
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -545,9 +574,10 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
         list = []
         obj = GencoPlantillas.objects.get(id_plantilla=serializer.validated_data['id_direlemento'].id_plantilla.id_plantilla)
         # cargamos la lista de tags de la entidad
-        list = getIterableFromTags(obj.tags)
-        dict = updateDictTags(list,dict)
-        serializer.validated_data['tags'] = json.dumps(dict);
+        if(obj.tags != None):
+            list = getIterableFromTags(obj.tags)
+            dict = updateDictTags(list,dict)
+            serializer.validated_data['tags'] = json.dumps(dict);
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now())
 
     def perform_update(self, serializer):
@@ -555,10 +585,11 @@ class GencoPlantillaEntidadViewSet(viewsets.ModelViewSet):
         list = []
         obj = GencoPlantillas.objects.get(id_plantilla=serializer.validated_data['id_direlemento'].id_plantilla.id_plantilla)
         # cargamos la lista de tags de la entidad
-        list = getIterableFromTags(obj.tags)
-        # cargamos el dicionario de tags desde la vista Builds
-        dict = getIterableFromTags(serializer.validated_data['tags'])
-        dict = updateDictTags(list,dict)
+        if(obj.tags != None):
+            list = getIterableFromTags(obj.tags)
+            # cargamos el dicionario de tags desde la vista Builds
+            dict = getIterableFromTags(serializer.validated_data['tags'])
+            dict = updateDictTags(list,dict)
         serializer.validated_data['tags'] = json.dumps(dict);
         serializer.save()      
 
@@ -1011,7 +1042,7 @@ class langs_tree(APIView):
             raise Http404
         # langs = GencoLenguajes.objects.filter(creado_por=request.user.id, id_lenguaje__gt=1).order_by('id_lenguaje')
         # tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
-        langs = GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS,'lang',request.user.id)).order_by('id_lenguaje')
+        langs = GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, request.user.id)).order_by('id_lenguaje')
         tipodatos = GencoTipodato.objects.filter(id_lenguaje__in=langs).order_by('id_lenguaje')
 
         dirs = []
@@ -1098,7 +1129,7 @@ class processors(APIView):
 
         comps = []        
         for i  in comp:         
-            comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload)})
+            comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://127.0.0.1:8000/media/' + str(i.id_icono.upload)})
 
         return JsonResponse({'processor':comps}) 
 
@@ -1111,7 +1142,7 @@ class getEntities(APIView):
 
         comps = []        
         for i  in comp:         
-            comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://localhost:8000/media/' + str(i.id_icono.upload)})
+            comps.append({'id_lenguajeprocesador': i.id_lenguajeprocesador, 'nombre': i.nombre, 'descripcion': i.descripcion, 'version': i.version, 'id_icono': 'http://127.0.0.1:8000/media/' + str(i.id_icono.upload)})
 
         return JsonResponse({'processor':comps})                
 
