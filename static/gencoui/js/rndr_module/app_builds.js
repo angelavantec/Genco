@@ -724,7 +724,7 @@ console.log($scope.components);
                     $scope.addTreeNode(node, nodeDef, $('#jstreeFolders').jstree(true));
                     $('#file-create-modal').modal('hide');
                     $('#file-edit-modal').modal('hide');
-                    $scope.showMessage("<b>" + nodeDef['text'] + "</b> was created.");
+                    //$scope.showMessage("<b>" + nodeDef['text'] + "</b> was created.");
                 }else{
                     node.li_attr["data-renderiddirtemplate"] = success.id_direlemento;
                     console.log(node);

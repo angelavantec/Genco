@@ -130,66 +130,43 @@
 	    	
 
 			    		<div class="container-fluid">
-			    			{% verbatim %}
-					      	<div class="panel-body" ng-if="language_selected.nombre!=null">
+			    			
+					      	<div class="panel-body">
+					      			{% verbatim %}
 					      		
-												<h3 style="display:inline">{{ language_selected.nombre }}</h3>
+									<h3 style="display:inline">{{ language_selected.nombre }}</h3>
+				
+									<table class="table-bordered render-table" style="margin-top: 20px; width:90%">
+									  	
+									  		
+									  	<thead>
+									  		<th style="min-width: 250px; background-color: #ffffff"><span>Genco</span>
+									  		</th>
+									  		<th style="background-color: #ECF0F1; min-width: 300px;">
+									  			<span>{{language_selected.nombre}}</span>
+									  		</th>			
+									  	</thead>
+									{% endverbatim %}	  		
+									  	<tbody >
+								  			{% for record in conversions %}
+								  			<tr >
+									      		<td>
+									      			{{record.id_tipodato.nombre}}<sub style="color:#cccccc">{{record.id_tipodato.descripcion}}</sub>
+									      		</td>						      		
+									      		<td>
+									      			{{record.id_tipodato_cnv.nombre}}
+									      		</td>
+										      </tr>
+											{% endfor %}
+								  	  	</tbody>
+
+									</table>
+
+						      </div>
+
 							
-												<table class="table-bordered render-table" style="margin-top: 20px; width:90%">
-												  	
-												  		
-												  		<thead>
-												  			<th style="min-width: 250px; background-color: #ffffff"><span>Genco</span>
-												  			</th>
-												  			<th style="background-color: #ECF0F1; min-width: 300px;">
-												  				<span>{{language_selected.nombre}}</span>
-								   	
 
-												  			</th>
-												  			
-												  		</thead>
-												  		<tbody >	
-												  			<!-- item in <code>{{ types | json }}</code> -->
-															<tr  ng-repeat="type in types">
-													      		<td>{{ type.nombre}}<sub style="color:#cccccc">{{type.descripcion}}</sub></td>						      		
-<!-- 													      		<td width="100px" >
-
-													      			<div>
-																		<a class="btn btn-sm" data-toggle="modal" data-target="#type-edit-modal" data-placement="bottom" data-tt="tooltip" title="Edit Type" ng-click="edit_type($index)" style="padding: 6px 2px;">
-																			<span class="glyphicon btn-glyphicon glyphicon-pencil" ></span>					
-																		</a>
-																		<a class="btn btn-sm" data-toggle="modal" data-target="#type-remove-modal" data-placement="bottom" data-tt="tooltip" title="Remove Type" ng-click="remove()" style="padding: 6px 2px;">
-																			<span class="glyphicon btn-glyphicon glyphicon-minus" ></span>					
-																		</a>
-													      			</div>
-													      			
-																</td> -->
-													      		<td>
-													      			<select  ng-model="Conversions[$index]" ng-change="" ng-options="types_cnv.id_tipodato as types_cnv.nombre for types_cnv in types_types">
-													      			<!-- <select  ng-model="Conversions[$index]" ng-change="" ng-options="type_cnv.nombre for type_cnv in types_types track by type_cnv.id_tipodato ">  -->
-													      				<option value=''>Select</option>
-															      		<!-- <option ng-options=="types_cnv in types_types" value="{{types_cnv.id_tipodato}}">{{ types_cnv.nombre }}</option> -->
-															    	</select>	
-															    	<!-- {{Conversions[$index]}} -->
-															    	<!-- <tt>repeatSelect = {{type.id_tipodato}}</tt><br/> -->
-													      		</td>
-													      		<!-- <td width="15px">
-																	<a class="btn icon-btn btn-default" href="#">
-																	<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
-																	</a>
-													      		</td> -->
-													      	</tr>
-												      	{% endverbatim %}	
-
-												      	<!-- <tfoot> -->
-											          		
-											  	  		<!-- </tfoot> -->
-											  	  	</tbody>
-
-												</table>
-
-									      </div>
-							</div>
+						</div>
 			    		
 	    	</div>
 	    </div>

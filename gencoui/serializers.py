@@ -130,6 +130,7 @@ class GencoProyectosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GencoProyectos
+        exclude = ('id_ws',)
         read_only_fields = ('creado_por','fecha_creacion','modificado_por','fecha_modificacion',)      
 
 
@@ -138,6 +139,7 @@ class GencoEntornoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GencoEntorno
+        exclude = ('id_ws',)
         read_only_fields = ('creado_por','fecha_creacion','modificado_por','fecha_modificacion',)      
 
 
@@ -241,7 +243,7 @@ class GencoDirectorioElementosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GencoDirectorioElementos
-        exclude = ('creado_por','fecha_creacion',) 
+        exclude = ('creado_por','fecha_creacion','id_ws') 
         read_only_fields = ('creado_por','fecha_creacion',) 
 
 

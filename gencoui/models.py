@@ -251,6 +251,7 @@ class GencoDirectorioElementos(models.Model):
     entidades_en_lista = models.IntegerField(blank=True, null=True)
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
+    id_ws = models.IntegerField()
 
     class Meta:
         managed = False
@@ -344,6 +345,7 @@ class GencoEntorno(models.Model):
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
+    id_ws = models.IntegerField()
 
     class Meta:
         managed = False
@@ -391,6 +393,7 @@ class GencoLenguajes(models.Model):
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
+    id_ws = models.IntegerField()
 
     class Meta:
         managed = False
@@ -464,6 +467,7 @@ class GencoProyectos(models.Model):
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
+    id_ws = models.IntegerField()
 
     class Meta:
         managed = False
@@ -480,6 +484,7 @@ class GencoRepositorio(models.Model):
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
+    id_ws = models.IntegerField()
 
     class Meta:
         managed = False

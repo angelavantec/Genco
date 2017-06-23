@@ -2,8 +2,9 @@ import re
 import ast
 from django.db import models
 from django.db import connection
-from models import AdminGrupoAccesos, GencoLenguajes, GencoEntorno
+from models import AdminGrupoAccesos, GencoLenguajes, GencoEntorno, GencoGrupo
 from itertools import chain
+from django.utils import timezone
 
 
 def getAccessFilters(id_grupo, id_tipo, user_id):
@@ -33,6 +34,17 @@ def getAccessFilters(id_grupo, id_tipo, user_id):
 	print 'Accesos !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1'
 	print allAccess	
 	return allAccess
+
+def setAccessAuth(id_grupo, id_tipo, user_id, id_elemento):
+
+	access = AdminGrupoAccesos.objects.create( 
+	auth_user_id = user_id,
+	id_grupo=GencoGrupo.objects.get(pk=id_grupo),
+	id_elemento=id_elemento,
+	id_tipo=id_tipo,
+	creado_por = user_id,
+	fecha_creacion=timezone.now()
+	)
 
 class MY_UTIL():
 	

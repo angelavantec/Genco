@@ -199,8 +199,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
                             $('#jstree').jstree(true).refresh();
                                                         
                         },function(error){                        
-                            console.log('ERR');
-                            console.log(error);  
+                            $scope.showMessage($scope.getDataError(error)); 
                         });
 
         //$scope.langs=lang.get({});

@@ -20,7 +20,7 @@ class GencoGrupoForm(ModelForm):
 class GencoLenguajesForm(ModelForm):
     class Meta:
         model = GencoLenguajes
-        exclude = ['creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        exclude = ['creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion', 'id_ws']
     
     def __init__(self, *args, **kwargs):    
         genco_init(GencoLenguajesForm, self, *args, **kwargs)
@@ -39,7 +39,7 @@ class GencoEntornoForm(ModelForm):
 
 	class Meta:
 		model = GencoEntorno
-		exclude = ['id_icono', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']        
+		exclude = ['id_icono', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion', 'id_ws']        
 
 	def __init__(self, *args, **kwargs):
 		super(GencoEntornoForm, self).__init__(*args, **kwargs)

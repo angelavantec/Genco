@@ -93,7 +93,8 @@ class GencoProyectosViewSet(viewsets.ModelViewSet):
         return GencoProyectos.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        idWS=self.request.session.get('wskey', None)
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(),id_ws=idWS) 
 
     def perform_update(self, serializer):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
@@ -115,17 +116,21 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoEntornoSerializer
 
     def get_queryset(self):
-        return GencoEntorno.objects.filter(creado_por=self.request.user.id)
+        idWS=self.request.session.get('wskey', None)
+        return GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, self.request.user.id))
     
     def perform_create(self, serializer):
-        instance = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
-        print instance.id_entorno
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
+        env = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS) 
+    
         project = GencoProyectos.objects.create(
         nombre='Default Project',
         descripcion='Default Project',
-        id_entorno = instance,
+        id_entorno = env,
         creado_por=self.request.user.id,
-        fecha_creacion=timezone.now()
+        fecha_creacion=timezone.now(),
+        id_ws=idWS
         )
         dirRoot = GencoDirectorios.objects.create(
         nombre='Root Folder',
@@ -134,19 +139,34 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
         creado_por=self.request.user.id,
         fecha_creacion=timezone.now()
         )
+        setAccessAuth(idWS, ACCESS_TYPE_ENV, self.request.user.id, env.pk)
+        setAccessAuth(idWS, ACCESS_TYPE_PROJECT, self.request.user.id, project.pk)
 
     def perform_update(self, serializer):
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo,  auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
         obj = get_object_or_404(self.get_queryset(), id_entorno=instance.id_entorno)
+
+        refElements = '';
+        
+        objLangs = GencoEntornoLenguajes.objects.filter(id_entorno__id_entorno=instance.id_entorno)        
+        
+        for i  in objLangs:
+            refElements += '<br><b>' + i.id_lenguaje.nombre + '</b> language'
+
+        objComponents = GencoComponentes.objects.filter(id_entorno__id_entorno=instance.id_entorno)        
+        
+        for i  in objComponents:
+            refElements += '<br><b>' + i.nombre + '</b> component'
+
+        if objLangs.exists() or objComponents.exists():
+            raise APIException('This Element contains ' + refElements)
+
         instance.delete()
             
-    # def list(self, request):
-    #     queryset = self.get_queryset()
-    #     serializer = GencoEntornoSerializer(queryset, many=True)
-    #     return Response(serializer.data)
-
 
 class GencoDirectoriosViewSet(viewsets.ModelViewSet):
     """
@@ -188,7 +208,13 @@ class GencoArchivosViewSet(viewsets.ModelViewSet):
     serializer_class = GencoArchivosSerializer
 
     def get_queryset(self):
-        return GencoArchivos.objects.filter(creado_por=self.request.user.id)
+        idWS=self.request.session.get('wskey', None)
+        archivos=[]
+        # direle =  GencoDirectorioElementos.objects.filter(id_directorio__id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, self.request.user.id))
+        direle = get_list_or_404(GencoDirectorioElementos, id_ws=idWS, id_archivo__isnull=False)
+        for i in direle:
+           archivos.append(i.id_archivo.id_archivo)
+        return GencoArchivos.objects.filter(id_archivo__in=archivos)
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -219,7 +245,8 @@ class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
         return GencoDirectorioElementos.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        idWS=self.request.session.get('wskey', None)
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS) 
 
     def perform_update(self, serializer):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
@@ -250,32 +277,24 @@ class GencoLenguajesViewSet(viewsets.ModelViewSet):
     """
     serializer_class = GencoLenguajesSerializer
 
-    def get_queryset(self):   
-        idWS=self.request.session.get('wskey', False)
+    def get_queryset(self):
+        idWS=self.request.session.get('wskey', None)
         return GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, self.request.user.id))
-        #return GencoLenguajes.objects.filter(creado_por=self.request.user.id, id_lenguaje__gt=1)
 
-    def perform_create(self, serializer):        
-        obj = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now())
+    def perform_create(self, serializer):
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
+        obj = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS)
         #registramos el permiso
-        idWS=self.request.session.get('wskey', False)        
-        access = AdminGrupoAccesos.objects.create(        
-        auth_user_id = self.request.user.id,
-        id_grupo=GencoGrupo.objects.get(pk=idWS),
-        id_elemento=obj.pk,
-        id_tipo=ACCESS_TYPE_LANG,
-        creado_por = self.request.user.id,
-        fecha_creacion=timezone.now()
-        )
-        # GencoGrupoAcceso(id_grupo=self.request.session.workspace, id_elemento= obj.id_lenguaje, id_tipo=1, id_user=self.request.user.id)
+        setAccessAuth(idWS, ACCESS_TYPE_LANG, self.request.user.id, obj.pk)
 
     def perform_update(self, serializer):
-        idWS=self.request.session.get('wskey', False)
-        obj = get_list_or_404(GencoUsuarioGrupo, id_grupo=idWS)
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo,  auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_lenguaje=instance.id_lenguaje)
+        get_object_or_404(self.get_queryset(), id_lenguaje=instance.id_lenguaje)
 
         obj = GencoTipodato.objects.filter(id_lenguaje=instance.id_lenguaje)
         refElements = '';
@@ -301,25 +320,30 @@ class GencoTipodatoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoTipodatoSerializer
 
     def get_queryset(self):
-        idWS=self.request.session.get('wskey', False)
+        idWS=self.request.session.get('wskey', None)
         return GencoTipodato.objects.filter(id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, self.request.user.id))
     
     def perform_create(self, serializer):
-        idWS=self.request.session.get('wskey', False)
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now())
 
     def perform_update(self, serializer):
-        obj = get_object_or_404(self.get_queryset(), id_lenguaje=instance.id_lenguaje)
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo,  auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_tipodato=instance.id_tipodato)
+        get_object_or_404(self.get_queryset(), id_tipodato=instance.id_tipodato)
+        obj = GencoConversionTipodato.objects.filter(id_tipodato_cnv=instance.id_tipodato)
+        refElements = '';
+        
+        for i  in obj:
+            refElements += '<br>'+ i.id_lenguaje__nombre +'<b> ' + i.id_tipodato__nombre + '</b>'
+
+        if obj.exists():
+            raise APIException('This Element have ' + refElements)
         instance.delete()
-            
-    # def list(self, request):
-    #     queryset = self.get_queryset()
-    #     serializer = GencoTipodatoSerializer(queryset, many=True)
-    #     return Response(serializer.data)        
 
 
 class GencoEntornoLenguajesViewSet(viewsets.ModelViewSet):
@@ -332,12 +356,18 @@ class GencoEntornoLenguajesViewSet(viewsets.ModelViewSet):
     serializer_class = GencoEntornoLenguajesSerializer
 
     def get_queryset(self):
-        return GencoEntornoLenguajes.objects.filter(creado_por=self.request.user.id)
+        idWS=self.request.session.get('wskey', None)
+        return GencoEntornoLenguajes.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, self.request.user.id))
+        # return GencoEntornoLenguajes.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
     def perform_update(self, serializer):
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo,  auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
@@ -360,24 +390,22 @@ class GencoConversionTipodatoViewSet(viewsets.ModelViewSet):
     serializer_class = GencoConversionTipodatoSerializer
 
     def get_queryset(self):
-        #return GencoConversionTipodato.objects.filter(creado_por=self.request.user.id)
-        idWS=self.request.session.get('wskey', False)
+        idWS=self.request.session.get('wskey', None)
         return GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, self.request.user.id))
     
     def perform_create(self, serializer):
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
     def perform_update(self, serializer):
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_conversion=instance.id_conversion)
+        get_object_or_404(self.get_queryset(), id_conversion=instance.id_conversion)
         instance.delete()
-            
-    # def list(self, request):
-    #     queryset = self.get_queryset()
-    #     serializer = GencoConversionTipodatoSerializer(queryset, many=True)
-    #     return Response(serializer.data) 
 
 
 class GencoGrupoViewSet(viewsets.ModelViewSet):
@@ -424,7 +452,9 @@ class GencoComponentesViewSet(viewsets.ModelViewSet):
     serializer_class = GencoComponentesSerializer    
 
     def get_queryset(self):
-        return GencoComponentes.objects.filter(creado_por=self.request.user.id)
+        idWS=self.request.session.get('wskey', None)
+        return GencoComponentes.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, self.request.user.id))
+        # return GencoComponentes.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
@@ -480,7 +510,8 @@ class GencoRepositorioViewSet(viewsets.ModelViewSet):
         return GencoRepositorio.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        idWS=self.request.session.get('wskey', None)
+        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS) 
 
     def perform_update(self, serializer):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
@@ -612,19 +643,17 @@ def get_form(request, id_form=None):
 
 @login_required
 def get_module(request, id_module=None, key_env=None, key_project=None):
-
-    # switcher = {
-    #     'env': 'gencoui/rndr_env.html',
-    #     'builds': 'gencoui/rndr_builds.html',
-    #     'entities': 'gencoui/rndr_entities.html'
-    # }
+    idWS=request.session.get('wskey', None)
+    env=None
 
     if id_module == 'env':
         context = {'form_add_env': GencoEntornoForm, 'user': request.user}
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
-        obj = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
-        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': obj, 'icon': obj.id_icono.upload}    
+        # obj = get_object_or_404(GencoEntorno, id_ws=request.user.id, id_entorno=key_env)
+        queryset=GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id))
+        env = get_object_or_404(queryset, id_entorno=key_env)    
+        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': env, 'icon': env.id_icono.upload}    
         return render(request,'gencoui/rndr_editor.html',context)
     elif id_module == 'entities':
         context = {'form_add_repository': GencoRepositorioForm, 
@@ -637,7 +666,9 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         context = {'form_add_lang': GencoLenguajesForm, 'form_add_type': GencoTipodatoForm,'user': request.user}    
         return render(request,'gencoui/rndr_langs.html',context)
     elif id_module == 'builds':
-        env = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
+        # env = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
+        queryset=GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id))
+        env = get_object_or_404(queryset, id_entorno=key_env)
         prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
         
 
@@ -652,19 +683,16 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
 
 @login_required
 def get_view(request, id_module=None, key_lang=None, key_env=None, key_project=None):
-
-    # switcher = {
-    #     'env': 'gencoui/rndr_env.html',
-    #     'builds': 'gencoui/rndr_builds.html',
-    #     'entities': 'gencoui/rndr_entities.html'
-    # }
+    idWS=request.session.get('wskey', None)
+    env=None
 
     if id_module == 'env':
         context = {'form_add_env': GencoEntornoForm, 'user': request.user}
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
-        obj = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
-        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': obj, 'icon': obj.id_icono.upload}    
+        queryset=GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id))
+        env = get_object_or_404(queryset, id_entorno=key_env)    
+        context = {'form_create_template': GencoPlantillasForm, 'form_create_component': GencoComponentesForm, 'user': request.user, 'key_module':key_env, 'entorno': env, 'icon': env.id_icono.upload}    
         return render(request,'gencoui/rndr_editor.html',context)
     elif id_module == 'entities':
         context = {'form_add_repository': GencoRepositorioForm, 
@@ -674,7 +702,8 @@ def get_view(request, id_module=None, key_lang=None, key_env=None, key_project=N
                     'user': request.user}    
         return render(request,'gencoui/rndr_repository.html',context)        
     elif id_module == 'langs':
-        context = {'key_lang': key_lang, 'user': request.user}    
+        conversions = GencoConversionTipodato.objects.filter(id_tipodato_cnv__id_lenguaje=key_lang)
+        context = {'key_lang': key_lang, 'user': request.user, 'conversions':conversions}    
         return render(request,'gencoui/rndr_langs_view.html',context)
     elif id_module == 'builds':
         env = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
@@ -838,8 +867,9 @@ class tmpl_preview(APIView):
 
 @login_required
 def index(request, id_ws=None):  
-    
-    if id_ws == None:
+    idWS=request.session.get('wskey', None)
+    print idWS
+    if idWS == None:
         # ws=GencoGrupo.objects.filter(creado_por=request.user.id)
         ws = get_list_or_404(GencoGrupo, creado_por=request.user.id)
         for item in ws:
@@ -847,13 +877,15 @@ def index(request, id_ws=None):
             request.session['wsname'] = item.nombre
     else:
         # ws=GencoGrupo.objects.filter(id_grupo=id_ws, creado_por=request.user.id)
-        ws = get_object_or_404(GencoGrupo, creado_por=request.user.id, pk=id_ws)
+        ws = get_object_or_404(GencoGrupo, pk=idWS)
         request.session['wskey'] = ws.id_grupo
         request.session['wsname'] = ws.nombre
 
     
+    workspaces = GencoUsuarioGrupo.objects.filter(auth_user_id=request.user.id)
+    print workspaces
 
-    context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user}
+    context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user, 'workspaces':workspaces}
     return render(request, 'gencoui/menu.html', context)  
 
 
@@ -1104,9 +1136,9 @@ class repo_tree(APIView):
 class component_template_tree(APIView):
     
     def get(self, request, id_entorno=None):
-
-        comp = GencoComponentes.objects.filter(id_entorno=id_entorno, creado_por=request.user.id).order_by('id_componente')
-        template = GencoPlantillas.objects.filter(id_componente__id_entorno=id_entorno, creado_por=request.user.id).order_by('id_plantilla')
+        idWS=request.session.get('wskey', False)
+        comp = GencoComponentes.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id)).order_by('id_componente')
+        template = GencoPlantillas.objects.filter(id_componente__in=comp).order_by('id_plantilla')
 
         comps = []
         id_padre = ''
@@ -1298,29 +1330,17 @@ class CloneLang(APIView):
         dataconversions=None
         cloneIdlang=0 
         typeoriginId=0     
-        # my_util = MY_UTIL()
 
         context = {'status':'' ,'error':'', 'response':''}
         langsclone = request.data['langs']
-        print langsclone
        
         if langsclone: 
             langsItr = getIterableFromTags(langsclone)
-        #     print str(langsItr)
-        #     for item in langsItr:
-        #       print item
-    
-        print langsItr
-        # try:
-        #     ret = my_util.exeCloneProc(langsItr, request.user.id)
-        #     context['response'] += 'Languages was cloned.\n'
-        #     context['status'] = 1
-        # except Exception as e:
-        #     context['error'] += 'Languages was not cloned. Please contact support :( \n'
-        #     context['status'] = 0
-        #     print str(e)
         
-
+        idWS=self.request.session.get('wskey', None)
+        print idWS
+        print request.user.id
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=request.user.id, id_grupo=idWS)
         langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=1)
 
         for lang in langs:
@@ -1333,6 +1353,15 @@ class CloneLang(APIView):
             print lang.id_lenguaje
             try:
                 lang.save()
+                setAccessAuth(idWS, ACCESS_TYPE_LANG, request.user.id, lang.pk)
+                # access = AdminGrupoAccesos.objects.create( 
+                # auth_user_id = request.user.id,
+                # id_grupo=GencoGrupo.objects.get(pk=idWS),
+                # id_elemento=lang.pk,
+                # id_tipo=ACCESS_TYPE_LANG,
+                # creado_por = request.user.id,
+                # fecha_creacion=timezone.now()
+                # )
                 print lang.id_lenguaje
                 datatypes = GencoTipodato.objects.filter(id_lenguaje=cloneIdlang)
                 for datatype in datatypes:
@@ -1359,7 +1388,7 @@ class CloneLang(APIView):
                             dataconversion.modificado_por = None
                             dataconversion.fecha_modificacion = None
                             try:
-                                dataconversion.save()
+                                dataconversion.save()                                
                             except Exception as e:
                                 print str(e)
                                 raise APIException('An error ocurred cloning type conversion. Please contatct support. ' + str(e))       
