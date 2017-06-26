@@ -2,10 +2,15 @@ import re
 import ast
 from django.db import models
 from django.db import connection
-from models import AdminGrupoAccesos, GencoLenguajes, GencoEntorno, GencoGrupo
+from models import AdminGrupoAccesos, GencoLenguajes, GencoEntorno, GencoGrupo, GencoProyectos, GencoRepositorio
 from itertools import chain
 from django.utils import timezone
+from django.shortcuts import get_object_or_404, get_list_or_404
 
+ACCESS_TYPE_LANG='LANG'
+ACCESS_TYPE_ENV='ENV'
+ACCESS_TYPE_REPO='REPO'
+ACCESS_TYPE_PROJECT='PROJECT'
 
 def getAccessFilters(id_grupo, id_tipo, user_id):
 	#id_grupo = id del workspace
@@ -13,11 +18,33 @@ def getAccessFilters(id_grupo, id_tipo, user_id):
 	sharedAccess = None
 	allAccess = []
 
-	# if id_tipo == 'lang':
-	# 	ownAccess = GencoLenguajes.objects.filter(creado_por=user_id)
+	if id_tipo == ACCESS_TYPE_LANG:
+		groups = GencoGrupo.objects.filter(creado_por=user_id).values('id_grupo')
+	
+		ownAccess = GencoLenguajes.objects.filter(id_ws__in=groups)
+		for i in ownAccess.iterator():
+			allAccess.append(i.id_lenguaje)
 
-	# 	for i in ownAccess.iterator():
-	# 		allAccess.append(i.id_lenguaje)
+	if id_tipo == ACCESS_TYPE_ENV:
+		groups = GencoGrupo.objects.filter(creado_por=user_id).values('id_grupo')
+	
+		ownAccess = GencoEntorno.objects.filter(id_ws__in=groups)
+		for i in ownAccess.iterator():
+			allAccess.append(i.id_entorno)
+
+	if id_tipo == ACCESS_TYPE_PROJECT:
+		groups = GencoGrupo.objects.filter(creado_por=user_id).values('id_grupo')
+	
+		ownAccess = GencoProyectos.objects.filter(id_ws__in=groups)
+		for i in ownAccess.iterator():
+			allAccess.append(i.id_proyecto)			
+
+	if id_tipo == ACCESS_TYPE_REPO:
+		groups = GencoGrupo.objects.filter(creado_por=user_id).values('id_grupo')
+	
+		ownAccess = GencoRepositorio.objects.filter(id_ws__in=groups)
+		for i in ownAccess.iterator():
+			allAccess.append(i.id_repositorio)			
 
 	# elif id_tipo == 'env':
 	# 	ownAccess = GencoEntorno.objects.filter(creado_por=user_id)

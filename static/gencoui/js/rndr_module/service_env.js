@@ -50,7 +50,7 @@ return $resource('http://127.0.0.1:8000/gencoui/entornos/:id\\/',{id:'@id_entorn
 
 }).factory('env_projects',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/projects/?id_env=:id_env',{id_entorno:'@id_entorno'},{
+return $resource('http://127.0.0.1:8000/gencoui/projects/?id_env=:id_env',{id_env:'@id_env'},{
     get: {
         isArray:true
     },

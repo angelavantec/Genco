@@ -450,7 +450,7 @@ tree.get({id:$scope.environment_selected}, function(success){
             $scope.GencoPlantillas.$save(function(success){   
                 var nodeDef = {'id': 'template' + success.id_plantilla, 
                                 'parent': success.id_componente, 
-                                'text': success.nombre, 
+                                'text': success.nombre + '<sub style="color:#CCCCCC">'+ success.lang.nombre +'</sub>' , 
                                 'icon':"glyphicon glyphicon-file", 
                                 'li_attr':{'data-renderas':"template",
                                             'data-renderid': success.id_plantilla, 
@@ -643,7 +643,7 @@ tree.get({id:$scope.environment_selected}, function(success){
                 
 
             var content = editors[$scope.current_pos].getValue();
-            editor_preview.setValue('');
+            editor_preview.setValue('');            
 
             var templ = new template({editor: content});
 
@@ -651,6 +651,8 @@ tree.get({id:$scope.environment_selected}, function(success){
                                     data = success;// success callback
                                     console.log(data);
                                     editor_preview.setValue(data.fileContent);
+                                    //editor_preview.getSession().setMode("ace/mode/python");
+                                    editor_preview.getSession().setMode(data.theme);
                                     $('#template-preview-modal').modal('show');  
                                 },function(error){
                                     $scope.showMessage($scope.getDataError(error));

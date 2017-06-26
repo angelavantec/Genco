@@ -644,7 +644,8 @@
     // editor.$blockScrolling = Infinity;
 
     var editor_preview = ace.edit("editor_preview");
-    editor_preview.getSession().setMode("ace/mode/html");
+    editor_preview.setTheme("ace/theme/monokai");
+    editor_preview.getSession().setMode("ace/mode/python");
     editor_preview.$blockScrolling = Infinity;
 
     // var editor2 = ace.edit("editor2");

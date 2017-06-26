@@ -47,12 +47,15 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
     } 
 
     $scope.chooseBuild = function(){
-        $scope.envProjects = env_projects.get({id_entorno:$scope.GencoEntorno.id_entorno}, 
-            function(success){                
-                $('#choose-build-modal').modal('show');
-            }, function(error){
-                $scope.showMessage($scope.getDataError(error));
-            });        
+
+        env_projects.get({id_env:$scope.GencoEntorno.id_entorno}, 
+        function(success){
+            $scope.envProjects = success;
+            $('#choose-build-modal').modal('show');
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+
     }
 
 
