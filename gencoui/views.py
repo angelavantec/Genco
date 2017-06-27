@@ -44,7 +44,10 @@ from django.db.models import Q
 
 from rest_framework.exceptions import APIException
 
-
+#BuildProjects imports
+import random
+import tarfile
+import shutil
 
 def current_datetime(request):
     now = datetime.datetime.now()
@@ -225,8 +228,8 @@ class GencoArchivosViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         idWS=self.request.session.get('wskey', None)
         archivos=[]
-        # direle =  GencoDirectorioElementos.objects.filter(id_directorio__id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, self.request.user.id))
-        direle = get_list_or_404(GencoDirectorioElementos, id_ws=idWS, id_archivo__isnull=False)
+        direle =  GencoDirectorioElementos.objects.filter(id_directorio__id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, self.request.user.id), id_archivo__isnull=False)
+        # direle = get_list_or_404(GencoDirectorioElementos, id_ws=idWS, id_archivo__isnull=False)
         for i in direle:
            archivos.append(i.id_archivo.id_archivo)
         return GencoArchivos.objects.filter(id_archivo__in=archivos)
@@ -257,13 +260,18 @@ class GencoDirectorioElementosViewSet(viewsets.ModelViewSet):
     serializer_class = GencoDirectorioElementosSerializer
 
     def get_queryset(self):
-        return GencoDirectorioElementos.objects.filter(creado_por=self.request.user.id)
+        # return GencoDirectorioElementos.objects.filter(creado_por=self.request.user.id)
+        idWS=self.request.session.get('wskey', None)
+        return GencoDirectorioElementos.objects.filter(id_directorio__id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, self.request.user.id))
     
     def perform_create(self, serializer):
         idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS) 
 
     def perform_update(self, serializer):
+        idWS=self.request.session.get('wskey', None)
+        get_list_or_404(GencoUsuarioGrupo,  auth_user_id=self.request.user.id, id_grupo=idWS)
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
@@ -870,9 +878,9 @@ class tmpl_preview(APIView):
 
         # t.clients = [cliente,cliente,cliente,cliente,cliente]
 
-        # t.entities = getDataTest(2,templateBeta.id_lenguaje.id_lenguaje)
+        t.entities = getDataTest(2,templateBeta.id_lenguaje.id_lenguaje)
 
-        t.entities = getDataBuild(2, templateBeta.id_lenguaje.id_lenguaje)
+        # t.entities = getDataBuild(2, templateBeta.id_lenguaje.id_lenguaje, None)
         
         try:
             context['fileContent'] = str(t);
@@ -1268,15 +1276,19 @@ def getDataTest(tipo, id_lenguaje):
     return a
 
 
-def getDataBuild(id_direlemento, id_lenguaje):
+def getDataBuild(id_direlemento, id_lenguaje, id_entidad):
     
     a = []
     b = []
     fields = []
+    fieldsref = []
     links = []
     dict = {}
     
-    entidades = GencoElementoEntidad.objects.filter(id_direlemento=id_direlemento)
+    if id_entidad == None:
+        entidades = GencoElementoEntidad.objects.filter(id_direlemento=id_direlemento).order_by('id_direlemento','id_entidad')
+    else:
+        entidades = GencoElementoEntidad.objects.filter(id_direlemento=id_direlemento, id_entidad=id_entidad)
     # types = GencoTipodato.objects.filter(id_lenguaje=1).order_by('id_tipodato')    
     typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=1, id_tipodato_cnv__id_lenguaje=id_lenguaje)
     
@@ -1293,21 +1305,26 @@ def getDataBuild(id_direlemento, id_lenguaje):
         for ii in definicionField:
             
             if ii.id_tipodato == None:
-                definicionLnk = GencoEntidadDefinicion.objects.filter(id_entidad=ii.id_entidad)
+                definicionLnk = GencoEntidadDefinicion.objects.filter(id_entidad=ii.entidad_ref)
                 for iii in definicionLnk:
-                    cnv = dict.get(iii.id_tipodato)
-
+                    print 'ref'
+                    print ii.entidad_ref
+                    print ('%s   %i',iii.nombre,  iii.id_tipodato)
                     if iii.id_tipodato == None:
-                        field = type('field', (object,),{'name':iii.nombre, 'type':'', 'typecnv': '', 'prefixcnv': ''})()    
+                        field = type('field', (object,),{'name':iii.nombre, 'type':'entity', 'typecnv': '', 'prefixcnv': ''})()    
                     else:
+                        cnv = dict.get(iii.id_tipodato.id_tipodato)
                         if cnv==None:
                             field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(iii.id_tipodato.prefijo)})()    
                         else:
                             field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(iii.id_tipodato.prefijo)})()
                     
-                    links.append(field)
+                    fieldsref.append(field)
+
+                links.append(type('entity', (object,),{'name': ii.nombre, 'fields': fieldsref, 'links':[]})())
+                fieldsref=[]
             else:
-                cnv = dict.get(ii.id_tipodato)
+                cnv = dict.get(ii.id_tipodato.id_tipodato)
                 if cnv==None:
                     field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(ii.id_tipodato.prefijo)})()    
                 else:
@@ -1315,7 +1332,13 @@ def getDataBuild(id_direlemento, id_lenguaje):
             
                 fields.append(field)
 
+        # print links
+        # for x in links:
+        #     print x.name
+
         a.append(type('entity', (object,),{'name': i.id_entidad.nombre, 'fields': fields, 'links':links})())
+        fields=[]
+        links=[]
 
     # if tipo == 2:
     #     b.append(type('entity', (object,),{'name': 'B', 'fields': f})())
@@ -1644,3 +1667,97 @@ class GencoDatatype(APIView):
         serializer = GencoTipodatoSerializer(tipos, many=True)
 
         return Response(serializer.data)
+
+
+class BuildProject(APIView):
+
+    def get(self, request, id_proyecto=None):
+        
+        idWS=request.session.get('wskey', False)
+        project = GencoProyectos.objects.filter(id_proyecto=id_proyecto, id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, request.user.id))
+        generatedFiles=[]
+
+
+        hash = random.getrandbits(128)
+        dirBuild = 'user_files/'+str(hash)
+        os.makedirs(dirBuild)
+        print project
+        directorios = GencoDirectorios.objects.filter(id_proyecto=project)
+       
+        for dirprj in directorios:
+
+            direlement = GencoDirectorioElementos.objects.filter(id_directorio=dirprj)
+
+            for item in direlement:
+                print item.id_plantilla
+                # tmpl = item.id_plantilla
+
+                if item.id_plantilla == None:
+                    print 'Bajando archivo.......'
+                    archivo = GencoArchivos.objects.get(pk=item.id_archivo.id_archivo)
+                    print archivo.upload.path
+                    shutil.copyfile(archivo.upload.path, dirBuild + '/' + archivo.nombre)
+                    
+                else:    
+
+                    
+                    print 'Generando archivos..........'
+                    print item.id_direlemento
+                    print item.id_plantilla.id_lenguaje.nombre
+
+
+                    context = {'error':'', 'fileContent':'', 'templateName':''}
+                    filename = os.path.join('user_templates/'+str(item.id_plantilla.id_plantilla))
+                    readFile(filename + '_rndr.tmpl', context)
+
+                    context['templateName'] = item.id_plantilla.nombre
+                    print context['fileContent']
+
+                    tmpl = context['fileContent']
+                    t = Template(tmpl)
+
+                    if item.entidades_en_lista == None:
+                        # templateBeta=get_object_or_404(GencoPlantillas,pk=id_plantilla)
+                        t.entities = getDataBuild(item.id_direlemento, item.id_plantilla.id_lenguaje, None)
+                        
+                        # getDataBuild(item.id_direlemento, direlement.id_plantilla)
+                        writefilename = os.path.join(dirBuild + '/' + str(item.id_plantilla.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension)) 
+                                   
+                        with open(writefilename, 'w') as f:
+                            myfile = File(f)
+                            myfile.write(str(t))
+                            myfile.closed
+                            f.closed
+                            generatedFiles.append(writefilename)
+                    else:
+
+                        entidades = GencoElementoEntidad.objects.filter(id_direlemento=item.id_direlemento)
+
+                        for itemL in entidades:
+
+                            t.entities = getDataBuild(item.id_direlemento, item.id_plantilla.id_lenguaje, itemL.id_entidad)
+                            
+                            # getDataBuild(item.id_direlemento, direlement.id_plantilla)
+                            writefilename = os.path.join(dirBuild + '/' + str(itemL.id_entidad.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension)) 
+                                       
+                            with open(writefilename, 'w') as f:
+                                myfile = File(f)
+                                myfile.write(str(t))
+                                myfile.closed
+                                f.closed
+                                generatedFiles.append(writefilename)
+
+                    
+                    tar = tarfile.open(dirBuild + ".tar", "w")
+                    for name in generatedFiles:
+                        tar.add(name)
+                    tar.close()
+                    
+                    # for name in generatedFiles:                    
+                    # shutil.rmtree(dirBuild)
+
+
+        serializer = GencoProyectosSerializer(project, many=True)
+        # return JsonResponse({'project':project})
+        return Response(serializer.data)
+

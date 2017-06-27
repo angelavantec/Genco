@@ -758,6 +758,40 @@ console.log($scope.components);
             
         }
 
+        $scope.update_directorioelemento = function(){
+
+            if($scope.direlemento_selected.id==null || $scope.direlemento_selected.id == undefined){
+                return;
+            }
+
+            dirElemento = new directorioelemento();
+
+            directorioelemento.get({id: $scope.direlemento_selected.id}, function(success){
+                dirElemento = success;
+
+                //$scope.direlemento_selected.as_list
+                if ($scope.direlemento_selected.as_list==1) {
+                    dirElemento.entidades_en_lista = null;
+                    $scope.direlemento_selected.as_list==0;
+                } else {
+                    dirElemento.entidades_en_lista = 1;
+                    $scope.direlemento_selected.as_list==1;
+                }
+
+                //dirElemento.entidades_en_lista = $('#chkAsList').val() ? 1 : 0;
+                //dirElemento.id_direlemento = id_componente
+                dirElemento.$update(function(success){
+
+                },function(error){
+                    $scope.showMessage($scope.getDataError(error));
+                });
+
+            }, function(error){
+                $scope.showMessage($scope.getDataError(error));
+            })
+
+        }
+
 
         $scope.new_directorio = function(id_proyecto, id_padre){
             $scope.GencoDirectorios = new directorio();
@@ -1197,7 +1231,7 @@ console.log($scope.components);
             $scope.GencoElementoEntidad.id_entidad = id_entidad;
             $scope.GencoElementoEntidad.id_elementoentidad = id_elementoentidad;
             $scope.GencoElementoEntidad.tags = JSON.stringify(obj);
-           // $scope.GencoElementoEntidad.entidades_en_lista = $('#chkAsList').val()? 1 : 0;
+            //$scope.GencoElementoEntidad.entidades_en_lista = $('#chkAsList').val()? 1 : 0;
 
             $scope.GencoElementoEntidad.$update(function(success){
                 //console.log(success);
@@ -1242,7 +1276,7 @@ console.log($scope.components);
             $scope.GencoElementoEntidad.id_entidad = id_entidad;
             $scope.GencoElementoEntidad.id_elementoentidad = id_elementoentidad;
             $scope.GencoElementoEntidad.tags = JSON.stringify(obj);
-           // $scope.GencoElementoEntidad.entidades_en_lista = $('#chkAsList').val()? 1 : 0;
+            //$scope.GencoElementoEntidad.entidades_en_lista = $('#chkAsList').val()? 1 : 0;
 
             $scope.GencoElementoEntidad.$update(function(success){
                 //console.log(success);

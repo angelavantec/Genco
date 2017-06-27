@@ -61,5 +61,6 @@ urlpatterns = patterns('',
 	url(r'^clonelang/$', CloneLang.as_view()),
 	url(r'^clonerepo/$', CloneRepo.as_view()),
 	url(r'^gencodatatype/$', GencoDatatype.as_view()),
+	url(r'^buildproject/(?P<id_proyecto>\d+)$', BuildProject.as_view()),
 	# url(r'^template_entity/(?P<id_proyecto>\d+)$', template_entity.as_view()),
 )

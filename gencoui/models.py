@@ -389,6 +389,7 @@ class GencoLenguajes(models.Model):
     version = models.CharField(max_length=10)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
     id_icono = models.ForeignKey(AdminAppIconos, models.DO_NOTHING, db_column='id_icono')
+    extension = models.CharField(max_length=15)
     creado_por = models.IntegerField()
     fecha_creacion = models.DateTimeField()
     modificado_por = models.IntegerField()

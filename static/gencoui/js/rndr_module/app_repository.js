@@ -291,8 +291,8 @@ angular.module('app_entities', ['ngResource','repository.services'])
 
       if($scope.GencoEntidadDefinicion.es_pk!=undefined)
         ves_pk = $scope.GencoEntidadDefinicion.es_pk.toString();
-
-      conv = new entitydef({id_entidad: $scope.entity_selected.id, entidad_ref: $scope.GencoEntidadDefinicion.entidad_ref, nombre: $scope.GencoEntidadDefinicion.entidad_ref, id_tipodato: null, es_pk:ves_pk});
+      console.log($scope.GencoEntidadDefinicion.entidad_ref.nombre);
+      conv = new entitydef({id_entidad: $scope.entity_selected.id, entidad_ref: $scope.GencoEntidadDefinicion.entidad_ref.id_entidad, nombre: $scope.GencoEntidadDefinicion.entidad_ref.nombre, id_tipodato: null, es_pk:ves_pk});
 
 
       conv.$save(

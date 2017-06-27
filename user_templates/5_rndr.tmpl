@@ -1,1 +1,16 @@
 @generics
+#for $e in $entities
+$e.name
+        FIELDS
+        #for $f in $e.fields
+        $f.typecnv $f.name
+        #end for
+        ENTITY REF
+        #for $l in $e.links
+        $l.name
+            #for $ll in $l.fields
+            $ll.typecnv $ll.name
+            #end for
+        #end for
+
+#end for

@@ -217,7 +217,7 @@
 						  			<!-- <td>{{form_add_entitydef.entidad_ref}}</td> -->
 						  			<td>
     									<select class="form-control" ng-model="GencoEntidadDefinicion.entidad_ref" ng-change="get_pk_fields()" 
-    									ng-options="entity.id_entidad as entity.nombre for entity in repoEntities">
+    									ng-options="entity as entity.nombre for entity in repoEntities">
 							      				<option value=''>Select</option>
 										</select>
 					                </td>
