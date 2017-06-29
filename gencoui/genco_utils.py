@@ -96,7 +96,26 @@ def getIterableFromTags(text):
 	Iterable = ast.literal_eval(text)
 	return Iterable
 
+def getIdsFromIterable(iterable):
+	Iterable = []
+	for i in iterable:
+		a = i.split(' ')
+		if len(a)>0:
+			ids = a[1].split('-')
+		if len(ids)>0:
+			Iterable.append(ids[0])
+	return Iterable		
 
+
+def getIdsFromText(text):
+	id=None
+	a = text.split(' ')
+	if len(a)>0:
+		ids = a[1].split('-')
+	if len(ids)>0:
+		id=ids[0]
+
+	return id		
 
 def updateDictTags(list, dict):
 	exists = None

@@ -37,9 +37,9 @@ return $resource('http://127.0.0.1:8000/gencoui/directorioelemento/:id\\/',{id:'
     },
   });
 
-}).factory('tree',function($resource){
+}).factory('dir_tmpl_tree',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/tree/:id',{id:'@id'},{
+return $resource('http://127.0.0.1:8000/gencoui/dir_tmpl_tree/:id',{id:'@id'},{
     update: {
             method: 'PUT'
         },

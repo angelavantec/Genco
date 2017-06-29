@@ -679,7 +679,8 @@ tree.get({id:$scope.environment_selected}, function(success){
             // return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             // s4() + '-' + s4() + s4() + s4();
 
-            return s4() + s4() + '-' + s4() + '-' + s4()
+            //return s4() + s4() + '-' + s4() + '-' + s4()
+            return s4() + '-' + s4()
             
         } 
 

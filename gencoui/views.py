@@ -151,7 +151,7 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
         id_ws=idWS
         )
         dirRoot = GencoDirectorios.objects.create(
-        nombre='Root Folder',
+        nombre='root',
         descripcion='Root Folder',
         id_proyecto=project,
         creado_por=self.request.user.id,
@@ -202,13 +202,15 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
-        obj = get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
+        get_object_or_404(self.get_queryset(), id_directorio=instance.id_directorio)
 
+        obj = GencoDirectorioElementos.objects.filter(id_directorio=instance.id_directorio)
         refElements = '';
+        
         for i  in obj:
             refElements += '<br>' + ('Template ' + i.id_plantilla.nombre if i.id_plantilla else '') + '' + ('File ' + i.id_archivo.nombre if i.id_archivo else '')
 
-        if queryset.exists():
+        if obj.exists():
             raise APIException('This Element is referenced by ' + refElements)
 
         instance.delete()
@@ -764,7 +766,7 @@ class tmpl(APIView):
         return JsonResponse(context);
     def post(self, request, id_plantilla=None):
         context = {'error':'', 'fileContent':'', 'templateName':''}
-        print (request.data['editor'])
+        # print (request.data['editor'])
         # print (request.data.editor)
         # received_json_data=json.loads(request.data)
         # print received_json_data
@@ -781,13 +783,27 @@ class tmpl(APIView):
 
 
         tags = getTagsTemplate(content,"")
+        # print tags
         # dic = {}
         # dic['UI/abm 636a3dbd-1d9e-8f78'] = 1 
         # dic['UI/abm e460864b-bb5b-96b8'] = 2
         # dic['DAL/dao e948b17d-68f4-658e'] = 3
 
         GencoPlantillas.objects.filter(id_plantilla=id_plantilla).update(tags=json.dumps(tags))
-        # se = GencoEntidadDefinicion.o 
+        
+        direlements = GencoDirectorioElementos.objects.filter(id_plantilla=id_plantilla)
+        dictTagsElement = {}
+        dictTagsElementUpd = {}
+        for item in direlements:
+            dictTagsElement = {}
+            elementEntity = GencoElementoEntidad.objects.filter(id_direlemento=item.id_direlemento)
+
+            for itemEntity in elementEntity:
+                if itemEntity.tags != None:
+                    dictTagsElement = getIterableFromTags(itemEntity.tags)             
+                    dictTagsElementUpd = updateDictTags(tags, dictTagsElement)
+                    GencoElementoEntidad.objects.filter(id_elementoentidad=itemEntity.id_elementoentidad).update(tags=json.dumps(dictTagsElementUpd))
+            # se = GencoEntidadDefinicion.o 
 
         return JsonResponse(context)
 
@@ -1276,20 +1292,101 @@ def getDataTest(tipo, id_lenguaje):
     return a
 
 
-def getDataBuild(id_direlemento, id_lenguaje, id_entidad):
+def getDataBuild(id_lenguaje, id_entidad, dictCnv):
     
-    a = []
+    # a = []
     b = []
     fields = []
     fieldsref = []
     links = []
-    dict = {}
+    # dict = {}
     
-    if id_entidad == None:
-        entidades = GencoElementoEntidad.objects.filter(id_direlemento=id_direlemento).order_by('id_direlemento','id_entidad')
-    else:
-        entidades = GencoElementoEntidad.objects.filter(id_direlemento=id_direlemento, id_entidad=id_entidad)
-    # types = GencoTipodato.objects.filter(id_lenguaje=1).order_by('id_tipodato')    
+    # if id_entidad == None:
+    #     entidades = GencoElementoEntidad.objects.filter(id_direlemento=id_direlemento).order_by('id_direlemento','id_entidad')
+    # else:
+    #     entidades = GencoElementoEntidad.objects.filter(id_direlemento=id_direlemento, id_entidad=id_entidad)
+    # # types = GencoTipodato.objects.filter(id_lenguaje=1).order_by('id_tipodato')    
+    # typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=1, id_tipodato_cnv__id_lenguaje=id_lenguaje)
+    
+    # for cni in typesCnv:
+    #     try:
+    #         dict[cni.id_tipodato.id_tipodato] = cni
+    #     except ValueError as e:
+    #         print str(e)            
+    #         dict={}
+
+    # for i in entidades:
+
+    definicionField = GencoEntidadDefinicion.objects.filter(id_entidad=id_entidad)
+    for ii in definicionField:
+        
+        if ii.id_tipodato == None:
+            definicionLnk = GencoEntidadDefinicion.objects.filter(id_entidad=ii.entidad_ref)
+            for iii in definicionLnk:
+                print 'ref'
+                print ii.entidad_ref
+                print ('%s   %i',iii.nombre,  iii.id_tipodato)
+                if iii.id_tipodato == None:
+                    field = type('field', (object,),{'name':iii.nombre, 'type':'entity', 'typecnv': '', 'prefixcnv': ''})()    
+                else:
+                    cnv = dictCnv.get(iii.id_tipodato.id_tipodato)
+                    if cnv==None:
+                        field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(iii.id_tipodato.prefijo)})()    
+                    else:
+                        field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(iii.id_tipodato.prefijo)})()
+                
+                fieldsref.append(field)
+
+            links.append(type('entity', (object,),{'name': ii.nombre, 'fields': fieldsref, 'links':[]})())
+            fieldsref=[]
+        else:
+            cnv = dictCnv.get(ii.id_tipodato.id_tipodato)
+            if cnv==None:
+                field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(ii.id_tipodato.prefijo)})()    
+            else:
+                field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(ii.id_tipodato.prefijo)})()
+        
+            fields.append(field)
+
+        # print links
+        # for x in links:
+        #     print x.name
+
+        # a.append(type('entity', (object,),{'name': i.id_entidad.nombre, 'fields': fields, 'links':links})())
+        # fields=[]
+        # links=[]
+
+    # if tipo == 2:
+    #     b.append(type('entity', (object,),{'name': 'B', 'fields': f})())
+    #     f=[]
+    #     counter=0
+    #     for i  in types:
+    #         counter = counter+1
+    #         cnv = dict.get(i.id_tipodato)
+
+    #         if cnv==None:
+    #             field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
+    #         else:
+    #             field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo)})()
+            
+    #         f.append(field)
+
+    #     a.append(type('main', (object,),{'name': 'A', 'fields': f, 'links': b})())
+
+    
+    a = type('entity', (object,),{'name': ii.id_entidad.nombre, 'fields': fields, 'links':links})()
+
+    return a
+
+
+def getDataBuildTags(id_lenguaje, id_entidad):
+    
+    a = []
+    fields = []
+    fieldsref = []
+    links = []
+    dict = {}
+
     typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=1, id_tipodato_cnv__id_lenguaje=id_lenguaje)
     
     for cni in typesCnv:
@@ -1299,7 +1396,7 @@ def getDataBuild(id_direlemento, id_lenguaje, id_entidad):
             print str(e)            
             dict={}
 
-    for i in entidades:
+
 
         definicionField = GencoEntidadDefinicion.objects.filter(id_entidad=i.id_entidad)
         for ii in definicionField:
@@ -1332,35 +1429,12 @@ def getDataBuild(id_direlemento, id_lenguaje, id_entidad):
             
                 fields.append(field)
 
-        # print links
-        # for x in links:
-        #     print x.name
 
         a.append(type('entity', (object,),{'name': i.id_entidad.nombre, 'fields': fields, 'links':links})())
         fields=[]
         links=[]
 
-    # if tipo == 2:
-    #     b.append(type('entity', (object,),{'name': 'B', 'fields': f})())
-    #     f=[]
-    #     counter=0
-    #     for i  in types:
-    #         counter = counter+1
-    #         cnv = dict.get(i.id_tipodato)
-
-    #         if cnv==None:
-    #             field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
-    #         else:
-    #             field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo)})()
-            
-    #         f.append(field)
-
-    #     a.append(type('main', (object,),{'name': 'A', 'fields': f, 'links': b})())
-
-    
-
     return a
-
 
 class searchLangs(APIView):
 
@@ -1671,27 +1745,39 @@ class GencoDatatype(APIView):
 
 class BuildProject(APIView):
 
-    def get(self, request, id_proyecto=None):
+    def get(self, request, id_proyecto=None, id_repositorio=None):
         
         idWS=request.session.get('wskey', False)
         project = GencoProyectos.objects.filter(id_proyecto=id_proyecto, id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, request.user.id))
         generatedFiles=[]
+        buildFolders={}
+        buildFolderPath=''
+        buildFolderParent=''
 
 
         hash = random.getrandbits(128)
-        dirBuild = 'user_files/'+str(hash)
-        os.makedirs(dirBuild)
+        mainBuild = 'user_files/'+str(hash)
+        os.makedirs(mainBuild)
         print project
-        directorios = GencoDirectorios.objects.filter(id_proyecto=project)
+        directorios = GencoDirectorios.objects.filter(id_proyecto=project).order_by('id_directorio')
        
         for dirprj in directorios:
+            
+            if dirprj.id_padre==None:
+                buildFolderParent=mainBuild+'/'
+            else:    
+                buildFolderParent = buildFolders.get(dirprj.id_padre.id_directorio) + '/'
+
+            
+            buildFolderPath=buildFolderParent + dirprj.nombre
+            os.makedirs(buildFolderPath)
+            buildFolders[dirprj.id_directorio]=buildFolderPath
+            dirBuild=buildFolderPath
 
             direlement = GencoDirectorioElementos.objects.filter(id_directorio=dirprj)
 
             for item in direlement:
-                print item.id_plantilla
-                # tmpl = item.id_plantilla
-
+                tags=[]
                 if item.id_plantilla == None:
                     print 'Bajando archivo.......'
                     archivo = GencoArchivos.objects.get(pk=item.id_archivo.id_archivo)
@@ -1706,6 +1792,50 @@ class BuildProject(APIView):
                     print item.id_plantilla.id_lenguaje.nombre
 
 
+                    ids=[]
+                    contextTag={}    
+                    tmpl=''
+                    tmplBase=''
+                    tmplInner=''
+                    tInner=None
+                    plantilla=None
+                    xx=None
+                    entitiesArr=[]
+                    entitiesInnerArr=[]
+                    dictCnv={}
+                    tInner=None
+                    t=None
+                    tagsVal=[]
+                    tagsValCant=0
+                    fileOutList=None
+                    # if item.id_plantilla.tags != None:
+                        # xx=GencoElementoEntidad.objects.get(pk=item.id_direlemento)
+                        # for key, value in dic.items():
+                        #     print "llave %s  valor %s" % (key, value)
+           
+                        # tags = getIterableFromTags(item.id_plantilla.tags)
+                        # ids = getIdsFromIterable(tags) 
+                        # contextTag = {'error':'', 'fileContent':'', 'templateName':''}
+                        # for id in ids:
+                        #     filename = os.path.join('user_templates/'+str(id))
+                        #     readFile(filename + '_rndr.tmpl', contextTag)
+                        #     tmpl = contextTag['fileContent']
+                        #     tInner = Template(tmpl)
+                        #     # t.entities = getDataBuild(item.id_direlemento, item.id_plantilla.id_lenguaje, itemL.id_entidad)
+                        #     print 'INNER ...........................................'
+                        #     plantilla = GencoPlantillas.objects.get(pk=int(id))
+                        #     tInner.entities = getDataBuildTags(plantilla.id_lenguaje, int(id))
+                        #     print tmpl;
+
+                    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=1, id_tipodato_cnv__id_lenguaje=item.id_plantilla.id_lenguaje)
+                    for cni in typesCnv:
+                        try:
+                            dictCnv[cni.id_tipodato.id_tipodato] = cni
+                        except ValueError as e:
+                            print str(e)            
+                            dictCnv={}    
+
+
                     context = {'error':'', 'fileContent':'', 'templateName':''}
                     filename = os.path.join('user_templates/'+str(item.id_plantilla.id_plantilla))
                     readFile(filename + '_rndr.tmpl', context)
@@ -1713,46 +1843,137 @@ class BuildProject(APIView):
                     context['templateName'] = item.id_plantilla.nombre
                     print context['fileContent']
 
-                    tmpl = context['fileContent']
-                    t = Template(tmpl)
+                    tmplBase = context['fileContent']
+                    
 
-                    if item.entidades_en_lista == None:
-                        # templateBeta=get_object_or_404(GencoPlantillas,pk=id_plantilla)
-                        t.entities = getDataBuild(item.id_direlemento, item.id_plantilla.id_lenguaje, None)
+                    # if item.entidades_en_lista == None:
+                    #     # templateBeta=get_object_or_404(GencoPlantillas,pk=id_plantilla)
+                    #     t.entities = getDataBuild(item.id_direlemento, item.id_plantilla.id_lenguaje, item)
                         
-                        # getDataBuild(item.id_direlemento, direlement.id_plantilla)
-                        writefilename = os.path.join(dirBuild + '/' + str(item.id_plantilla.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension)) 
+                    #     # getDataBuild(item.id_direlemento, direlement.id_plantilla)
+                    #     writefilename = os.path.join(dirBuild + '/' + str(item.id_plantilla.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension)) 
                                    
-                        with open(writefilename, 'w') as f:
-                            myfile = File(f)
-                            myfile.write(str(t))
-                            myfile.closed
-                            f.closed
-                            generatedFiles.append(writefilename)
-                    else:
+                    #     with open(writefilename, 'w') as f:
+                    #         myfile = File(f)
+                    #         myfile.write(str(t))
+                    #         myfile.closed
+                    #         f.closed
+                    #         generatedFiles.append(writefilename)
+                    # else:
 
-                        entidades = GencoElementoEntidad.objects.filter(id_direlemento=item.id_direlemento)
+                    entidades = GencoElementoEntidad.objects.filter(id_direlemento=item.id_direlemento, id_entidad__id_repositorio__in=getAccessFilters(idWS, ACCESS_TYPE_REPO, request.user.id), id_entidad__id_repositorio=id_repositorio)
 
-                        for itemL in entidades:
+                    for itemLE in entidades:
+                        tagsVal=[]
+                        tagsValCant=0
+                        tmpl=tmplBase
+                        entitiesArr=[]
+                        entitiesInnerArr=[]
 
-                            t.entities = getDataBuild(item.id_direlemento, item.id_plantilla.id_lenguaje, itemL.id_entidad)
-                            
-                            # getDataBuild(item.id_direlemento, direlement.id_plantilla)
-                            writefilename = os.path.join(dirBuild + '/' + str(itemL.id_entidad.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension)) 
-                                       
+
+                        # if item.entidades_en_lista == None:
+                        entitiesArr.append(getDataBuild(item.id_plantilla.id_lenguaje, itemLE.id_entidad, dictCnv))                            
+                        
+                        if item.id_plantilla.tags != None:
+                            tags = getIterableFromTags(itemLE.tags)
+                            for key, value in tags.items():
+                                print "llave %s  valor %s" % (key, value)
+                                id = getIdsFromText(key)
+                                print id
+                                if value > 0:
+                                    contextInner = {'error':'', 'fileContent':'', 'templateName':''}
+                                    filename = os.path.join('user_templates/'+str(id))
+                                    readFile(filename + '_rndr.tmpl', contextInner)
+
+                                    tmplInner = contextInner['fileContent']
+                                    #Angel Barrios - getbeta
+                                    #quitamos los tags del tagTemplate ya que solo hay 2 nivele
+                                    # tags = getTagsTemplate(tmplInner,"")
+                                    # for tag in tags:
+                                    #     tmplInner = tmplInner.replace('[@ ' + tag + ' @]', '')
+
+
+
+                                    tInner = Template(tmplInner)
+                                    entitiesInnerArr.append(getDataBuild(id, value, dictCnv))                            
+                                    tInner.entities = entitiesInnerArr
+                                    print 'STRREPLACE1========================================='
+                                    print tmpl
+                                    print 'STRREPLACE2========================================='
+                                    print str(tInner)
+                                    print key                                        
+                                    print 'STRREPLACE3========================================='
+                                    # tmpl = tmpl.replace('[@ ' + key + ' @]', str(tInner))
+                                    tmpl = tmpl.replace('[@ ' + key + ' @]', ' $tagsVal['+str(tagsValCant)+'] ')
+                                    tagsVal.append(str(tInner))
+                                    tagsValCant=tagsValCant+1;
+                                else:
+                                    tmpl = tmpl.replace('[@ ' + key + ' @]', '')
+
+                                    # print tmpl
+
+                        t = Template(tmpl)
+                        t.entities = entitiesArr
+                        t.tagsVal=tagsVal
+
+                        if item.entidades_en_lista == 1:
+                            if fileOutList==None:
+                                writefilename = os.path.join(dirBuild + '/' + str(item.id_plantilla.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension))
+                                fileOutList = open(writefilename, 'w')
+                            print 'AS LIST======================================'
+                            print tmpl
+                            fileOutList.write(str(t))
+
+                        else:                            
+                            writefilename = os.path.join(dirBuild + '/' + str(itemLE.id_entidad.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension))                             
                             with open(writefilename, 'w') as f:
                                 myfile = File(f)
                                 myfile.write(str(t))
                                 myfile.closed
                                 f.closed
                                 generatedFiles.append(writefilename)
+                            
 
                     
-                    tar = tarfile.open(dirBuild + ".tar", "w")
-                    for name in generatedFiles:
-                        tar.add(name)
-                    tar.close()
+                    if entidades.exists() and item.entidades_en_lista==1:
+                        with open(writefilename, 'w') as f:
+                            fileOutList.close()
+                            fileOutList=None
+                            generatedFiles.append(writefilename)
+
+                        # else:
+                            # if item.id_plantilla.tags != None:
+                            #     tags = getIterableFromTags(itemLE.tags)
+                            #     for key, value in tags.items():
+                            #         print "llave %s  valor %s" % (key, value)
+                                    
+                            # entitiesArr.append(getDataBuild(item.id_plantilla.id_lenguaje, itemLE.id_entidad, dictCnv))
+                            # pass
+
+                    # if item.entidades_en_lista == 1:                        
+                    #     t = Template(tmpl)
+                    #     t.entities = entitiesArr
+                    #     writefilename = os.path.join(dirBuild + '/' + str(item.id_plantilla.nombre) + '.' + str(item.id_plantilla.id_lenguaje.extension)) 
+                    #     with open(writefilename, 'w') as f:
+                    #             myfile = File(f)
+                    #             myfile.write(str(t))
+                    #             myfile.closed
+                    #             f.closed
+                    #             generatedFiles.append(writefilename)
+                # getDataBuild(item.id_direlemento, direlement.id_plantilla)
                     
+
+                    
+        # tar = tarfile.open(mainBuild + ".tar", "w")
+        # for name in generatedFiles:
+        #     tar.add(name)
+        # tar.close()
+                   
+        zip_name = mainBuild
+        directory_name = mainBuild
+
+            # Create 'path\to\zip_file.zip'
+        shutil.make_archive(zip_name, 'zip', directory_name) 
                     # for name in generatedFiles:                    
                     # shutil.rmtree(dirBuild)
 

@@ -1,6 +1,6 @@
 angular.module('app_builds', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_builds', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef) {
+.controller('ctrl_builds', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_tmpl_tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -18,6 +18,7 @@ $scope.nodeComponente=[];
 $scope.direlemento_selected = {
     id: null,
     nombre: null,
+    id_padre: null,
     nombre_padre: null,
     tags: null,
     as_list: null,
@@ -86,7 +87,9 @@ $scope.dataLang = {
     availableOptions: $scope.langs,
 };
 
-
+$scope.asListModel = {
+       value : true
+};
 
     /*Instancia del arbol de la seccion de FOLDERS*/
 
@@ -123,7 +126,15 @@ $scope.dataLang = {
                         console.log(renderas);  
                         if(validator && operation == 'move_node'){
 
-                            validator = node.li_attr['data-renderas'] === 'archive' ? true : false; 
+                            validator = node.li_attr['data-renderas'] === 'file' ? true : false;
+
+                            // if(validator){
+                                
+                            //     console.log(node.li_attr['data-renderid'] + '  ' + node_parent.li_attr['data-renderid']);
+                            //     $scope.direlemento_selected = {id:node.li_attr['data-renderid'], nombre:node.li_attr['data-rendername'], id_padre: node_parent.li_attr['data-renderid'],nombre_padre:node_parent.li_attr['data-rendername'], tags:'', as_list:'' };
+                            //     // $scope.direlemento_selected = {id:node.li_attr['data-renderid'], nombre:node.li_attr['data-rendername'], nombre_padre:node_parent.li_attr['data-rendername'], tags:node.li_attr['data-rendertags'], as_list:node.li_attr['data-renderaslist'] };
+                            //     $scope.update_directorioelemento();
+                            // }
 
                         }   
                         return validator;
@@ -399,13 +410,22 @@ $scope.dataLang = {
         $scope.direlemento_selected = {id:renderId, nombre:node.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername'], tags:node.li_attr['data-rendertags'], as_list:node.li_attr['data-renderaslist'] };
 
         if($scope.direlemento_selected.as_list==1){
-            $("#chkAsList").prop('checked', true);
-        }               
+            // $("#chkAsList").prop('checked', true);
+            $scope.asListModel.value = true;
+        }else{
+            $scope.asListModel.value = false;
+        }
         console.log('data');
         console.log(renderId);
         console.log($scope.repository_selected.data.id_repositorio)
         $scope.getItemTree(renderId, $scope.repository_selected.data.id_repositorio);
 
+    }).bind("move_node.jstree", function(e, data) {
+        console.log('SE movio un nodo hacer update ././././././../.');
+        console.log(data.node.li_attr['data-renderid']);
+        console.log(data.parent);
+        $("#jstreeFolders").jstree(true).select_node(data.node.id);
+        $scope.update_directorioelemento(data.node.li_attr['data-renderiddirtemplate'],  data.parent);
     });
 
     /*Instancia del arbol de la seccion de ENTITIES*/
@@ -471,7 +491,7 @@ $scope.dataLang = {
                                     var renderId = nodeParent.li_attr['data-renderid'];
                                     $scope.elementoentidad_selected = {id:renderId, nombre_padre:nodeParent.li_attr['data-rendername'], tag: obj.li_attr['data-renderid']};    
                                     $scope.node_item_selected = obj;                            
-                                    angular.element($("#ctrl_editor")).scope().$apply();
+                                    angular.element($("#ctrl_builds")).scope().$apply();
                                     $('#template-entities-tag-modal').modal('show');
         
                                 }
@@ -512,10 +532,55 @@ $scope.dataLang = {
     });
 
 
+    $("#jstree").jstree({
+        "core" : {
+        "check_callback" : function (operation, node, node_parent, node_position, more) {
+                // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                // in case of 'rename_node' node_position is filled with the new node name                      
+                
+                var validator;
+
+                if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
+                    return false;
+                }
+                    
+
+              
+                console.log(operation);
+                if(operation == 'move_node' || operation == 'copy_node'){
+
+                    validator = false; 
+
+                }   
+                return validator;
+                
+            }
+    },
+    "crrm": { "move": { "always_copy": "multitree" } },
+    "plugins" : [ "dnd","sort", "crrm" ],
+    });
+
+/* Ya construidos los arboles cargo los items de directorio elemento*/
+$scope.getCmpTree = function(){
+tree.get({id:$scope.environment_selected}, function(success){
+                        
+                        console.log('success');    
+                        //$('#jstreeBuilds').jstree();
+                        //$('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
+                        //$('#jstreeBuilds').jstree(true).refresh();
+
+                        $('#jstree').jstree();
+                        $('#jstree').jstree(true).settings.core.data = success.dirs;
+                        $('#jstree').jstree(true).refresh();
+                                                    
+                    },function(error){                        
+                        $scope.showMessage($scope.getDataError(error)); 
+                    });
+}
 
 /* Ya construidos los arboles cargo los items de directorio elemento*/
 $scope.getDirTree = function(){
-tree.get({id:$scope.project_selected}, function(success){
+dir_tmpl_tree.get({id:$scope.project_selected}, function(success){
                         
                         console.log('success');    
                         //$('#jstreeBuilds').jstree();
@@ -552,94 +617,94 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                     });
 }
 
-$scope.printTree = function(){
+// $scope.printTree = function(){
 
-    var v = $('#jstreeFolders').jstree(true).get_json('#', {flat:true})
-    var mytext = JSON.stringify(v);
-    console.log(mytext);
+//     var v = $('#jstreeFolders').jstree(true).get_json('#', {flat:true})
+//     var mytext = JSON.stringify(v);
+//     console.log(mytext);
 
-    //$('#jstree').jstree(true).settings.core.data = $scope.nodeComponente;
-    $('#jstree').jstree(true).refresh();
-}
+//     //$('#jstree').jstree(true).settings.core.data = $scope.nodeComponente;
+//     $('#jstree').jstree(true).refresh();
+// }
 
 
-$scope.load_components = function(){
-    $scope.components = [];
-    $scope.components = componente_env.query({id_entorno:$scope.environment_selected}, function(success){
-                            console.log('success');
-                            console.log(success);
-                            $scope.createTreeModel(); 
+// $scope.load_components = function(){
+//     $scope.components = [];
+//     $scope.components = componente_env.query({id_entorno:$scope.environment_selected}, function(success){
+//                             console.log('success');
+//                             console.log(success);
+//                             $scope.createTreeModel(); 
                             
-                        },function(error){
-                            $scope.showMessage($scope.getDataError(error)); 
-        });
-}
+//                         },function(error){
+//                             $scope.showMessage($scope.getDataError(error)); 
+//         });
+// }
 
-$scope.createTreeModel = function(){
+// $scope.createTreeModel = function(){
     
-   console.log('init');
-    $scope.nodeComponente=[];
-    proccess = [];
-    angular.forEach($scope.components, function(value, key){
+//    console.log('init');
+//     $scope.nodeComponente=[];
+//     proccess = [];
+//     angular.forEach($scope.components, function(value, key){
 
-        console.log(value);
+//         console.log(value);
 
-        proccess.push(1);
-        plantillas_comp.query({id:value.id_componente}, function(success){
-            proccess.pop();
-            add_templates(proccess, value, success);
-        },function(error){
-            proccess.pop();
-            add_templates(proccess, value, null);  
-        });
+//         proccess.push(1);
+//         plantillas_comp.query({id:value.id_componente}, function(success){
+//             proccess.pop();
+//             add_templates(proccess, value, success);
+//         },function(error){
+//             proccess.pop();
+//             add_templates(proccess, value, null);  
+//         });
 
-    })
+//     })
 
-}
+// }
 
 
-function add_templates(proccess, componente, plantillas){
+// function add_templates(proccess, componente, plantillas){
     
-    var nodePlantillas=[];
+//     var nodePlantillas=[];
     
-    if(plantillas != null){
+//     if(plantillas != null){
 
-        angular.forEach(plantillas, function(value, key){    
-            nodePlantillas.push({'parent': componente.id_componente, 'text':value.nombre + '<sub style="color:#CCCCCC">'  + value.lang.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':'template', 'data-renderid': value.id_plantilla, 'data-rendername': value.nombre}});
-        });
-        $scope.nodeComponente.push({'id': componente.id_componente,'text':componente.nombre, 'icon':"glyphicon glyphicon-folder-open", 'children':nodePlantillas, 'li_attr':{'data-renderas':'component','data-renderid': componente.id_componente, 'data-rendername': componente.nombre}});
+//         angular.forEach(plantillas, function(value, key){    
+//             nodePlantillas.push({'parent': componente.id_componente, 'text':value.nombre + '<sub style="color:#CCCCCC">'  + value.lang.nombre + '</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':'template', 'data-renderid': value.id_plantilla, 'data-rendername': value.nombre}});
+//         });
+//         $scope.nodeComponente.push({'id': componente.id_componente,'text':componente.nombre, 'icon':"glyphicon glyphicon-folder-open", 'children':nodePlantillas, 'li_attr':{'data-renderas':'component','data-renderid': componente.id_componente, 'data-rendername': componente.nombre}});
 
-    }
+//     }
 
-    //Render -> Wait
-    if(proccess.length<=0){
-        $("#jstree").jstree('destroy');
-        $scope.load();
-        console.log('--------------------------------------------------');
-        console.log($scope.nodeComponente);
-        $('#jstree').jstree(true).settings.core.data = $scope.nodeComponente;
-        $('#jstree').jstree(true).refresh();
-        setTimeout(function(){$scope.infoBubble('Drag Templates here!','#jstreeFolders');},2000);
+//     //Render -> Wait
+//     if(proccess.length<=0){
+//         $("#jstree").jstree('destroy');
+//         $scope.load();
+//         console.log('--------------------------------------------------');
+//         console.log($scope.nodeComponente);
+//         $('#jstree').jstree(true).settings.core.data = $scope.nodeComponente;
+//         $('#jstree').jstree(true).refresh();
+//         setTimeout(function(){$scope.infoBubble('Drag Templates here!','#jstreeFolders');},2000);
         
-    }
+//     }
 
     
 
-}
+// }
 
 
 
-$scope.reload_tree = function(){
-    console.log('push');
+// $scope.reload_tree = function(){
+//     console.log('push');
 
-    $scope.createTreeModel();
-    $scope.load();
+//     $scope.createTreeModel();
+//     $scope.load();
  
 
-}
+// }
 
 
-console.log($scope.components);
+// console.log($scope.components);
 
 
         
@@ -650,35 +715,9 @@ console.log($scope.components);
 
 
 
-        $scope.load = function(){
+        // $scope.load = function(){
 
-            $("#jstree").jstree({
-                "core" : {
-                "check_callback" : function (operation, node, node_parent, node_position, more) {
-                        // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-                        // in case of 'rename_node' node_position is filled with the new node name                      
-                        
-                        var validator;
 
-                        if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
-                            return false;
-                        }
-                            
-
-                      
-                        console.log(operation);
-                        if(operation == 'move_node' || operation == 'copy_node'){
-
-                            validator = false; 
-
-                        }   
-                        return validator;
-                        
-                    }
-            },
-            "crrm": { "move": { "always_copy": "multitree" } },
-            "plugins" : [ "dnd","sort", "crrm" ],
-            });
 
 
             //$.jstree.defaults.core.dblclick_toggle = false;
@@ -687,7 +726,7 @@ console.log($scope.components);
 
 
 
-        }
+        // }
 
         $scope.new_directorioelemento = function(id_directorio, id_plantilla, id_archivo, node, nodeDef){
 
@@ -758,30 +797,38 @@ console.log($scope.components);
             
         }
 
-        $scope.update_directorioelemento = function(){
+        $scope.update_directorioelemento_asList = function(){
 
-            if($scope.direlemento_selected.id==null || $scope.direlemento_selected.id == undefined){
-                return;
-            }
+            dirElemento = new directorioelemento();
+            var $btn = $('#chkAsList').button('loading')
+    // business logic...
+    
+            directorioelemento.get({id: $scope.direlemento_selected.id}, function(success){
+                dirElemento = success;
+                dirElemento.entidades_en_lista = $scope.asListModel.value ? 1 : null;
+                dirElemento.$update(function(success){
+                    $btn.button('reset')
+                },function(error){
+                    $scope.showMessage($scope.getDataError(error));
+                    $btn.button('reset')
+                });
+
+            }, function(error){
+                $scope.showMessage($scope.getDataError(error));
+                $btn.button('reset')
+            })
+
+        }
+
+
+        $scope.update_directorioelemento = function(id, id_parent){
 
             dirElemento = new directorioelemento();
 
-            directorioelemento.get({id: $scope.direlemento_selected.id}, function(success){
+            directorioelemento.get({id: id}, function(success){
                 dirElemento = success;
-
-                //$scope.direlemento_selected.as_list
-                if ($scope.direlemento_selected.as_list==1) {
-                    dirElemento.entidades_en_lista = null;
-                    $scope.direlemento_selected.as_list==0;
-                } else {
-                    dirElemento.entidades_en_lista = 1;
-                    $scope.direlemento_selected.as_list==1;
-                }
-
-                //dirElemento.entidades_en_lista = $('#chkAsList').val() ? 1 : 0;
-                //dirElemento.id_direlemento = id_componente
+                dirElemento.id_directorio = id_parent;
                 dirElemento.$update(function(success){
-
                 },function(error){
                     $scope.showMessage($scope.getDataError(error));
                 });
@@ -791,7 +838,6 @@ console.log($scope.components);
             })
 
         }
-
 
         $scope.new_directorio = function(id_proyecto, id_padre){
             $scope.GencoDirectorios = new directorio();
@@ -810,7 +856,7 @@ console.log($scope.components);
                                 'parent': success.id_padre, 
                                 'text': success.nombre, 
                                 'icon':"glyphicon glyphicon-folder-open", 
-                                'li_attr':{'data-renderas':"component",
+                                'li_attr':{'data-renderas':"folder",
                                             'data-renderid': success.id_directorio, 
                                             'data-rendername':success.nombre
                                         }
@@ -1023,7 +1069,7 @@ console.log($scope.components);
 
             console.log('respuesta ' + respuesta);
             $('#file-edit-modal').modal('hide');
-        } 
+        }
 
 
         $scope.load_file = function(id_file){
@@ -1442,10 +1488,11 @@ console.log($scope.components);
 
         /*Cargar valores inciales*/
         setListenterContent();
-        $scope.load_components();
+        //$scope.load_components();
         $scope.load_repository();
-        //$scope.getItemTree();
+        $scope.getCmpTree();
         $scope.getDirTree();
+
 
 
 

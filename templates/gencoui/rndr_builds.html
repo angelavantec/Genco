@@ -216,12 +216,14 @@
 									</a>
 				    			</div>
 			    	
-								{% endverbatim %}
+								
 								<div class="checkbox" >
-								    <label >
-								      <input type="checkbox" id="chkAsList" ng-click="update_directorioelemento()">As List
-								    </label>								
+								    <label ng-if="direlemento_selected.id != null">
+								      <input id="chkAsList" type="checkbox" ng-model="asListModel.value" ng-click="update_directorioelemento_asList()">As List
+								    </label>																    
 								</div>
+								
+						{% endverbatim %}		
 					    		<div id="jstreeBuilds" style="margin-top:20px;min-height: 50%;background-color: white;overflow:auto"></div>
 					    										
 					    	</div>	
