@@ -106,6 +106,11 @@ return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@i
 
   });
 
+}).factory('buildproject',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/buildproject/:id_project/:id_repository',{id_project:'@id_elementoentidad',id_repository:'@id_repository'},{
+});
+
 }).service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);

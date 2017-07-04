@@ -105,7 +105,7 @@ class GencoProyectosViewSet(viewsets.ModelViewSet):
         fecha_creacion=timezone.now()
         )
         #registramos el permiso
-        setAccessAuth(idWS, ACCESS_TYPE_PROJECT, self.request.user.id, obj.pk)
+        setAccessAuth(idWS, ACCESS_TYPE_PROJECT, self.request.user.id, project.pk)
 
     def perform_update(self, serializer):
         idWS=self.request.session.get('wskey', None)
@@ -206,7 +206,7 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
 
         obj = GencoDirectorioElementos.objects.filter(id_directorio=instance.id_directorio)
         refElements = '';
-        
+
         for i  in obj:
             refElements += '<br>' + ('Template ' + i.id_plantilla.nombre if i.id_plantilla else '') + '' + ('File ' + i.id_archivo.nombre if i.id_archivo else '')
 
@@ -676,7 +676,7 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
     env=None
 
     if id_module == 'env':
-        context = {'form_add_env': GencoEntornoForm, 'user': request.user}
+        context = {'form_add_env': GencoProyectosForm, 'user': request.user, 'form_project': GencoProyectosForm}
         return render(request,'gencoui/rndr_environments.html',context)
     elif id_module == 'editor':
         # obj = get_object_or_404(GencoEntorno, id_ws=request.user.id, id_entorno=key_env)
@@ -935,9 +935,10 @@ def index(request, id_ws=None):
         else:
             raise Http404
    
-    workspaces = GencoUsuarioGrupo.objects.filter(auth_user_id=request.user.id)
+    # workspaces = GencoUsuarioGrupo.objects.filter(auth_user_id=request.user.id)
+    workspaces=None
 
-    context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user, 'workspaces':workspaces}
+    context = {'form_add_env': GencoEntornoForm, 'titulo': request.user.username, 'user': request.user, 'workspaces':workspaces,'form_project': GencoProyectosForm}
     return render(request, 'gencoui/menu.html', context)  
 
 

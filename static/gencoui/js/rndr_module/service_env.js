@@ -59,6 +59,21 @@ return $resource('http://127.0.0.1:8000/gencoui/projects/?id_env=:id_env',{id_en
     },  
   });
 
+}).factory('projects',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/projects/:id_project\\/',{id_project:'@id_project'},{
+    update: {    
+            method: 'PUT'
+        },
+    save: {
+        url: 'http://127.0.0.1:8000/gencoui/projects\\/',
+        method: 'POST'
+    },
+    query: {
+        isArray:true    
+    },  
+  });
+
 }).factory('icons',function($resource){
 
 return $resource('http://127.0.0.1:8000/gencoui/icono/?tipo=:id',{id:'@_id'},{

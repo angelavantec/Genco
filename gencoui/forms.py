@@ -26,6 +26,17 @@ class GencoLenguajesForm(ModelForm):
         genco_init(GencoLenguajesForm, self, *args, **kwargs)
 
 
+
+class GencoProyectosForm(ModelForm):
+    class Meta:
+        model = GencoProyectos
+        fields = ['nombre', 'descripcion']
+        exclude = ['creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+    
+    def __init__(self, *args, **kwargs):    
+        genco_init(GencoProyectosForm, self, *args, **kwargs)
+
+
 class GencoTipodatoForm(ModelForm):
     class Meta:
         model = GencoTipodato

@@ -12,18 +12,19 @@
         <div style="float: right; margin-top:20px">
             {% if user.is_authenticated %}
                 <p style="color:white; display:inline;">{{request.session.wsname}} - {{ user.get_username }}</p>
+
                 <div class="dropdown" style="color:white; display:inline;">
                   <button class="btn btn-primary dropdown-toggle btn-xs" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="glyphicon glyphicon-menu-hamburger" ></span>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                    <li>Switch Workspace</li>
+                    <!-- <li>Switch Workspace</li>
                     {% for ws in workspaces %}
                                             <li >
                                                 <a  href="{{ ws.id_grupo.id_grupo }}"> {{ ws.id_grupo.nombre }} </a>
                                               </li>
                     {% endfor %}
-                    <li role="separator" class="divider"></li>
+                    <li role="separator" class="divider"></li> -->
                     <li><a href="/login/logout">logout</a></li>
                   </ul>
                 </div>

@@ -200,6 +200,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
               $scope.load_entities(objParent.id);
            }
            $scope.repo_selected = objParent;
+           console.log(objParent);
              
         }
        

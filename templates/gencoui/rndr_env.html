@@ -21,11 +21,11 @@
 						</div>						
 					</div>
 					<div class="row">
-						<div class="col-xs-12 col-sm-6">
-						<div style="padding-left: 5%; padding-right:15px; background-color:#eee; height:300px;">
+						<div class="col-xs-12 col-sm-5">
+						<div style="padding-left: 5%; padding-right:15px;  height:400px; overflow: auto;border-right: 1px solid #e3e3e3;">
 							
-							<div id="jstreeEnvs">
-				    		</div>
+						<!-- 	<div id="jstreeEnvs">
+				    		</div> -->
 				    		<div style="margin-bottom: 15px; padding-top:10px;">
 							    <a class="btn icon-btn btn-default" role="button"  data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
 										<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
@@ -74,23 +74,23 @@
 							
 						</div>	
 						</div>
-						<div class="col-xs-12 col-sm-6" style="">
-							<div style="height:300px;padding-top: 15px; padding-right: 15px; overflow:auto;">
+						<div class="col-xs-12 col-sm-7" style="">
+							<div style="height:400px;padding-top: 15px; padding-right: 15px; overflow:auto;">
 
-								<div class="panel panel-default" style="border:none; background-color:transparent" >
+								<div class="panel panel-default" style="border:none; background-color:transparent" ng-if="GencoEntorno.id_entorno!=null">
 						
 									<div class="" style=""> 
 
 										{% verbatim %}
-										<img ng-src="{{icono}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px" ng-if="nombre!=''">
+										<img ng-src="{{icono}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="32px" height="32px" >
 										{% endverbatim %}
 										<div class="rndr_title" style="display:inline">
 											<!-- <image src="{% static 'gencoui/img/gwt.jpg' %}" width="32px" height="32px"></image> -->
-											<p style="font-size:14px; display:inline" ng-bind="nombre"></p>
+											<p style="font-size:14px; display:inline;" ng-bind="nombre"></p>
 										</div>
 										
 										<div class="dropdown" style="display:inline; float: right">
-										  <button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropEnvOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" disabled="true">
+										  <button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropEnvOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 										    Options
 										    <span class="caret"></span>
 										  </button>
@@ -109,13 +109,13 @@
 													Templates
 										    	</a>
 										    </li>
-										    <li >
+										    <!-- <li >
 										    	<a id="lnkToBuildsFull" href="#" ng-click="chooseBuild()">						    	
 										    		<img src="{% static 'gencoui/img/rndr/build_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline;">
 													</img>
 													Build
 												</a>
-											</li>
+											</li> -->
 										    <li role="separator" class="divider"></li>
 										    <li>
 										    	<a href="#" ng-click="remove()">
@@ -150,9 +150,9 @@
 							                </tr>
 						            	</table>
 										
-							  			<div style="padding: 10px;" >
+							  			<div style="padding: 10px; " >
 											<!-- <p style="display:inline;">Langs</p> -->
-											<p style="display:inline;">Langs</p>
+											<p style="display:inline;width:50px">Langs</p>
 								  			<!-- <button style="display:inline;" type="button" class="btn btn-default btn-lg btn-circle-sm">
 								        		<span class="glyphicon btn-glyphicon glyphicon-thumbs-up img-circle text-primary"></span>
 								        	 </button>-->
@@ -162,12 +162,7 @@
 											</a>
 
 
-											<table class="table table-bordered" style="margin-top: 20px;" ng-if="langs.length>0">
-											  	<!-- <thead>
-											    	<tr style="margin-top:10px">
-											      		<th></th>
-											    	</tr>
-											  	</thead> -->
+	<!-- 										<table class="table table-bordered" style="margin-top: 20px;" ng-if="langs.length>0">
 											  	<tbody >
 											  		{% verbatim %}
 													<tr  ng-repeat="lang in langs">
@@ -175,18 +170,45 @@
 											      			<img  ng-src="{{lang.lang.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px" style="margin-right: 10px;"/>	
 											      			{{lang.lang.nombre}}
 											      		</td>
-											      		<!-- <td  width="15px">
-											      			<a href="#" class="list-group-item list-group-item-success">Types</a>	
-											      		</td> -->
-											      		<!-- <td width="15px">
-															<a class="btn icon-btn btn-default" href="#">
-															<span class="glyphicon btn-glyphicon glyphicon-minus img-circle" ></span>
-															</a>
-											      		</td> -->
+
 											      	</tr>
 											      	{% endverbatim %}	
 										  	  	</tbody>
-											</table> 
+											</table>  -->
+
+											<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 20px;  background-color:rgba(236, 240, 241, 0.39);">
+												<div  ng-repeat="lang in langs" style="display:inline">
+											      			{% verbatim %}
+											      			<!-- <div class="rndr-envcard"> -->
+											      				<!-- <img  ng-src="{{lang.lang.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px" style="margin-right: 10px;"/>	 -->
+											      				
+											      				<span class="label label-default">{{lang.lang.nombre}}</span>
+											      			<!-- </div> -->
+
+											      			{% endverbatim %}
+											    </div>
+											</div>	
+
+										</div>
+
+
+										<div style="padding: 10px;" >
+			
+											<p style="display:inline;">Projects</p>
+								  			
+								        	<a class="btn icon-btn btn-default" ng-click="create_project()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+											</a>
+
+											<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 20px;  background-color:rgba(236, 240, 241, 0.39);">
+												{% verbatim %}
+											  	<div ng-repeat="prj in envProjects" style="display:inline;">
+											  		<a class="btn btn-default btn-sm" href="module/builds/{{prj.id_entorno}}/{{prj.id_proyecto}}">
+											    	{{prj.nombre}}
+											    	</a>
+											  	</div>
+											  	{% endverbatim %}
+									 		</div>
 
 										</div>						
 									</div>	
@@ -217,7 +239,7 @@
 
         <div class="modal-content">
 	        <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 		        <h4 class="modal-title">Add Environment</h4>
 		    </div>
           <!-- <div class="arrow-up"></div> -->
@@ -250,60 +272,7 @@
 					</a>
 				</div>
 				<div style="display:inline">	
-					<a class="btn icon-btn btn-default"  ng-click="cancel()" data-placement="bottom"data-tt="tooltip" title="Cancel">
-							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-					</a>
-				</div>	
-          	</div>
-
-        </div>
-    </div>
-</div>
-          	
-
-<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-    <div class="modal-dialog" >
-
-        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
-	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-	        	<h4 class="modal-title">Information</h4>
-		    </div>	     
-          	<div id="imConfirm" class="modal-body">
-          	</div>
-          	<div class="modal-footer">
-				<div style="display:inline">
-					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
-							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-					</a>
-				</div>	
-          	</div>
-
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-    <div class="modal-dialog">
-
-        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ffb612;">
-	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-	        	<h4 class="modal-title">Confirm</h4>
-		    </div>	     
-          	<div id="tedmConfirm" class="modal-body">
-
-          	</div>
-          	<div class="modal-footer">
-          		<div style="display:inline">
-	          		<a class="btn icon-btn btn-default" ng-click="confirm_delete()" data-placement="bottom"data-tt="tooltip" title="Save">
-						<span class="glyphicon btn-glyphicon glyphicon-ok img-circle" ></span>					
-					</a>
-				</div>
-				<div style="display:inline">
-					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+					<a class="btn icon-btn btn-default" data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Cancel">
 							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
 					</a>
 				</div>	
@@ -339,11 +308,6 @@
 			{% endverbatim %}
           	</div>
           	<div class="modal-footer">
-          		<div style="display:inline">
-	          		<a class="btn icon-btn btn-default"  ng-click="" data-placement="bottom"data-tt="tooltip" title="Go to Languages">
-							<span class="glyphicon btn-glyphicon glyphicon-comment img-circle"></span>					
-					</a>
-				</div>
 				<div style="display:inline">
 	          		<a class="btn icon-btn btn-default" ng-click="save_add_lang()" data-placement="bottom"data-tt="tooltip" title="Save">
 						<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
@@ -361,25 +325,75 @@
 </div>
 
 
-<div class="modal fade" id="choose-build-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="create-project-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+	        <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">Create Project</h4>
+		    </div>
+          <!-- <div class="arrow-up"></div> -->
+          	<div class="modal-body">
+   
+   	   				<form ng-submit="save_project()">
+						{{ form_project }}				
+						<button type="submit" hidden></button>
+					</form>			
+
+          	</div>
+          	<div class="modal-footer">
+          		<div style="display:inline">
+	          		<a class="btn icon-btn btn-default" ng-click="save_project()" data-placement="bottom"data-tt="tooltip" title="Save">
+						<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+					</a>
+				</div>
+				<div style="display:inline">	
+					<a class="btn icon-btn btn-default" data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Cancel">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>          	
+
+<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog" >
+
+        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Information</h4>
+		    </div>	     
+          	<div id="imConfirm" class="modal-body">
+          	</div>
+          	<div class="modal-footer">
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
     <div class="modal-dialog">
 
         <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ffb612;">
 	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title">Confirm</h4>
 		    </div>	     
-          	<div class="modal-body">
-          		{% verbatim %}
-     
-				  <div ng-repeat="prj in envProjects">
-				  	<a class="btn btn-default" href="module/builds/{{prj.id_entorno}}/{{prj.id_proyecto}}">
-				    {{prj.nombre}}
-				    </a>
-				  </div>
+          	<div id="tedmConfirm" class="modal-body">
 
-				{% endverbatim %}
           	</div>
           	<div class="modal-footer">
           		<div style="display:inline">
@@ -397,6 +411,7 @@
         </div>
     </div>
 </div>
+
 
 </div>
 

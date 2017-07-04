@@ -1,6 +1,6 @@
 angular.module('app_builds', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
 
-.controller('ctrl_builds', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_tmpl_tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef) {
+.controller('ctrl_builds', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_tmpl_tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef, buildproject) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -91,6 +91,11 @@ $scope.asListModel = {
        value : true
 };
 
+
+const typeError = 'ERROR';
+const typeInfo = 'INFO';
+const typeWarning = 'WARNING';
+
     /*Instancia del arbol de la seccion de FOLDERS*/
 
     $("#jstreeFolders").jstree({
@@ -126,7 +131,7 @@ $scope.asListModel = {
                         console.log(renderas);  
                         if(validator && operation == 'move_node'){
 
-                            validator = node.li_attr['data-renderas'] === 'file' ? true : false;
+                            validator = (node.li_attr['data-renderas'] === 'file' || node.li_attr['data-renderas'] === 'template') ? true : false;
 
                             // if(validator){
                                 
@@ -574,7 +579,7 @@ tree.get({id:$scope.environment_selected}, function(success){
                         $('#jstree').jstree(true).refresh();
                                                     
                     },function(error){                        
-                        $scope.showMessage($scope.getDataError(error)); 
+                        $scope.showMessage($scope.getDataError(error), typeError); 
                     });
 }
 
@@ -592,7 +597,7 @@ dir_tmpl_tree.get({id:$scope.project_selected}, function(success){
                         $('#jstreeFolders').jstree(true).refresh();
                                                     
                     },function(error){                        
-                        $scope.showMessage($scope.getDataError(error));
+                        $scope.showMessage($scope.getDataError(error), typeError);
                     });
 }
 
@@ -613,7 +618,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                     },function(error){
                         $('#jstreeBuilds').jstree(true).settings.core.data = {};
                         $('#jstreeBuilds').jstree(true).refresh(); 
-                        $scope.showMessage($scope.getDataError(error));  
+                        $scope.showMessage($scope.getDataError(error), typeError);  
                     });
 }
 
@@ -771,7 +776,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
 
             },function(error){
                 
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
                 $('#jstreeFolders').jstree(true).delete_node(node); 
                 //delete from restapi
                 //agregar la llamada al metodo delete_archivo
@@ -791,7 +796,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 
             },function(error){
                 
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
 
             });
             
@@ -809,12 +814,12 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 dirElemento.$update(function(success){
                     $btn.button('reset')
                 },function(error){
-                    $scope.showMessage($scope.getDataError(error));
+                    $scope.showMessage($scope.getDataError(error),typeError);
                     $btn.button('reset')
                 });
 
             }, function(error){
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
                 $btn.button('reset')
             })
 
@@ -830,11 +835,11 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 dirElemento.id_directorio = id_parent;
                 dirElemento.$update(function(success){
                 },function(error){
-                    $scope.showMessage($scope.getDataError(error));
+                    $scope.showMessage($scope.getDataError(error),typeError);
                 });
 
             }, function(error){
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error),typeError);
             })
 
         }
@@ -866,7 +871,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 $scope.addTreeNode($scope.node_selected, nodeDef, $('#jstreeFolders').jstree(true));
                 $('#folder-create-modal').modal('hide');
             },function(error){
-               $scope.showMessage($scope.getDataError(error));
+               $scope.showMessage($scope.getDataError(error),typeError);
             });
             //$scope.GencoDirectorios = new directorio();
             
@@ -884,7 +889,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
 
                 
             },function(error){
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error),typeError);
 
             });
             
@@ -899,7 +904,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                                             $scope.GencoDirectorios = data;                                
                                         }, 
                                         function(error){
-                                            $scope.showMessage($scope.getDataError(error));
+                                            $scope.showMessage($scope.getDataError(error), typeError);
                                         }
                 );
             
@@ -917,7 +922,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 // $("#jstreeFolders").jstree('rename_node', $scope.node_selected , success.nombre );
                 $('#folder-edit-modal').modal('hide');
             },function(error){
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
             });
             //$scope.GencoDirectorios = new directorio();
             
@@ -950,7 +955,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 //console.log('rename');
                 //console.log(newText);
                 //console.log(obj);
-                $('#jstreeBuilds').jstree('set_text', node, newText);
+                $('#jstreeFolders').jstree('set_text', node, newText);
            
         }
 
@@ -1087,7 +1092,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                                                                       
                                     }, 
                                     function(error){
-                                        $scope.showMessage($scope.getDataError(error));
+                                        $scope.showMessage($scope.getDataError(error), typeError);
                                     });
 
         }
@@ -1105,7 +1110,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 
             },function(error){
                 
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
 
             });
             
@@ -1119,7 +1124,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                                 //$('#repository-change-modal').modal('show');
                             }, 
                             function(error){
-                                $scope.showMessage($scope.getDataError(error));
+                                $scope.showMessage($scope.getDataError(error), typeError);
             });
         }
 
@@ -1246,7 +1251,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 //$('#chkAsList').prop('checked', false);
             },function(error){
                 
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
             }); 
         }
 
@@ -1290,7 +1295,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 $('#template-entities-modal').modal('hide');
                 //$('#chkAsList').prop('checked', false);
             },function(error){
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
             });
 
 
@@ -1335,7 +1340,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 $('#template-entities-tag-modal').modal('hide');
                 //$('#chkAsList').prop('checked', false);
             },function(error){
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
             });
 
 
@@ -1349,7 +1354,7 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
             plantillaentidad.delete({id: id_elementoentidad},function(success){
                 $('#jstreeBuilds').jstree(true).delete_node(node); 
             },function(error){
-                $scope.showMessage($scope.getDataError(error));
+                $scope.showMessage($scope.getDataError(error), typeError);
             });
             
         }
@@ -1362,15 +1367,26 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                                             console.log(success);                               
                                         }, 
                                         function(error){
-                                            $scope.showMessage($scope.getDataError(error));
+                                            $scope.showMessage($scope.getDataError(error), typeError);
                                         }
                 );
             
         }
 
-        $scope.showMessage = function(message){
+        $scope.showMessage = function(message, type){
             $('#imConfirm').html(message);
-            $('#info-modal').modal('show');
+
+            $('#borderMessage').css('border-left-color', '#eee');
+            
+            if(type==typeError){
+                $('#borderMessage').css('border-left-color', '#d9534f');
+            }else if(type==typeInfo){
+                $('#borderMessage').css('border-left-color', '#5bc0de');
+            }else if(type==typeWarning){
+                $('#borderMessage').css('border-left-color', '#f0ad4e');
+            }
+
+            $('#message-modal').modal('show');
 
         }
 
@@ -1402,6 +1418,24 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                         
             return resp;
        }
+    }
+
+
+    $scope.buildProject = function(){
+        if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
+            $scope.infoBubble('Select Repository!','#dropdownRepo');  
+            return;                                  
+        }
+        var $btn = $('#btnBuildProject').button('loading');
+
+        buildproject.query({id_project: $scope.project_selected, id_repository: $scope.repository_selected.data.id_repositorio},
+            function(success){
+                $btn.button('reset');
+                $scope.showMessage('The project was build successfully', typeInfo);
+            },function(error){
+                $btn.button('reset');
+                $scope.showMessage($scope.getDataError(error), typeError);
+            });
     }
 
         // $scope.template_entities_load = function(id_plantilla){

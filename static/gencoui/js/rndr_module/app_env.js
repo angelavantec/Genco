@@ -1,6 +1,6 @@
 angular.module('app_env', ['ngResource','env.services','lang.services'])
 
-.controller('ctrl_env', function($scope, env_lang, env, lang, icons, env_projects, $window) {
+.controller('ctrl_env', function($scope, env_lang, env, lang, icons, env_projects, projects, $window) {
 
     $scope.langIconos =  icons.get({id:'env'});
     $scope.iconSelected;
@@ -15,6 +15,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
                         $scope.showMessage($scope.getDataError(error));  
     });
     $scope.GencoEntorno = new env();
+    $scope.GencoProyectos = new projects();
     $scope.tmpGencoEntorno;
     $scope.descripcion = '';
     $scope.nombre = '';
@@ -39,6 +40,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
             $scope.tmpGencoEntorno =  $scope.GencoEntorno;
             $scope.langs=env_lang.get({id:id_env});
             $('#dropEnvOptions').attr('disabled', false);
+            $scope.chooseBuild();
 
             //$('#lnkToEditorFull').attr('href', 'module/editor/' + id_env);
                 //$('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
@@ -51,7 +53,7 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
         env_projects.get({id_env:$scope.GencoEntorno.id_entorno}, 
         function(success){
             $scope.envProjects = success;
-            $('#choose-build-modal').modal('show');
+            //$('#choose-build-modal').modal('show');
         }, function(error){
             $scope.showMessage($scope.getDataError(error));
         });
@@ -196,6 +198,26 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
         //angular.forEach($scope.langs, function(value, key){    
         //        console.log(key + ' - ' + value);
         //});
+    }
+
+    $scope.create_project = function(){
+        $scope.GencoProyectos = new projects();
+        $('#create-project-modal').modal('show');
+
+    }
+
+
+    $scope.save_project = function(){
+        project = new projects({id_entorno: $scope.GencoEntorno.id_entorno, nombre: $scope.GencoProyectos.nombre, descripcion: $scope.GencoProyectos.descripcion})
+
+        project.$save(function(success){
+            $scope.envProjects.push(success);
+            $('#create-project-modal').modal('hide');
+
+        },function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+
     }
 
 

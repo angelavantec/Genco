@@ -147,10 +147,10 @@
 
 	    		<div class="modal-header" style="margin-bottom: 20px">				    	
 					<!-- <img src="{% static 'gencoui/img/rndr/entity.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"> -->
-					<h3> 
+					 
 		    		{% verbatim %}
-		    		{{GencoEntidad.nombre}}
-		    		</h3>
+		    		<h3>{{GencoEntidad.nombre}} </h3>
+		    		<p>{{repo_selected.text}} Repository</p>
 				</div>	
 		    		<p>{{GencoEntidad.descripcion}}</p>
 		    		{% endverbatim %}

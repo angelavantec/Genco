@@ -162,3 +162,10 @@ CORS_ORIGIN_WHITELIST = (
 
 MEDIA_ROOT='C:/Users/Angel/GencoPy/genco'
 MEDIA_URL='/media/'
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'angel.avantec@gmail.com'
+EMAIL_HOST_PASSWORD = 'arameo09'
+EMAIL_PORT = 587
