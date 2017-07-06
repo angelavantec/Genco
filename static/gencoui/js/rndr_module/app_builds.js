@@ -1,6 +1,8 @@
-angular.module('app_builds', ['ngResource','editor.services','lang.services','builds.services','repository.services'])
+var buildApp = angular.module('app_builds', ['ngResource','editor.services','lang.services','builds.services','repository.services']);
 
-.controller('ctrl_builds', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_tmpl_tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef, buildproject) {
+buildApp.controller('ctrl_builds', [ 
+                '$scope', '$http', 'componente_env', 'componente', 'plantillas', 'plantillas_comp', 'template', 'lang', 'directorioelemento', 'tree', 'dir_tmpl_tree', 'dir_item_tree','repotree', 'directorio', 'archivo', 'plantillaentidad', 'fileUpload', 'repository', 'entity_repo', 'entitydef', 'buildproject',
+                function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_tmpl_tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef, buildproject) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -92,9 +94,9 @@ $scope.asListModel = {
 };
 
 
-const typeError = 'ERROR';
-const typeInfo = 'INFO';
-const typeWarning = 'WARNING';
+typeError = 'ERROR';
+typeInfo = 'INFO';
+typeWarning = 'WARNING';
 
     /*Instancia del arbol de la seccion de FOLDERS*/
 
@@ -1555,43 +1557,43 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
         }
 
 
-  });
+}]);
 
-angular.module('app_builds').config(function($httpProvider){
+angular.module('app_builds').config(['$httpProvider',function($httpProvider){
 
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-})
+}])
 
-angular.module('app_builds').directive('emitLastRepeaterElement', function($timeout) {
- var itr_plantillas = 0;   
+// angular.module('app_builds').directive('emitLastRepeaterElement', function($timeout) {
+//  var itr_plantillas = 0;   
 
-    return {
-        restrict: 'A',
-        link: function (scope, element, attr) {
-            if (scope.$last === true) { 
+//     return {
+//         restrict: 'A',
+//         link: function (scope, element, attr) {
+//             if (scope.$last === true) { 
 
-                if(attr['renderas'] == 'archive'){
+//                 if(attr['renderas'] == 'archive'){
  
-                    $timeout(function () {
-                        scope.load();
-                    });
+//                     $timeout(function () {
+//                         scope.load();
+//                     });
 
-                }
+//                 }
 
-                if(attr['renderas'] == 'component'){
-                   console.log('termino component'); 
-                }
+//                 if(attr['renderas'] == 'component'){
+//                    console.log('termino component'); 
+//                 }
                 
-            }
-        }
+//             }
+//         }
 
-  };   
+//   };   
 
 
-});
+// });
 
 
 angular.module('app_builds').directive('fileModel', ['$parse', function ($parse) {

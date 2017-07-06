@@ -1,15 +1,24 @@
+{% extends "admin/base.html" %}
 {% load staticfiles %}
+{% block extrastyle %}
+	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
+	  <style type="text/css">
+    body {
+        margin-top:100px;
+    }
+  </style>
+{% endblock %}
 {% block extrajs %}
-	<script src="{% static 'gencoui/js/rndr_module/app_env.js' %}"></script>
-	<script src="{% static 'gencoui/js/rndr_module/service_env.js' %}"></script>
-	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
+	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
 	<script type="text/javascript">
 		$(function () {
 		  $('[data-tt="tooltip"]').tooltip()
 		});
+
+		$('#example').popover('show');
 	</script>
 {% endblock %}
-
 
 {% block extrahead %}    
     <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>

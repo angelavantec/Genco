@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
   <style type="text/css">
     body {
-        background-color: #185b88;
+        background-color: #eee;
     }
 
     .navbar {
@@ -59,8 +59,8 @@
             <div class="row" style="margin-top:100px">
               <!-- <div class="col-xs-1"></div> -->
               <div class="col-xs-12">
-                <div class="panel panel-default" style="border-width:1px; border-color:rgb(164,200,236);box-shadow: 5px 5px 5px #3a3838; margin-bottom:50px">
-                    <div class="panel-body" style="background-color: rgb(165,199,236); ">
+                <div class="panel panel-default" style="border-width:5px; border-color:#bad8eb; box-shadow: 0px 10px 19px 0px #b4bcc2; margin-bottom:50px">
+                    <div class="panel-body" style="background-color: #bad8eb; ">
                       <h2 style="color: #202077;display:inline" >Langs</h2> 
                         <a href="{% url 'gencoui:module' 'langs' %}" style="display:inline; float:right">
                           <img class="rndr-scale" src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
@@ -70,7 +70,7 @@
                 </div>
               </div>
               <div class="col-xs-12">      
-                <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow: 5px 5px 5px #3a3838; margin-bottom:50px">        
+                <div class="panel panel-default" style="border-width:5px; border-color:rgb(251,221,127);  box-shadow:0px 10px 19px 0px #b4bcc2; margin-bottom:50px">        
                     <div class="panel-body" style="background-color:rgb(251,221,127)">                  
                         <h2 style="color: #202077;display:inline" >Metadata</h2> 
                         <a href="{% url 'gencoui:module' 'entities' %}" style="display:inline; float:right">
@@ -82,11 +82,11 @@
               </div>
               <!-- <div class="col-md-1"></div> -->
               <div class="col-xs-12">
-                <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow: 5px 5px 5px #3a3838">
+                <!-- <div class="panel panel-default" style="border-width:1px; border-color:rgb(251,221,127); box-shadow:0px 10px 19px 0px #b4bcc2;">
                     <div class="panel-header">                      
                     </div>
-                  <div class="panel-body">{% include "gencoui/rndr_builds_search.html" %}</div>
-                </div>
+                  <div class="panel-body">{ include "gencoui/rndr_builds_search.html" }</div>
+                </div> -->
               </div>
 
             </div>        
@@ -100,11 +100,11 @@
           <div class="row" style="margin-top:100px">
             <div class="col-md-1"></div>
             <div class="col-md-10">
-              <div class="panel panel-default" style="border-width:1px; box-shadow: 5px 5px 5px #3a3838">
-                <div class="panel-body" style=" text-align:center; border-bottom:1px solid #e3e3e3; background-color:#eee">
+              <div class="panel panel-default" style="border-width:0px; box-shadow:0px 10px 19px 0px #b4bcc2; ">
+                <div class="panel-body" style=" text-align:center; border-bottom:1px solid #e3e3e3; background-color:rgb(85, 158, 205); border-top-right-radius: 5px; border-top-left-radius: 5px; padding:5px">
                   <img src="{% static 'gencoui/img/rndr/environment.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="64px" height="64px"></img>
-                  <h2 style="color: #202077">Environments</h2>
-                  <p style="font-size:14px">Define a stack of languajes</p>
+                  <h2 style="color: #fff; margin-top: 10px;">Environments</h2>
+                  <p style="font-size:14px; color:#fff; margin-bottom: 5px;">Define a stack for languages</p>
                 </div>
                 <div class="">{% include "gencoui/rndr_env.html" %}
                 </div>

@@ -84,21 +84,13 @@ def activate(request, uidb64, token):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
-        user.save() 
-        print user.username
-        print user.password 
-
-        newuser = authenticate(username=user.username, password=user.password)
-        if newuser is not None:
-            if newuser.is_active:
-                login(request, newuser)    
-                return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        user.save()       
         # user = authenticate(username=user.username, password=user.password)
-        # login(request, user)
+        # loggeduser = authenticate(remote_user=user.username) 
+        # print loggeduser
+        # login(request, loggeduser)
         # return redirect('home')
-            else:
-                return HttpResponse('Activation link is invalid!') 
-        else:
-            return HttpResponse('Activation link is invalid!') 
+        return HttpResponseRedirect('/gencoui/')
+        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')    

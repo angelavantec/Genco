@@ -279,7 +279,7 @@
 
         <div class="modal-content">
 	        <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 		        <h4 class="modal-title">Repository</h4>
 		    </div>
           <!-- <div class="arrow-up"></div> -->
@@ -318,7 +318,7 @@
 
         <div class="modal-content">
 	        <div class="modal-header" >
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 		        <h4 class="modal-title" style="display:inline">Entity</h4>
 		    </div>
           <!-- <div class="arrow-up"></div> -->
@@ -354,7 +354,7 @@
 
         <div class="modal-content">
 	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title">Confirm</h4>
 		    </div>	     
           	<div class="modal-body">
@@ -386,7 +386,7 @@
 
         <div class="modal-content">
 	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title">Confirm</h4>
 		    </div>	     
           	<div class="modal-body">
@@ -418,7 +418,7 @@
 
         <div class="modal-content">
 	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title">Edit Field</h4>
 		    </div>	     
           	<div class="modal-body">
@@ -468,7 +468,7 @@
 
 	        <div class="modal-content">
 		        <div class="modal-header">
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 			        <h4 class="modal-title">Clone Repository</h4>
 			    </div>
 	          <!-- <div class="arrow-up"></div> -->
@@ -559,37 +559,13 @@
 	</div>
 
 
-	<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-
-    <div class="modal-dialog" >
-
-        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
-	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-	        	<h4 class="modal-title">Information</h4>
-		    </div>	     
-          	<div id="imConfirm" class="modal-body">
-          	</div>
-          	<div class="modal-footer">
-				<div style="display:inline">
-					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
-							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-					</a>
-				</div>	
-          	</div>
-
-        </div>
-    </div>
-</div>
-
-
 <div class="modal fade" id="confirm-delete-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
     <div class="modal-dialog">
 
         <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ffb612;">
 	        <div class="modal-header">
-		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
 	        	<h4 class="modal-title">Confirm</h4>
 		    </div>	     
           	<div id="tedmConfirm" class="modal-body">
@@ -612,6 +588,28 @@
     </div>
 </div>
 
+<div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <div class="modal-dialog" >
+
+        <div class="modal-content" style="padding: 20px;margin: 20px 0;border-left-width: 20px;border-radius: 3px; border-left-color: #ce4844;">
+	        <div class="modal-header">
+		    	<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        	<h4 class="modal-title">Information</h4>
+		    </div>	     
+          	<div id="imConfirm" class="modal-body">
+          	</div>
+          	<div class="modal-footer">
+				<div style="display:inline">
+					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+							<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+					</a>
+				</div>	
+          	</div>
+
+        </div>
+    </div>
+</div>
 
 </div>
 

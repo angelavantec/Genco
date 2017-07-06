@@ -1,6 +1,8 @@
-angular.module('app_env', ['ngResource','env.services','lang.services'])
+var envApp = angular.module('app_env', ['ngResource','env.services','lang.services']);
 
-.controller('ctrl_env', function($scope, env_lang, env, lang, icons, env_projects, projects, $window) {
+envApp.controller('ctrl_env', [
+    '$scope', 'env_lang', 'env', 'lang', 'icons', 'env_projects', 'projects', '$window',
+    function($scope, env_lang, env, lang, icons, env_projects, projects, $window) {
 
     $scope.langIconos =  icons.get({id:'env'});
     $scope.iconSelected;
@@ -355,38 +357,16 @@ angular.module('app_env', ['ngResource','env.services','lang.services'])
        }
     }
 
-  });
+  }]);
 
-angular.module('app_env').config(function($httpProvider){
+angular.module('app_env').config(['$httpProvider', function($httpProvider){
 
-    // $stateProvider.state('env-add',{
-    //     url:'/movies',
-    //     templateUrl:'http://localhost:8000/gencoui/form/1',
-    //     controller:'MovieListController'
-    // }).state('viewMovie',{
-    //    url:'/movies/:id/view',
-    //    templateUrl:'partials/movie-view.html',
-    //    controller:'MovieViewController'
-    // }).state('newMovie',{
-    //     url:'/movies/new',
-    //     // templateUrl:'partials/movie-add.html',
-    //     templateUrl:'http://localhost:8000/gencoui/form/1',
-    //     controller:'MovieCreateController'
-    // }).state('editMovie',{
-    //     url:'/movies/:id/edit',
-    //     templateUrl:'partials/movie-edit.html',
-    //     controller:'MovieEditController'
-    // });
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.xsrfCookieName = 'csrftoken';
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.headers.post['X-CSRFToken'] = getCookie('csrftoken');
 
-    // $httpProvider.defaults.headers.common['Authorization'] = 'Basic YWRtaW46YWRtaW4=';
-    // $httpProvider.defaults.withCredentials = true;
-    // delete $httpProvider.defaults.headers.common['X-Requested-With'];
-
-})
+}])
 
     function getCookie(cname) {
         var name = cname + "=";
