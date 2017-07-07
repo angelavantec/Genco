@@ -46,7 +46,7 @@ def register(request):
             )
 
             current_site = get_current_site(request)
-            subject = 'Activate your blog account.'
+            subject = 'Activate your getbeta account.'
             message = render_to_string('acc_active_email.html', {
                 'user':user, 'domain':current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
