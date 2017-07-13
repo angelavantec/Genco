@@ -1,5 +1,6 @@
 {% extends "admin/base.html" %}
 {% load staticfiles %}
+{% load i18n %}
 {% block title %}Render Developer{% endblock %}
 
 {% block extrastyle %}
@@ -58,10 +59,11 @@
           <div class"container-fluid">
             <div class="row" style="margin-top:100px">
               <!-- <div class="col-xs-1"></div> -->
+              {% trans "Welcome to TaskBuster!"%}
               <div class="col-xs-12">
                 <div class="panel panel-default" style="border-width:5px; border-color:#bad8eb; box-shadow: 0px 10px 19px 0px #b4bcc2; margin-bottom:50px">
                     <div class="panel-body" style="background-color: #bad8eb; ">
-                      <h2 style="color: #202077;display:inline" >Langs</h2> 
+                      <h2 style="color: #202077;display:inline" >{% trans 'Langs' %}</h2> 
                         <a href="{% url 'gencoui:module' 'langs' %}" style="display:inline; float:right">
                           <img class="rndr-scale" src="{% static 'gencoui/img/rndr/langs.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" height="48px"></img>
                         </a>

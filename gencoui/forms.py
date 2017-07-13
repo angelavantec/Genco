@@ -9,6 +9,7 @@ class GencoGrupoForm(ModelForm):
     class Meta:
         model = GencoGrupo
         fields = ['nombre',]
+        labels = {'nombre': 'Name',}
 
     def __init__(self, *args, **kwargs):
 	    super(GencoGrupoForm, self).__init__(*args, **kwargs)
@@ -20,7 +21,8 @@ class GencoGrupoForm(ModelForm):
 class GencoLenguajesForm(ModelForm):
     class Meta:
         model = GencoLenguajes
-        exclude = ['creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion', 'id_ws']
+        fields = ['nombre', 'descripcion', 'version', 'id_icono', 'extension']
+        labels = {'nombre': 'Name','descripcion':'Description','id_icono':'Icon',}
     
     def __init__(self, *args, **kwargs):    
         genco_init(GencoLenguajesForm, self, *args, **kwargs)
@@ -139,6 +141,7 @@ class GencoRepositorioForm(ModelForm):
     class Meta:
         model = GencoRepositorio
         fields = ['nombre','descripcion']
+        labels = {'nombre': 'Name','descripcion':'Description'}
 
     def __init__(self, *args, **kwargs):    
         genco_init(GencoRepositorioForm, self, *args, **kwargs)

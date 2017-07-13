@@ -26,7 +26,7 @@ router.register(r'icono', AdminAppIconosViewSet, base_name="icono")
 
 urlpatterns = patterns('',	
 	url(r'^$', index, name='index'),
-	url(r'^(?P<id_ws>\w+)$', index, name='index'),
+	# url(r'^$', index, name='index'),
 	url(r'^module/(?P<id_module>\w+)$', get_module, name='module'),
 	url(r'^module/(?P<id_module>\w+)/(?P<key_env>\w+)/$', get_module , name='module-env'),
 	url(r'^module/(?P<id_module>\w+)/(?P<key_env>\w+)/(?P<key_project>\w+)/$', get_module),

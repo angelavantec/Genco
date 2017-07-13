@@ -51,9 +51,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware',    
+    # 'django.contrib.auth.middleware.RemoteUserMiddleware',    
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
 )
 
 REST_FRAMEWORK = {
@@ -118,6 +120,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
             ],
         },
   },
@@ -127,8 +130,17 @@ TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
+from django.utils.translation import ugettext_lazy as _
+LANGUAGES = (
+    ('en', _('English')),
+    ('es', _('Spanish')),
+)
 
 LANGUAGE_CODE = 'en-us'
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 TIME_ZONE = 'UTC'
 

@@ -540,9 +540,9 @@ class GencoRepositorioViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         idWS=self.request.session.get('wskey', None)
         get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS)
+        repo = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS)
         #asignamos permisos
-        setAccessAuth(idWS, ACCESS_TYPE_REPO, self.request.user.id, env.pk)
+        setAccessAuth(idWS, ACCESS_TYPE_REPO, self.request.user.id, repo.pk)
 
     def perform_update(self, serializer):
         idWS=self.request.session.get('wskey', None)
@@ -916,8 +916,8 @@ class tmpl_preview(APIView):
         return JsonResponse(context)   
 
 @login_required
-def index(request, id_ws=None):  
-    # idWS=request.session.get('wskey', None)
+def index(request):  
+    id_ws=request.session.get('wskey', None)
     # print idWS
     if id_ws == None:
         # ws=GencoGrupo.objects.filter(creado_por=request.user.id)
@@ -926,7 +926,7 @@ def index(request, id_ws=None):
             request.session['wskey'] = item.id_grupo
             request.session['wsname'] = item.nombre
     else:
-        ws=GencoUsuarioGrupo.objects.filter(id_grupo__id_grupo=id_ws, auth_user_id=request.user.id)
+        ws=GencoUsuarioGrupo.objects.filter(id_grupo__id_grupo=int(id_ws), auth_user_id=request.user.id)
         # ws = get_object_or_404(GencoGrupo, pk=idWS)
         if ws.exists():
             for wsi  in ws:
