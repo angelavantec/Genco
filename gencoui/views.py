@@ -507,8 +507,9 @@ class GencoPlantillasViewSet(viewsets.ModelViewSet):
     serializer_class = GencoPlantillasSerializer    
 
     def get_queryset(self):
-        print 'get plantillas'
-        return GencoPlantillas.objects.filter(creado_por=self.request.user.id)
+        idWS=self.request.session.get('wskey', None)
+        components = GencoComponentes.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, self.request.user.id))
+        return GencoPlantillas.objects.filter(id_componente__in=components)
     
     def perform_create(self, serializer):
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 

@@ -6,11 +6,12 @@
             <a class="navbar-brand" href="#">
             {% if user.is_authenticated %}
             <div style="background-color: #fff; border-radius: 10px; padding-top: 3px; padding-bottom: 3px; padding-left:10px; padding-right: 10px;margin-top: 8px;" data-toggle="modal" data-target="#menu">
-                <img alt="Brand" src="{% static 'gencoui/img/rndr/getbeta.png' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="76px"  sytle="top:10px">
+                <img alt="Brand" src="{% static 'gencoui/img/rndr/getbeta.png' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="76px"  sytle="top:10px"></img>
             </div>
+
             {% else %}
             <div style="background-color: #fff; border-radius: 10px; padding-top: 3px; padding-bottom: 3px; padding-left:10px; padding-right: 10px;margin-top: 8px;">
-                <img alt="Brand" src="{% static 'gencoui/img/rndr/getbeta.png' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="76px" sytle="top:10px">
+                <img alt="Brand" src="{% static 'gencoui/img/rndr/getbeta.png' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="76px" sytle="top:10px"/></img>
             </div>
             
             
@@ -19,10 +20,26 @@
         </div>
         <div style="float: right; margin-top:20px">
             {% if user.is_authenticated %}
-                <p style="color:white; display:inline;">{{request.session.wsname}} - {{ user.get_username }}</p>
-                
+                <div style="display:inline;padding:15px">
+                    <a href="/gencoui" style="color:#ffffff" data-placement="bottom" data-tt="tooltip" title="Go Main Panel">
+                        <span style="display:inline;" class="glyphicon glyphicon-home"></span>
+                    </a>
+                </div>
+                <div style="display:inline;background-color: #eee; border-radius: 10px; padding-top: 3px; padding-bottom: 3px; padding-left:10px; padding-right: 10px;margin-top: 8px;">
+                    <p style="display:inline; font-size:12px">{{request.session.wsname}} - {{ user.get_username }}</p>    
+                </div>                
+                <div style="display:inline;padding:15px">
+                    <a style="color:#ffffff" data-placement="bottom" data-tt="tooltip" title="Close Session" href="/login/logout">
+                        <span style="display:inline;" class="glyphicon glyphicon-off"></span>
+                    </a>
+                </div> 
                 
             {% else %}
+                <div style="display:inline;padding:15px">
+                    <a href="/login" style="color:#ffffff" data-placement="bottom" data-tt="tooltip" title="Go Main Panel">
+                        <span style="display:inline;" class="glyphicon glyphicon-menu-left"></span>
+                    </a>
+                </div>
                 <p style="color:white; display:inline;">Welcome</p>
             {% endif %}
 
@@ -113,8 +130,10 @@
                         </div> -->
                     </td>
                     <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';">
-                        <div style="text-align:center" data-placement="bottom" data-tt="tooltip" title="Close Session">
-                            <a class="btn btn-default btn-xs" role="button" data-toggle="modal" data-placement="bottom" data-tt="tooltip" title="Add Type" href="/login/logout">Logout</a>
+                        <div style="text-align:center" >
+                            <a class="btn btn-default btn-sm" role="button" data-placement="bottom" data-tt="tooltip" title="Close Session" href="/login/logout" style="width:64px">
+                                <span style="display:inline;" class="glyphicon glyphicon-off"></span>
+                            </a>
                         </div>                        
                     </td>
                 </tr>

@@ -177,32 +177,34 @@ typeWarning = 'WARNING';
                                    // this.rename(obj);
                                     console.log(data);
                                     
+                                    // var inst = $.jstree.reference(data.reference),
+                                    // obj = inst.get_node(data.reference);
+                                    // var renderId = obj.li_attr['data-renderid'];
+                                    // //inst.edit(obj);
                                     var inst = $.jstree.reference(data.reference),
                                     obj = inst.get_node(data.reference);
-                                    var renderId = obj.li_attr['data-renderid'];
-                                    //inst.edit(obj);
-                                    
-                                    //$scope.component_selected.nombre = obj.text;
-                                    //$scope.component_selected.id = obj.id;
-                                    //console.log($scope.component_selected);
+                                    //var renderId = obj.li_attr['data-renderid'];                                    
+                                    //$scope.elementoentidad_selected = {id:renderId, nombre:obj.li_attr['data-rendername']};    
+                         
                                     if($scope.repository_selected.data == null || $scope.repository_selected.data == undefined){
-                                        $scope.infoBubble('Select Repository!','#dropdownRepo');
-                                        //$scope.globalMessage = "No repository selected";
-                                        //angular.element($("#ctrl_editor")).scope().$apply();
-                                       // console.log($scope.globalMessage);
-                                        //$('#info-modal').modal('show');      
-
+                                        $scope.infoBubble('Select Repository!','#dropdownRepo');  
                                         return;                                  
                                     }
-                                    
-                                    
-                                    $scope.template_entities_load(renderId);
 
 
-                                    
-                                    //Hago que la interfaz refresque el titulo con el valor de component_selected
-                                    //angular.element($("#ctrl_editor")).scope().$apply();
-                                    //$('#component-edit-modal').modal('show');
+                                    $scope.node_item_selected = obj;
+
+
+                                    var renderId = obj.li_attr['data-renderiddirtemplate'];          
+                                    var nodeParent = inst.get_node(obj.parents[0]);
+                                    $scope.direlemento_selected = {id:renderId, nombre:obj.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername'], tags:obj.li_attr['data-rendertags'], as_list:obj.li_attr['data-renderaslist'] };
+
+                                    if($scope.direlemento_selected.as_list==1){
+                                        $scope.asListModel.value = true;
+                                    }else{
+                                        $scope.asListModel.value = false;
+                                    }
+                                    $scope.getItemTree(renderId, $scope.repository_selected.data.id_repositorio);
         
                                 }
                             },
@@ -408,23 +410,15 @@ typeWarning = 'WARNING';
 
         var nodePath = tree.get_path(node).join("/");
         var renderId = node.li_attr['data-renderiddirtemplate'];          
-        console.log(renderId);
-
-
         var nodeParent = tree.get_node(node.parents[0]);
-        console.log(nodeParent);
-        console.log(nodeParent.li_attr['data-rendername'] + '/' + node.li_attr['data-rendername'])
         $scope.direlemento_selected = {id:renderId, nombre:node.li_attr['data-rendername'], nombre_padre:nodeParent.li_attr['data-rendername'], tags:node.li_attr['data-rendertags'], as_list:node.li_attr['data-renderaslist'] };
 
+        $scope.node_item_selected = node;
         if($scope.direlemento_selected.as_list==1){
-            // $("#chkAsList").prop('checked', true);
             $scope.asListModel.value = true;
         }else{
             $scope.asListModel.value = false;
         }
-        console.log('data');
-        console.log(renderId);
-        console.log($scope.repository_selected.data.id_repositorio)
         $scope.getItemTree(renderId, $scope.repository_selected.data.id_repositorio);
 
     }).bind("move_node.jstree", function(e, data) {
@@ -809,12 +803,21 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
             dirElemento = new directorioelemento();
             var $btn = $('#chkAsList').button('loading')
     // business logic...
+    console.log('?????????????????????????????');
     
             directorioelemento.get({id: $scope.direlemento_selected.id}, function(success){
                 dirElemento = success;
                 dirElemento.entidades_en_lista = $scope.asListModel.value ? 1 : null;
                 dirElemento.$update(function(success){
-                    $btn.button('reset')
+                    console.log(success);
+                    console.log(success.entidades_en_lista);
+                    //$scope.node_item_selected.li_attr['data-renderaslist'] == success.entidades_en_lista;
+                nodeChild = $('#jstreeBuilds').jstree(true).get_node(''+$scope.node_item_selected.id)
+                //console.log(nodeChild.li_attr['data-renderid'] + nodeChild.li_attr['data-renderentity']);
+                obj[nodeChild.li_attr['data-renderid']] = parseInt(nodeChild.li_attr['data-renderentity']);
+
+
+                    $btn.button('reset')                    
                 },function(error){
                     $scope.showMessage($scope.getDataError(error),typeError);
                     $btn.button('reset')
@@ -1440,38 +1443,38 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
             });
     }
 
-        // $scope.template_entities_load = function(id_plantilla){
+        $scope.template_entities_load = function(id_plantilla){
 
-        //     plantillas.get({id: id_plantilla},function(success){
-        //         console.log(success);
-        //         $scope.template_tags = JSON.parse(success.tags);                
-        //         //$scope.reload_tree();
-        //         //$('#template-delete-modal').modal('hide');
-        //     },function(error){
-        //         console.log(error);
-        //     });
+            plantillas.get({id: id_plantilla},function(success){
+                console.log(success);
+                $scope.template_tags = JSON.parse(success.tags);                
+                //$scope.reload_tree();
+                //$('#template-delete-modal').modal('hide');
+            },function(error){
+                console.log(error);
+            });
 
-        //     console.log('obtener entidades');
-        //     console.log($scope.repository_selected)
+            console.log('obtener entidades');
+            console.log($scope.repository_selected)
 
-        //     entity_repo.query({id_repositorio: $scope.repository_selected.data.id_repositorio}, 
-        //         function(success){
-        //             //angular.element($("#ctrl_editor")).scope().$apply();
-        //             if(!$scope.$$phase) {
-        //                   $scope.$apply();
-        //             }
-        //             $scope.all_entities = success;
+            entity_repo.query({id_repositorio: $scope.repository_selected.data.id_repositorio}, 
+                function(success){
+                    //angular.element($("#ctrl_editor")).scope().$apply();
+                    if(!$scope.$$phase) {
+                          $scope.$apply();
+                    }
+                    $scope.all_entities = success;
     
-        //             console.log(success);
-        //             $('#template-entities-modal').modal('show');
+                    console.log(success);
+                    $('#template-entities-modal').modal('show');
 
-        //         },
-        //         function(error){
-        //             console.log(error);
-        //         })
+                },
+                function(error){
+                    console.log(error);
+                })
 
 
-        // }
+        }
 
 
 

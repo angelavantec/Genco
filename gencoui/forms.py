@@ -33,7 +33,8 @@ class GencoProyectosForm(ModelForm):
     class Meta:
         model = GencoProyectos
         fields = ['nombre', 'descripcion']
-        exclude = ['creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        # exclude = ['creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        labels = {'nombre': 'Name','descripcion':'Description'}
     
     def __init__(self, *args, **kwargs):    
         genco_init(GencoProyectosForm, self, *args, **kwargs)
@@ -42,40 +43,50 @@ class GencoProyectosForm(ModelForm):
 class GencoTipodatoForm(ModelForm):
     class Meta:
         model = GencoTipodato
-        exclude = ['id', 'id_lenguaje','creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        fields = ['nombre', 'descripcion','contenedor','prefijo','longitud_maxima']
+        # exclude = ['id', 'id_lenguaje','creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        labels = {'nombre': 'Name','descripcion':'Description', 'contenedor':'Container','prefijo':'Prefix','longitud_maxima':'Max Length'}
 
     def __init__(self, *args, **kwargs):    
         genco_init(GencoTipodatoForm, self, *args, **kwargs)
 
 
 class GencoEntornoForm(ModelForm):
+    class Meta:
+        model = GencoEntorno
+        fields = ['nombre', 'descripcion','version']
+        # exclude = ['id_icono', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion', 'id_ws']
+        labels = {'nombre': 'Name','descripcion':'Description'}
 
-	class Meta:
-		model = GencoEntorno
-		exclude = ['id_icono', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion', 'id_ws']        
-
-	def __init__(self, *args, **kwargs):
-		super(GencoEntornoForm, self).__init__(*args, **kwargs)
-		for field in self.fields:
-			self.fields[field].widget.attrs.update({'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})
+    def __init__(self, *args, **kwargs):
+        genco_init(GencoEntornoForm, self, *args, **kwargs)
+                
+    # def __init__(self, *args, **kwargs):
+    # 	super(GencoEntornoForm, self).__init__(*args, **kwargs)
+    # 	for field in self.fields:
+    # 		self.fields[field].widget.attrs.update({'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})
 
 
 class GencoComponentesForm(ModelForm):
     class Meta:
         model = GencoComponentes
         fields = ['nombre','descripcion']
-        # exclude = [ 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        labels = {'nombre':'Name','descripcion':'Description'}
 
     def __init__(self, *args, **kwargs):
-        super(GencoComponentesForm, self).__init__(*args, **kwargs)
-        for field in self.fields:
-            self.fields[field].widget.attrs.update({'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})            
+        genco_init(GencoComponentesForm, self, *args, **kwargs)
+    # def __init__(self, *args, **kwargs):
+    #     super(GencoComponentesForm, self).__init__(*args, **kwargs)
+    #     for field in self.fields:
+    #         self.fields[field].widget.attrs.update({'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})            
 
 
 class GencoPlantillasForm(ModelForm):
     class Meta:
         model = GencoPlantillas
-        exclude = ['id_plantilla', 'id_componente','archivo', 'id_lenguaje','creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        fields = ['nombre','descripcion']
+        labels = {'nombre':'Name','descripcion':'Description'}
+        # exclude = ['id_plantilla', 'id_componente','archivo', 'id_lenguaje','creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
 
     def __init__(self, *args, **kwargs):    
         genco_init(GencoPlantillasForm, self, *args, **kwargs)

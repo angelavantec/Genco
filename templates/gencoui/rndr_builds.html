@@ -13,7 +13,7 @@
 {% block extrajs %}
 	<script src="{% static 'gencoui/js/angular.min.js' %}"></script>
 	<script src="{% static 'gencoui/js/angular-resource.min.js' %}"></script>
-	<script src="{% static 'gencoui/js/rndr_module/app_builds_min.js' %}"></script>
+	<script src="{% static 'gencoui/js/rndr_module/app_builds.js' %}"></script>
 	<script src="{% static 'gencoui/js/rndr_module/service_editor.js' %}"></script>
 	<script src="{% static 'gencoui/js/rndr_module/service_builds.js' %}"></script>
 	<script src="{% static 'gencoui/js/rndr_module/service_lang.js' %}"></script>
@@ -440,7 +440,7 @@
 			    </div>
 			    <div class="modal-body">
 	    		{% verbatim %}
-		    		<h4 style="margin-top: 10px;" ng-if="direlemento_selected.id == null">Entities</h4>
+		    		<!-- <h4 style="margin-top: 10px;" ng-if="direlemento_selected.id == null">Entities</h4> -->
 	    			<h5 style="display:inline;margin-top: 20px;" ng-if="direlemento_selected.id != null">{{direlemento_selected.nombre_padre}}/{{direlemento_selected.nombre}}</h5>				    			
 	    			<span style="display:inline;" class="glyphicon glyphicon-link" ng-if="direlemento_selected.id != null"></span>
 

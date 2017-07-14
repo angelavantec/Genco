@@ -6,7 +6,6 @@
 
 {% block extrastyle %}
     <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
-	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
 	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
 {% endblock %}
 
@@ -331,7 +330,7 @@
 						<div class="well" style="margin-top: 20px">
 					
 							{% verbatim %}
-							<label>Lenguaje </label>
+							<label>Language </label>
 							<img id="imgTmplLang" src="" width="32px" height="32px" style="margin: 8px"/>
 							<div class="modal-footer">							
 								<div class="checkbox" ng-repeat="lang in langs" style="display:inline;margin: 8px">

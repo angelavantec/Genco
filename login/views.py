@@ -56,7 +56,7 @@ def register(request):
             toemail = form.cleaned_data.get('email')
             email = EmailMessage(subject, message, to=[toemail])
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            return render_to_response('registration/confirm.html',)
 
             # return HttpResponseRedirect('/gencoui/')
     else:
