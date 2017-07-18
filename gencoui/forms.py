@@ -161,7 +161,9 @@ class GencoRepositorioForm(ModelForm):
 class GencoDirectoriosForm(ModelForm):
     class Meta:
         model = GencoDirectorios
-        exclude = ['id_proyecto', 'id_padre','creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        fields = ['nombre','descripcion']
+        labels = {'nombre': 'Name','descripcion':'Description'}
+        # exclude = ['id_proyecto', 'id_padre','creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
 
     def __init__(self, *args, **kwargs):    
         genco_init(GencoDirectoriosForm, self, *args, **kwargs)
@@ -170,7 +172,9 @@ class GencoDirectoriosForm(ModelForm):
 class GencoArchivosForm(ModelForm):
     class Meta:
         model = GencoArchivos
-        exclude = ['id_archivo', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        fields = ['nombre','descripcion']
+        labels = {'nombre': 'Name','descripcion':'Description'}
+        # exclude = ['id_archivo', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
 
     def __init__(self, *args, **kwargs):    
         genco_init(GencoArchivosForm, self, *args, **kwargs)

@@ -2,16 +2,16 @@
 public class $e.name{
         
         #for $f in $e.fields
-        private $f.typecnv $f.name
+        private $f.typecnv $f.name.capitalize().replace(' ','_')
         #end for
         
         #for $f in $e.fields
-        public $f.typecnv get$f.name () {
+        public $f.typecnv get$f.name.capitalize().replace(' ','_')() {
             return $f.name;
         }    
         #end for
         #for $f in $e.fields
-        public void set$f.name ($f.typecnv  $f.name)  {
+        public void set$f.name.capitalize().replace(' ','_')($f.typecnv  $f.name)  {
             this.$f.name = $f.name;
         }    
         #end for

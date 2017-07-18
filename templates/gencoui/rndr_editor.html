@@ -86,6 +86,23 @@
     <script src="{% static 'gencoui/jstree/jstree.min.js' %}"></script>
     <script>
     
+            
+        // $(window).keypress(function(event) {
+	       //  if (!(event.which == 115 && event.ctrlKey) && !(event.which == 19)) return true;
+	       //  alert("Ctrl-S pressed");
+	       //  event.preventDefault();
+	       //  return false;
+        // });
+
+		document.addEventListener("keydown", function(e) {
+		      if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey))      {
+		      	//alert("Ctrl-S pressed");		      	
+		        e.preventDefault();
+		        angular.element($("#ctrl_editor")).scope().submit();
+		        //your implementation or function calls
+		      }
+		}, false);
+
 		$(document).ready(function () {
 		    var i = 0;
 		    var dragging = false;
@@ -678,11 +695,11 @@
 	  //   });
 
 
-	function getCode(){
-		$.get( "http://localhost:8000/gencoui/code", function( data ) {
-		editor.setValue(data);	
-		});	
-	};
+	// function getCode(){
+	// 	$.get( "http://localhost:8000/gencoui/code", function( data ) {
+	// 	editor.setValue(data);	
+	// 	});	
+	// };
 
 
 	function openFile(id_template){

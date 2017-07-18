@@ -1119,13 +1119,13 @@ class dir_elemento_entidad_tree(APIView):
 class langs_tree(APIView):
     
     def get(self, request):
-
-        print 'usuario'
-        print request.user.id
         idWS=request.session.get('wskey', False)
-        print idWS
         if not idWS:  
             raise Http404
+        group = None
+        groupName=''
+        cloneDate=''
+        originDesc=''
         # langs = GencoLenguajes.objects.filter(creado_por=request.user.id, id_lenguaje__gt=1).order_by('id_lenguaje')
         # tipodatos = GencoTipodato.objects.filter(creado_por=request.user.id).order_by('id_lenguaje')
         langs = GencoLenguajes.objects.filter(id_lenguaje__in=getAccessFilters(idWS, ACCESS_TYPE_LANG, request.user.id)).order_by('id_lenguaje')
@@ -1134,8 +1134,18 @@ class langs_tree(APIView):
         dirs = []
         id_padre = ''
 
-        for i  in langs:         
-            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre}})
+        for i  in langs:
+            groupName=''
+            cloneDate=''
+            originDesc=''
+            if i.id_ws_origen is not None:
+                group = get_object_or_404(GencoGrupo, id_grupo=i.id_ws_origen)
+                groupName = group.nombre
+                cloneDate = i.fecha_creacion.strftime("%d/%m/%y")
+                originDesc='Cloned from'
+            if i.id_ws != int(idWS):
+                originDesc='Shared by'        
+            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre + '<sub style="color:#CCCCCC">' + originDesc + ' ' + groupName + ' ' + cloneDate + '</sub>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre}})
        
 
         for i  in tipodatos:          
@@ -1170,15 +1180,30 @@ class langs_tree_view(APIView):
 class repo_tree(APIView):
     
     def get(self, request):
-
-        repo = GencoRepositorio.objects.filter(creado_por=request.user.id).order_by('id_repositorio')
-        entity = GencoEntidad.objects.filter(creado_por=request.user.id).order_by('id_entidad')
+        idWS=request.session.get('wskey', False)
+        if not idWS:  
+            raise Http404
+        group = None
+        groupName=''
+        cloneDate=''
+        originDesc=''
+        repo = GencoRepositorio.objects.filter(id_repositorio__in=getAccessFilters(idWS, ACCESS_TYPE_REPO, request.user.id)).order_by('id_repositorio')
+        entity = GencoEntidad.objects.filter(id_repositorio__in=repo).order_by('id_repositorio')
 
         repos = []
         id_padre = ''
 
-        for i  in repo:         
-            repos.append({'id': i.id_repositorio, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"repository",'data-renderid': i.id_repositorio, 'data-rendername':i.nombre}})
+        for i  in repo: 
+            groupName=''
+            cloneDate=''
+            if i.id_ws_origen is not None:
+                group = get_object_or_404(GencoGrupo, id_grupo=i.id_ws_origen)
+                groupName = group.nombre
+                cloneDate = i.fecha_creacion.strftime("%d/%m/%y")
+                originDesc='Cloned from'
+            if i.id_ws != int(idWS):
+                originDesc='Shared by'
+            repos.append({'id': i.id_repositorio, 'parent': '#', 'text': i.nombre + '<sub style="color:#CCCCCC">' + originDesc + ' ' + groupName + ' ' + cloneDate + '</sub>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"repository",'data-renderid': i.id_repositorio, 'data-rendername':i.nombre}})
        
 
         for i  in entity:          
@@ -1527,7 +1552,7 @@ class CloneLang(APIView):
         datatypes=None
         dataconversions=None
         cloneIdlang=0 
-        typeoriginId=0     
+        typeoriginId=0
 
         context = {'status':'' ,'error':'', 'response':''}
         langsclone = request.data['langs']
@@ -1536,10 +1561,8 @@ class CloneLang(APIView):
             langsItr = getIterableFromTags(langsclone)
         
         idWS=self.request.session.get('wskey', None)
-        print idWS
-        print request.user.id
-        get_list_or_404(GencoUsuarioGrupo, auth_user_id=request.user.id, id_grupo=idWS)
-        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=1)
+        # get_list_or_404(GencoUsuarioGrupo, auth_user_id=request.user.id, id_grupo=idWS)
+        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=1)        
 
         for lang in langs:
             cloneIdlang = lang.id_lenguaje
@@ -1548,7 +1571,9 @@ class CloneLang(APIView):
             lang.creado_el = timezone.now()
             lang.modificado_por = None
             lang.fecha_modificacion = None
-            print lang.id_lenguaje
+            lang.id_ws_origen = lang.id_ws
+            lang.id_ws = int(idWS)
+            
             try:
                 lang.save()
                 setAccessAuth(idWS, ACCESS_TYPE_LANG, request.user.id, lang.pk)
@@ -1674,7 +1699,7 @@ class CloneRepo(APIView):
         cloneentities=[]
         entities=None
         cloneIdrepo=0 
-        entityOriginId=0     
+        entityOriginId=0
 
         context = {'status':'' ,'error':'', 'response':''}
         reposclone = request.data['repos']
@@ -1682,7 +1707,7 @@ class CloneRepo(APIView):
         if reposclone: 
             reposItr = getIterableFromTags(reposclone)
 
-
+        idWS=self.request.session.get('wskey', None)    
         repos = GencoRepositorio.objects.filter(id_repositorio__in=reposItr)
 
         for repo in repos:
@@ -1692,9 +1717,12 @@ class CloneRepo(APIView):
             repo.creado_el = timezone.now()
             repo.modificado_por = None
             repo.fecha_modificacion = None
+            repo.id_ws_origen = repo.id_ws
+            repo.id_ws = int(idWS)
 
             try:
                 repo.save()
+                setAccessAuth(idWS, ACCESS_TYPE_REPO, request.user.id, repo.pk)
                 entities = GencoEntidad.objects.filter(id_repositorio=cloneIdrepo)
                 for entity in entities:
                     entityOriginId = entity.id_entidad

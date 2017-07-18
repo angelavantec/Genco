@@ -809,12 +809,15 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                 dirElemento = success;
                 dirElemento.entidades_en_lista = $scope.asListModel.value ? 1 : null;
                 dirElemento.$update(function(success){
-                    console.log(success);
-                    console.log(success.entidades_en_lista);
-                    //$scope.node_item_selected.li_attr['data-renderaslist'] == success.entidades_en_lista;
-                nodeChild = $('#jstreeBuilds').jstree(true).get_node(''+$scope.node_item_selected.id)
+                    //console.log(success);
+                    //console.log(success.entidades_en_lista);
+                    //console.log($scope.node_item_selected.li_attr['data-renderaslist']);
+                    $scope.node_item_selected.li_attr['data-renderaslist']=success.entidades_en_lista;
+                    //console.log($scope.node_item_selected.li_attr['data-renderaslist']);
+
+                //nodeChild = $('#jstreeBuilds').jstree(true).get_node(''+$scope.node_item_selected.id)
                 //console.log(nodeChild.li_attr['data-renderid'] + nodeChild.li_attr['data-renderentity']);
-                obj[nodeChild.li_attr['data-renderid']] = parseInt(nodeChild.li_attr['data-renderentity']);
+                //obj[nodeChild.li_attr['data-renderid']] = parseInt(nodeChild.li_attr['data-renderentity']);
 
 
                     $btn.button('reset')                    

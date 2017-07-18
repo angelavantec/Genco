@@ -395,6 +395,7 @@ class GencoLenguajes(models.Model):
     modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
     id_ws = models.IntegerField()
+    id_ws_origen = models.IntegerField()
 
     class Meta:
         managed = False
@@ -486,6 +487,7 @@ class GencoRepositorio(models.Model):
     modificado_por = models.IntegerField()
     fecha_modificacion = models.DateTimeField(blank=True, null=True)
     id_ws = models.IntegerField()
+    id_ws_origen = models.IntegerField()
 
     class Meta:
         managed = False

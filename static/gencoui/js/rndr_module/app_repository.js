@@ -40,36 +40,19 @@ angular.module('app_entities', ['ngResource','repository.services'])
   /* Para que el arbol permita manipular(create, rename, delete) los nodos check_callback debe ser true*/
   
     $("#jstree").jstree({
-      'core':{check_callback : true},
-    //     "core" : {
-    //     "check_callback" : function (operation, node, node_parent, node_position, more) {
-    //             // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
-    //             // in case of 'rename_node' node_position is filled with the new node name                      
+      // 'core':{check_callback : true},
+        "core" : {
+        "check_callback" : function (operation, node, node_parent, node_position, more) {
+                // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                // in case of 'rename_node' node_position is filled with the new node name                      
+                              
+                if(operation == 'move_node'){
+                    return false;
+                }   
+                return true;
                 
-
-    //             var validator;
-
-    //             if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
-    //                 return false;
-    //             }
-                    
-    //             console.log(node_parent);
-    //             var renderas = node_parent.li_attr['data-renderas'];
-
-    //             if(typeof renderas == 'undefined'){
-    //                 return false;
-    //             }
-                    
-    //             validator = renderas === 'repository' ? true : false;    
-    //             if(validator && operation == 'move_node'){
-
-    //                 validator = node.li_attr['data-renderas'] === 'archive' ? true : false; 
-
-    //             }   
-    //             return validator;
-                
-    //         }
-    // },
+            }
+    },
     "plugins" : [  "contextmenu","dnd" ],
     "contextmenu": {
         "items": function ($node) {
@@ -200,6 +183,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
               $scope.load_entities(objParent.id);
            }
            $scope.repo_selected = objParent;
+           $("#RepoDesc").html('Repository: ' + $scope.repo_selected.text);
            console.log(objParent);
              
         }
