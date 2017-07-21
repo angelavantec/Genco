@@ -55,7 +55,10 @@ def register(request):
             # user.email_user(subject, message)
             toemail = form.cleaned_data.get('email')
             email = EmailMessage(subject, message, to=[toemail])
-            email.send()
+            try:
+                email.send()
+            except:
+                render_to_response('registration/email_error.html',)
             return render_to_response('registration/confirm.html',)
 
             # return HttpResponseRedirect('/gencoui/')

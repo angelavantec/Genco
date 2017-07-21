@@ -196,9 +196,15 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
         return GencoDirectorios.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
+        obj = GencoDirectorios.objects.filter(nombre=serializer.validated_data['nombre'])
+        if obj.exists():
+            raise APIException('Already exists a folder with this name.')
         serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
 
     def perform_update(self, serializer):
+        obj = GencoDirectorios.objects.filter(nombre=serializer.validated_data['nombre'])
+        if obj.exists():
+            raise APIException('Already exists a folder with this name.')
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
     
     def perform_destroy(self, instance):
@@ -1484,7 +1490,7 @@ class searchLangs(APIView):
         if keysearch=='*':
             langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(id_lenguaje__gt=1).exclude(creado_por=request.user.id)
         else:   
-            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch, id_lenguaje__gt=1).exclude(creado_por=request.user.id)
+            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__istartswith=keysearch, id_lenguaje__gt=1).exclude(creado_por=request.user.id)
 
 
         paginator = Paginator(langs, npages)
@@ -1659,7 +1665,7 @@ class searchRepo(APIView):
         if keysearch=='*':
             repos = GencoRepositorio.objects.extra(tables=('auth_user',),where=('genco_repositorio.creado_por=auth_user.id',),select={'user':'username'}).exclude(creado_por=request.user.id)
         else:   
-            repos = GencoRepositorio.objects.extra(tables=('auth_user',),where=('genco_repositorio.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__icontains=keysearch).exclude(creado_por=request.user.id)
+            repos = GencoRepositorio.objects.extra(tables=('auth_user',),where=('genco_repositorio.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__istartswith=keysearch).exclude(creado_por=request.user.id)
 
         paginator = Paginator(repos, npages)
 
@@ -1761,6 +1767,54 @@ class CloneRepo(APIView):
 
         
         return JsonResponse(context)
+
+
+
+class searchProjects(APIView):
+
+    def get(self, request, keysearch=None, page=None):
+        
+        next='0'
+        prev='0'
+        offset='0'
+        npages=3
+        pagerange=''
+
+        if keysearch=='*':
+            projects = GencoProyectos.objects.extra(tables=('auth_user',),where=('genco_proyectos.creado_por=auth_user.id',),select={'user':'username'}).exclude(creado_por=request.user.id)
+        else:   
+            projects = GencoProyectos.objects.extra(tables=('auth_user',),where=('genco_proyectos.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__istartswith=keysearch)
+
+
+        paginator = Paginator(projects, npages)
+        #page = request.GET.get('page')
+
+        try:
+            projects = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            projects = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            projects = paginator.page(paginator.num_pages)
+
+        offset = str(paginator.num_pages)
+        serializer = SearchProjectSerializer(projects, many=True, context={'request': request})
+
+        if projects.has_next():
+            next = str(projects.next_page_number())
+        else:
+            next = offset
+            page = offset
+
+        if projects.has_previous():
+            prev = str(projects.previous_page_number())
+        else:
+            prev = page
+
+        pagerange = page_range(int(page), int(offset), npages)
+
+        return Response({'current': page, 'next': next, 'previous': prev, 'offset':offset, 'pagerange':pagerange,'projects' :serializer.data})
 
 
 class GencoDatatype(APIView):

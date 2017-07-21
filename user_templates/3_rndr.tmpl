@@ -1,5 +1,5 @@
 #for $e in $entities
-public class $e.name{
+public class $e.name.capitalize(){
         
         #for $f in $e.fields
         private $f.typecnv $f.name.capitalize().replace(' ','_')
