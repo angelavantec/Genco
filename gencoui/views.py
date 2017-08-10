@@ -193,7 +193,10 @@ class GencoDirectoriosViewSet(viewsets.ModelViewSet):
     serializer_class = GencoDirectoriosSerializer
 
     def get_queryset(self):
-        return GencoDirectorios.objects.filter(creado_por=self.request.user.id)
+        # return GencoDirectorios.objects.filter(creado_por=self.request.user.id)
+        idWS=self.request.session.get('wskey', None)
+        return GencoDirectorios.objects.filter(id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, self.request.user.id))
+
     
     def perform_create(self, serializer):
         obj = GencoDirectorios.objects.filter(nombre=serializer.validated_data['nombre'])
@@ -1051,11 +1054,17 @@ def deleteFile(fileName, context):
 class dir_template_tree(APIView):
     
     def get(self, request, id_proyecto=None):
+
+        idWS=request.session.get('wskey', False)
+        if not idWS:  
+            raise Http404
+        
         context = {'error':'none', 'fileContent':'none'}
-        a = GencoDirectorioElementos
-        e = a.objects.filter(id_directorio__id_proyecto=id_proyecto).order_by('id_directorio')
+        
         gd = GencoDirectorios
-        gdSet = gd.objects.filter(id_proyecto=id_proyecto).order_by('id_directorio')
+        gdSet = gd.objects.filter(id_proyecto__in=getAccessFilters(idWS, ACCESS_TYPE_PROJECT, request.user.id), id_proyecto=id_proyecto).order_by('id_directorio')
+        a = GencoDirectorioElementos
+        e = a.objects.filter(id_directorio__in=gdSet).order_by('id_directorio')
 
         dirs = []
         templates = {}
