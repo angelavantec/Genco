@@ -47,8 +47,9 @@ def register(request):
 
             current_site = get_current_site(request)
             subject = 'Activate your getbeta account.'
-            message = render_to_string('acc_active_email.html', {
+            message = render_to_string('registration/acc_active_email.html', {
                 'user':user, 'domain':current_site.domain,
+                'protocol':request.is_secure() and 'https' or 'http',
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })

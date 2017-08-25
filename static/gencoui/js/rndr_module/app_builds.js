@@ -7,6 +7,7 @@ buildApp.controller('ctrl_builds', [
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
 $scope.project_selected = $("#key_project").val();
+$scope.name_project_selected = $("#name_project").val();
 $scope.node_selected;
 $scope.node_item_selected;
 console.log($scope.environment_selected);
@@ -1436,14 +1437,87 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
         }
         var $btn = $('#btnBuildProject').button('loading');
 
-        buildproject.query({id_project: $scope.project_selected, id_repository: $scope.repository_selected.data.id_repositorio},
-            function(success){
-                $btn.button('reset');
-                $scope.showMessage('The project was build successfully', typeInfo);
-            },function(error){
-                $btn.button('reset');
-                $scope.showMessage($scope.getDataError(error), typeError);
-            });
+
+
+// $http({
+//     url: 'http://127.0.0.1:8000/gencoui/buildproject/1/1',
+//     method: "GET",
+//     headers: {
+//        'Content-type': 'application/json'
+//     },
+//   responseType: "arraybuffer"
+// }).success(function (data, status, headers, config) {
+//     console.log(data);
+//    var file = new Blob([data], { type: 'application/binary' });
+// var fileURL = URL.createObjectURL(file);
+// window.open(fileURL);
+// var link=document.createElement('a');
+// link.href=fileURL;
+// link.download="testing.zip";
+// link.click();
+//     window.open(objectUrl);
+// }).error(function (data, status, headers, config) {
+//     //upload failed
+// });
+
+
+        console.log('inciciando build');
+        var respuesta = buildproject.getBuild($scope.project_selected, $scope.repository_selected.data.id_repositorio, $scope.name_project_selected, $scope.showMessage, $scope.getDataError);
+        console.log('respuesta ' + respuesta);
+        //$scope.showMessage('The project was build successfully', typeInfo);
+        $btn.button('reset');
+//             function(success){
+//                 $btn.button('reset');
+//                 $scope.showMessage('The project was build successfully', typeInfo);
+//                 // var anchor = angular.element('<a/>');
+//                 // anchor.attr({
+//                 //     href: 'data:attachment/zip;charset=utf-8,' + encodeURI(success),
+//                 //     target: '_blank',
+//                 //     download: 'build.zip'
+//                 // })[0].click();
+
+// /*
+//                 var a = document.createElement('a');
+//                 var blob = new Blob([success], {'type':"application/zip"});
+//                 a.href = URL.createObjectURL(blob);
+//                 a.download = "takeatool.zip";
+//                 a.click();
+// */              
+//                 //console.log(success);
+//                 // var blob = new Blob([success], {type: "application/binary"});
+//                 // var fileURL = URL.createObjectURL(blob);
+//                 // window.open(fileURL);
+//                 // //var fileName = "QCPReport.zip";
+//                 // //var blob = success;
+//                 // console.log('blob');
+//                 // console.log(blob);
+
+//                 //console.log('data:attachment/csv;charset=utf-8,' + encodeURI(success));
+//                 //saveAs(blob, fileName);
+
+//                 // uriContent = "data:application/zip," + encodeURIComponent(success);
+//                 // console.log(uriContent);
+//                 // newWindow=window.open(uriContent, 'takeatool.zip');
+
+
+//                 // var blob2=new Blob([success]);
+//                 // console.log(blob2);
+//                 //     var link=document.createElement('a');
+//                 //     link.href=window.URL.createObjectURL(blob2);
+//                 //     link.download="myFileName.txt";
+//                 //     link.click();
+
+//                 // var URL = $window.URL || $window.webkitURL || $window.mozURL || $window.msURL;
+//                 //     if ( URL ) {
+//                 //         var blob = new Blob([success],{type:'application/zip'});
+//                 //         var url = URL.createObjectURL(blob);
+//                 //         $window.open(url);
+//                 //     }
+
+//             },function(error){
+//                 $btn.button('reset');
+//                 $scope.showMessage($scope.getDataError(error), typeError);
+//             });
     }
 
         $scope.template_entities_load = function(id_plantilla){

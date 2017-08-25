@@ -12,14 +12,14 @@ class RegistrationForm(forms.Form):
  
     def clean_username(self):
         try:
-            user = User.objects.get(username__iexact=self.cleaned_data['username'])
+            user = User.objects.get(username__iexact=self.cleaned_data['username'], is_active=1)
         except User.DoesNotExist:
             return self.cleaned_data['username']
         raise forms.ValidationError(_("The username already exists. Please try another one."))
 
     def clean_email(self):
         try:
-            user = User.objects.get(email__iexact=self.cleaned_data['email'])
+            user = User.objects.get(email__iexact=self.cleaned_data['email'], is_active=1)
         except User.DoesNotExist:
             return self.cleaned_data['email']
         raise forms.ValidationError(_("The email already exists. Please try another one."))    

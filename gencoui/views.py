@@ -49,6 +49,8 @@ import random
 import tarfile
 import shutil
 
+from wsgiref.util import FileWrapper
+
 def current_datetime(request):
     now = datetime.datetime.now()
     html = "<html><body>It is now %s.</body></html>" % now
@@ -1303,9 +1305,9 @@ def getDataTest(tipo, id_lenguaje):
         cnv = dict.get(i.id_tipodato)
 
         if cnv==None:
-            field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
+            field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': '', 'length':'', 'isKey':True, 'mandatory':True})()    
         else:
-            field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo)})()
+            field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo), 'length':'', 'isKey':False, 'mandatory':False})()
         
         f.append(field)
 
@@ -1321,9 +1323,9 @@ def getDataTest(tipo, id_lenguaje):
             cnv = dict.get(i.id_tipodato)
 
             if cnv==None:
-                field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': str(i.prefijo)})()    
+                field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': '', 'prefixcnv': '', 'length':'', 'isKey':True, 'mandatory':True})()    
             else:
-                field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo)})()
+                field = type('field', (object,),{'name':'Field'+ str(counter), 'type':str(i.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(i.prefijo), 'length':'', 'isKey':False, 'mandatory':False})()
             
             f.append(field)
 
@@ -1369,13 +1371,13 @@ def getDataBuild(id_lenguaje, id_entidad, dictCnv):
                 print ii.entidad_ref
                 print ('%s   %i',iii.nombre,  iii.id_tipodato)
                 if iii.id_tipodato == None:
-                    field = type('field', (object,),{'name':iii.nombre, 'type':'entity', 'typecnv': '', 'prefixcnv': ''})()    
+                    field = type('field', (object,),{'name':iii.nombre, 'type':'entity', 'typecnv': '', 'prefixcnv': '', 'length':iii.longitud, 'isKey':iii.es_pk, 'mandatory':iii.obligatorio})()    
                 else:
                     cnv = dictCnv.get(iii.id_tipodato.id_tipodato)
                     if cnv==None:
-                        field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(iii.id_tipodato.prefijo)})()    
+                        field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': '', 'length':iii.longitud, 'isKey':iii.es_pk, 'mandatory':iii.obligatorio})()    
                     else:
-                        field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(iii.id_tipodato.prefijo)})()
+                        field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(iii.id_tipodato.prefijo), 'length':iii.longitud, 'isKey':iii.es_pk, 'mandatory':iii.obligatorio})()
                 
                 fieldsref.append(field)
 
@@ -1384,9 +1386,9 @@ def getDataBuild(id_lenguaje, id_entidad, dictCnv):
         else:
             cnv = dictCnv.get(ii.id_tipodato.id_tipodato)
             if cnv==None:
-                field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(ii.id_tipodato.prefijo)})()    
+                field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': '', 'length':ii.longitud, 'isKey':ii.es_pk, 'mandatory':ii.obligatorio})()    
             else:
-                field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(ii.id_tipodato.prefijo)})()
+                field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(ii.id_tipodato.prefijo), 'length':ii.longitud, 'isKey':ii.es_pk, 'mandatory':ii.obligatorio})()
         
             fields.append(field)
 
@@ -1450,13 +1452,13 @@ def getDataBuildTags(id_lenguaje, id_entidad):
                     print ii.entidad_ref
                     print ('%s   %i',iii.nombre,  iii.id_tipodato)
                     if iii.id_tipodato == None:
-                        field = type('field', (object,),{'name':iii.nombre, 'type':'entity', 'typecnv': '', 'prefixcnv': ''})()    
+                        field = type('field', (object,),{'name':iii.nombre, 'type':'entity', 'typecnv': '', 'prefixcnv': '', 'length':iii.longitud, 'isKey':iii.es_pk, 'mandatory':iii.obligatorio})()    
                     else:
                         cnv = dict.get(iii.id_tipodato.id_tipodato)
                         if cnv==None:
-                            field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(iii.id_tipodato.prefijo)})()    
+                            field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': '', 'length':iii.longitud, 'isKey':iii.es_pk, 'mandatory':iii.obligatorio})()    
                         else:
-                            field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(iii.id_tipodato.prefijo)})()
+                            field = type('field', (object,),{'name':iii.nombre, 'type':str(iii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(iii.id_tipodato.prefijo), 'length':iii.longitud, 'isKey':iii.es_pk, 'mandatory':iii.obligatorio})()
                     
                     fieldsref.append(field)
 
@@ -1465,9 +1467,9 @@ def getDataBuildTags(id_lenguaje, id_entidad):
             else:
                 cnv = dict.get(ii.id_tipodato.id_tipodato)
                 if cnv==None:
-                    field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': str(ii.id_tipodato.prefijo)})()    
+                    field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': '', 'prefixcnv': '', 'length':ii.longitud, 'isKey':ii.es_pk, 'mandatory':ii.obligatorio})()    
                 else:
-                    field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(ii.id_tipodato.prefijo)})()
+                    field = type('field', (object,),{'name':ii.nombre, 'type':str(ii.id_tipodato.nombre), 'typecnv': cnv.id_tipodato_cnv, 'prefixcnv': str(ii.id_tipodato.prefijo), 'length':ii.longitud, 'isKey':ii.es_pk, 'mandatory':ii.obligatorio})()
             
                 fields.append(field)
 
@@ -2070,8 +2072,20 @@ class BuildProject(APIView):
                     # for name in generatedFiles:                    
                     # shutil.rmtree(dirBuild)
 
+        
+        #zip_file = open(mainBuild+'.zip', 'rb')        
+        #response = HttpResponse(zip_file, content_type='application/zip')
+        
+        response = HttpResponse(open(mainBuild+'.zip', 'rb').read(), content_type='application/binary')
+        #response['Content-Disposition'] = 'attachment; filename="%s"' % str(hash)+'.zip'
+        response['Content-Disposition'] = 'attachment; filename=takeatool.zip'
+        
+        shutil.rmtree(mainBuild, ignore_errors=False, onerror=None)
+        #os.remove(mainBuild+'.zip')
+        
+        return response
 
-        serializer = GencoProyectosSerializer(project, many=True)
-        # return JsonResponse({'project':project})
-        return Response(serializer.data)
+        # serializer = GencoProyectosSerializer(project, many=True)
+        # # return JsonResponse({'project':project})
+        # return Response(serializer.data)
 

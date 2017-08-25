@@ -1,9 +1,13 @@
-@generics 2017 fe
+@generics 2017 angel barrios
 #for $e in $entities
 $e.name
         FIELDS
         #for $f in $e.fields
-        $f.typecnv $f.name
+        #if $f.isKey == True 
+        $f.typecnv $f.name $f.prefixcnv $f.length $f.isKey $f.mandatory
+        #else
+        $f.typecnv $f.name $f.prefixcnv $f.length $f.isKey $f.mandatory
+        #end if
         #end for
         ENTITY REF
         #for $l in $e.links

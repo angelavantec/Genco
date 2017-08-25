@@ -106,12 +106,14 @@ return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@i
 
   });
 
-}).factory('buildproject',function($resource){
+})
+// .factory('buildproject',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/buildproject/:id_project/:id_repository',{id_project:'@id_elementoentidad',id_repository:'@id_repository'},{
-});
+// return $resource('http://127.0.0.1:8000/gencoui/buildproject/:id_project/:id_repository',{id_project:'@id_elementoentidad',id_repository:'@id_repository'},{
+// });
 
-}).service('popupService',function($window){
+// })
+.service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);
     }
@@ -183,5 +185,38 @@ return $resource('http://127.0.0.1:8000/gencoui/buildproject/:id_project/:id_rep
 
 
     }
-}]);
+}]).service('buildproject', ['$http', function ($http) {
+    this.getBuild = function(id_project, id_repository, name, callback, callback2){
+
+  
+        $http({
+            url: 'http://127.0.0.1:8000/gencoui/buildproject/'+id_project+'/'+id_repository,
+            method: "GET",
+            headers: {
+               'Content-type': 'application/json'
+            },
+          responseType: "arraybuffer"
+        }).success(function (data, status, headers, config) {
+            //console.log(data);
+            var file = new Blob([data], { type: 'application/binary' });
+            var fileURL = URL.createObjectURL(file);
+            //console.log(fileURL);
+            //window.open(fileURL);
+            var link=document.createElement('a');
+            link.href=fileURL;
+            link.download=name+".zip";
+            //link.click();
+            console.log('link');
+            //console.log(link);
+            //return link;
+            callback('The project was build successfully <a href="'+link+'" download="' + name +'.zip">Download</a>', typeInfo);
+            //window.open(objectUrl);
+        }).error(function (data, status, headers, config) {
+            console.log(error);
+            callback(callback2(error), typeError);
+        });
+
+
+    }
+}])
 ;
