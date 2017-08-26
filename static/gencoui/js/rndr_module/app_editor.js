@@ -67,6 +67,9 @@ $scope.node_selected;
 $scope.ConfirmDeleteCallback;
 
 
+$scope.pageFoundComponents = {}
+$scope.componentsToClone = []
+
 $(function () {
 
         $(document)
@@ -772,6 +775,97 @@ tree.get({id:$scope.environment_selected}, function(success){
             return resp;
        }
     }
+
+    /*
+    Cloning repository 
+    */
+    $scope.searchComponent =  function(pagenum){
+        var searchKey = $('#findComponentKey').val();
+        console.log(searchKey);
+
+        if(searchKey.trim().length==0 || searchKey.trim()=='' || searchKey==undefined || searchKey==null){
+            $scope.showMessage('Invalid text for search');
+            return;
+        }
+
+        // var sl = new searchLangs({keysearch: searchKey, page:1})
+        // console.log(sl);
+        searchComponent.get({keysearch: searchKey, page:pagenum}, function(success){
+            console.log(success.repos);
+            $scope.setChecktoSearchComponents(success.langs);          
+            $scope.pageFoundRepos = success;
+            //console.log('expand');
+            
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+    }
+
+
+    $scope.addToCloneRepos = function(index){
+        var pos=0;
+
+        pos = $scope.reposToClone.map(function(x) {return x.id_repositorio}).indexOf($scope.pageFoundRepos.repos[index].id_repositorio);
+
+
+        if(pos>=0) {
+            $scope.reposToClone.splice(pos,1);
+        }else{
+            $scope.reposToClone.push($scope.pageFoundRepos.repos[index]);
+        } 
+
+
+        console.log($scope.reposToClone);
+         
+    }
+
+
+    $scope.setChecktoSearchComponents = function(components){
+        var pos=0;
+
+        angular.forEach($scope.componentsToClone, function(value, key){
+
+            pos = components.map(function(x) {return x.id_componente}).indexOf(value.id_componente);
+
+            if(pos>=0) {
+                (components[pos])['checked']=true;
+            }    
+            // }else{
+            //     ($scope.pageFoundLangs.langs[pos])['checked']=false;
+            // }  
+        
+        });
+
+        return components;
+  
+         
+    }
+
+
+    $scope.save_clone_repo = function(){
+
+        if($scope.reposToClone.length<=0){
+            $scope.showMessage('Please select a Lanaguage for clone');
+            return;
+        }
+
+        var cloneRepos = '[' + $scope.reposToClone.map(function(x) {return x.id_repositorio}).toString() + ']'
+        
+
+        clone = new cloneRepo({repos: cloneRepos});
+        clone.$save(function(success){
+            console.log(success);
+            $scope.reposToClone = [];
+            $scope.pageFoundRepos = {};
+            $scope.load_repositories();
+            // $scope.getLangTree();
+            $('#repo-clone-modal').modal('hide')
+        }, function(error){
+            $scope.showMessage($scope.getDataError(error));
+        });
+         
+    }
+
 
     $scope.selectedTab = 0; //set selected tab to the 1st by default.
     $scope.getDirTree();

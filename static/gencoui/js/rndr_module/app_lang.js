@@ -641,7 +641,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
     $scope.save_clone_lang = function(){
 
         if($scope.langsToClone.length<=0){
-            $scope.showMessage('Please select a Lanaguage for clone');
+            $scope.showMessage('Please select Lanaguage to clone');
             return;
         }
 
