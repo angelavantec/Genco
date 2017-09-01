@@ -21,7 +21,7 @@ class GencoGrupoForm(ModelForm):
 class GencoLenguajesForm(ModelForm):
     class Meta:
         model = GencoLenguajes
-        fields = ['nombre', 'descripcion', 'version', 'id_icono', 'extension']
+        fields = ['nombre', 'descripcion', 'version', 'extension']
         labels = {'nombre': 'Name','descripcion':'Description','id_icono':'Icon',}
     
     def __init__(self, *args, **kwargs):    

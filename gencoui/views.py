@@ -1155,14 +1155,19 @@ class langs_tree(APIView):
             groupName=''
             cloneDate=''
             originDesc=''
+            origin=''
             if i.id_ws_origen is not None:
                 group = get_object_or_404(GencoGrupo, id_grupo=i.id_ws_origen)
                 groupName = group.nombre
                 cloneDate = i.fecha_creacion.strftime("%d/%m/%y")
-                originDesc='Cloned from'
+                originDesc='Cloned from ' + groupName
+                origin='Cloned'
             if i.id_ws != int(idWS):
-                originDesc='Shared by'        
-            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre + '<sub style="color:#CCCCCC">' + originDesc + ' ' + groupName + ' ' + cloneDate + '</sub>', 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre}})
+                group = get_object_or_404(GencoGrupo, id_grupo=i.id_ws)
+                groupName = group.nombre
+                originDesc='Shared by ' + groupName
+                origin='Shared'  
+            dirs.append({'id': i.id_lenguaje, 'parent': '#', 'text': i.nombre + '<sub style="color:#CCCCCC">'+ origin + '</sub>'  , 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"language",'data-renderid': i.id_lenguaje, 'data-rendername':i.nombre, 'data-cloned':originDesc + ' ' + cloneDate}})
        
 
         for i  in tipodatos:          

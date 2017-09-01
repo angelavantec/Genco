@@ -56,7 +56,7 @@ class GencoLenguajesSerializer(serializers.ModelSerializer):
 
     class Meta:        
         model = GencoLenguajes
-        fields = ('id_lenguaje', 'nombre', 'descripcion', 'version', 'id_icono', 'icon','creado_por','fecha_creacion','modificado_por','fecha_modificacion')
+        fields = ('id_lenguaje', 'nombre', 'descripcion', 'version', 'id_icono', 'icon','extension','creado_por','fecha_creacion','modificado_por','fecha_modificacion')
         read_only_fields = ('id_lenguaje', 'creado_por','fecha_creacion','modificado_por','fecha_modificacion',)
 
     # def create(self, validated_data):

@@ -127,6 +127,15 @@ return $resource('http://127.0.0.1:8000/gencoui/tipodatos_view/:id_tipodato\\/',
     // }, 
   });
 
+}).factory('icons',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/icono/?tipo=:id',{id:'@_id'},{
+
+    get: {
+        isArray:true    
+    }, 
+  });
+
 }).service('popupService',function($window){
     this.showPopup=function(message){
         return $window.confirm(message);

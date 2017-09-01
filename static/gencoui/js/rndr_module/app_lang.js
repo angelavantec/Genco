@@ -1,6 +1,7 @@
 angular.module('app_lang', ['ngResource','lang.services'])
 
-.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs, cloneLang, genco_tipodato) {
+.controller('ctrl_lang', function($scope, lang, lang_tipodato, conversion, langs_tree, searchLangs, cloneLang, genco_tipodato, icons) {
+    $scope.langIconos =  icons.get({id:'lang'});
     $scope.idGencolang = 1;
     $scope.langs = [];
 
@@ -29,6 +30,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
     $scope.language_selected = {
         id: null,
         nombre: null,
+        cloneData: null,
     }
 
     $scope.datatype_selected = {
@@ -61,8 +63,8 @@ angular.module('app_lang', ['ngResource','lang.services'])
                               obj = inst.get_node(data.reference);
                               $scope.node_selected = obj;
                               
-                              $scope.language_selected.nombre = obj.text;
-                              $scope.language_selected.id = obj.id;
+                              $scope.language_selected.nombre = obj.li_attr['data-rendername'];
+                              $scope.language_selected.id = obj.li_attr['data-renderid'];
                               $scope.new_type($scope.language_selected.id);
                              //$scope.repo_selected = obj;
 
@@ -85,8 +87,8 @@ angular.module('app_lang', ['ngResource','lang.services'])
                               obj = inst.get_node(data.reference);
                               $scope.node_selected = obj;
                               
-                              $scope.language_selected.nombre = obj.text;
-                              $scope.language_selected.id = obj.id;                              
+                              $scope.language_selected.nombre = obj.li_attr['data-rendername'];
+                              $scope.language_selected.id = obj.li_attr['data-renderid'];                           
                               //$scope.load_lang(obj.id);
                               $scope.edit_lang(obj.id)
                               //Hago que la interfaz refresque el titulo con el valor de component_selected
@@ -103,8 +105,8 @@ angular.module('app_lang', ['ngResource','lang.services'])
                                 obj = inst.get_node(data.reference);
                                 $scope.node_selected = obj;
                                 
-                                $scope.language_selected.nombre = obj.text;
-                                $scope.language_selected.id = obj.id;
+                                $scope.language_selected.nombre = obj.li_attr['data-rendername'];
+                                $scope.language_selected.id = obj.li_attr['data-renderid'];
                                 
                                 $scope.node_item_selected = obj;
                                 $scope.showConfirmDelete("Do you really want to delete <b>" + obj['text'] + "</b> language?");
@@ -169,7 +171,8 @@ angular.module('app_lang', ['ngResource','lang.services'])
             return;
         }
         $scope.language_selected.id = obj.li_attr['data-renderid']; 
-        $scope.language_selected.nombre = obj.li_attr['data-rendername']; 
+        $scope.language_selected.nombre = obj.li_attr['data-rendername'];
+        $scope.language_selected.cloneData = obj.li_attr['data-cloned'];
         $scope.load_lang($scope.language_selected.id);
             
         // var nodeParent = tree.get_node(''+obj.parent)
@@ -431,7 +434,7 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
 
 
-    $scope.saveOrUpdateEntity = function(){
+    $scope.saveOrUpdate = function(){
         var mode = $scope.wdnMode;
         if(mode==1){
             $scope.save_lang();
@@ -464,9 +467,9 @@ angular.module('app_lang', ['ngResource','lang.services'])
 
 
     $scope.update_lang = function(){
-
+        console.log('update');
         $scope.GencoLenguajes.$update(function(success){
-          $scope.renameTreeNode($scope.node_selected, success.nombre);
+          $scope.renameTreeNode($scope.node_selected, success.nombre + '<sub style="color:#cccccc">'+ success.lang.nombre +'</sub>');
           $('#lang-modal').modal('hide')
         },function(error){
             $scope.showMessage($scope.getDataError(error));
@@ -737,6 +740,11 @@ angular.module('app_lang', ['ngResource','lang.services'])
        $scope.ConfirmDeleteCallback();
     }
 
+    $scope.setLangIcon = function (icon) {
+        $scope.GencoLenguajes.id_icono = icon.id_icono;
+        console.log(icon);
+        $('#imgLangIconAdd').attr('src',icon.upload);
+    }
 
     /*
     Inicializamos el UI

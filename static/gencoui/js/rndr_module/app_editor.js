@@ -480,7 +480,7 @@ tree.get({id:$scope.environment_selected}, function(success){
 
         $scope.update_template = function(){
             $scope.GencoPlantillas.$update(function(success){
-                $scope.renameTreeNode($scope.node_selected, success.nombre);
+                $scope.renameTreeNode($scope.node_selected, success.nombre + '<sub style="color:#CCCCCC">' + success.lang.nombre + '</sub>');
                 $('#template-modal').modal('hide')
             },function(error){
                 $scope.showMessage($scope.getDataError(error));

@@ -1,0 +1,20 @@
+#for $e in $entities
+public class $e.name{
+        
+        #for $f in $e.fields
+        private $f.typecnv $f.name
+        #end for
+        
+        #for $f in $e.fields
+        public $f.typecnv get$f.name () {
+            return $f.name;
+        }    
+        #end for
+        #for $f in $e.fields
+        public void set$f.name ($f.typecnv  $f.name)  {
+            this.$f.name = $f.name;
+        }    
+        #end for
+}
+#end for
+
