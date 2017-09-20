@@ -1,106 +1,75 @@
 {% load staticfiles %}
-
+{% load static %}
+{% block extrajs %}
+	<script type="text/javascript">
+		$(function () {
+		  $('[data-tt="tooltip"]').tooltip()
+		});
+	</script>
+{% endblock %}
 {% block content %}
-<div class="container-fluid">
+<div id="ctrl_env" ng-controller="ctrl_env">
 	  	  		  	
-        <div class="modal-content">
-	        <div class="modal-header">
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
-		        <h4 class="modal-title">Clone Lang</h4>
-		    </div>
-          <!-- <div class="arrow-up"></div> -->
-          	<div class="modal-body">
+
+    <div class="panel-body">
    
-				  	<div class="form-group">		
-	  		<span style="color:#cccccc">
-	  			<i class="glyphicon glyphicon-asterisk"></i>
-	  			for all
-	  		</span>
 
-	  		<form ng-submit="serachLang()">
-				 	<div class="input-group">
-					    <input id="findLangKey" type="text" class="form-control" placeholder="Find Lang">
-					    <span class="input-group-btn">
-					      <button class="btn btn-default btn-sm" type="button" ng-click="searchLang(1)">
-					      	<i class="glyphicon glyphicon-search"></i>
-					      	Search
-					      </button>
-					    </span>			    
-				  	</div>
-		  		<button type="submit" hidden></button>
-			</form>	
-		</div>
+		<div style="padding: 10px;" >
 
-		<div>
-			{% verbatim %}
-			<table class="table table-hover" style="color: #6d758c;">
-			  <thead>
-			    <tr>
-			      <th>Name</th>
-			      <th>Logo</th>
-			      <th>Description</th>
-			      <th>Creator</th>
-			      <th>Add</th>
-			      <th></th>
-			    </tr>
-			  </thead>
-			  <tbody>
-			  	
-			    <tr ng-repeat="langsf in pageFoundLangs.langs">
-			      <td>{{langsf.nombre}}</td>
-			      <td><img  ng-src="{{langsf.id_icono.upload}}" onerror="this.onerror=null; this.src='../static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px"/></td>
-			      <td>{{langsf.descripcion}}</td>
-			      <td>{{langsf.user}}</td>
-			      <td>
-					
-					<input type="checkbox" autocomplete="off" ng-click="addToCloneLangs($index)" ng-checked="langsf.checked">					
-					
-			      </td>		
-			      <td>
-			      	<a class="btn btn-default btn-xs" role="button" style="margin-bottom:20px" ng-click="openViewWindow($index)" >View</a>	
-			      </td>	      
-			    </tr>
-			   
-		  	  </tbody>
-			</table> 
-			<div style="text-align:center">
-				<ul class="pagination" ng-if="pageFoundLangs.next >= pageFoundLangs.current" >
-				  <li><a ng-class="{'disabled': pageFoundLangs.next == pageFoundLangs.current}" href="#" ng-click="searchLang(pageFoundLangs.pagerange[0])">&laquo;</a></li>
+			<p style="display:inline;">Projects</p>
+				
+			<a class="btn icon-btn btn-default" ng-click="create_project()" data-placement="bottom"data-tt="tooltip" title="Save">
+		<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
+			</a>
 
-				  <li ng-class="{'active':npage==pageFoundLangs.current}" ng-repeat="npage in pageFoundLangs.pagerange"><a href="#" ng-click="searchLang(npage)">{{npage}}</a></li>
-
-
-			<!-- 	  <li ng-class="{'active':npage[$index]==pageFoundLangs.current}" ><a href="#" ng-click="searchLang(npage[$index])">1</a></li>	 -->			  
-	<!-- 			  <li><a href="#" ng-click="searchLang(2)">2</a></li>
-				  <li><a href="#" ng-click="searchLang(3)">3</a></li>
-				  <li><a href="#" ng-click="searchLang(4)">4</a></li>
-				  <li><a href="#" ng-click="searchLang(5)">5</a></li> -->
-
-				  <li><a ng-class="{'disabled': pageFoundLangs.next == pageFoundLangs.current}" href="#" ng-click="searchLang(pageFoundLangs.pagerange[pageFoundLangs.pagerange.length - 1])">&raquo;</a></li>
-
-				</ul>
-			</div>
-
-			 {% endverbatim %}
+			<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 20px;  background-color:rgba(236, 240, 241, 0.39);">
+				{% verbatim %}
+			  	<div ng-repeat="prj in envProjects" style="display:inline;">
+			  		<a class="btn btn-default btn-sm" href="module/builds/gb/{{prj.id_proyecto}}">
+			    	{{prj.nombre}}
+			    	</a>
+			  	</div>
+			  	{% endverbatim %}
+				</div>
 
 		</div>	
 
 
-          	</div>
-          	<div class="modal-footer">
-          		<div style="display:inline; float:left">
-          			<a class="btn btn-default" ng-click="save_clone_lang()" data-placement="bottom"data-tt="tooltip" title="Clone">Clone
-					<!-- <span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					 -->
-					</a>
-				</div>
-				<div style="display:inline">	
-					<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Cancel">
-						<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
-					</a>
-				</div>	
-          	</div>
+	</div>
+	<div class="modal fade" id="create-project-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
-        </div>
+	    <div class="modal-dialog">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title">Create Project</h4>
+			    </div>
+	          <!-- <div class="arrow-up"></div> -->
+	          	<div class="modal-body">
+	   
+	   	   				<form ng-submit="save_project()">
+							{{ form_project }}				
+							<button type="submit" hidden></button>
+						</form>			
+
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		<a class="btn icon-btn btn-default" ng-click="save_project()" data-placement="bottom"data-tt="tooltip" title="Save">
+							<span class="glyphicon btn-glyphicon glyphicon-floppy-disk img-circle" ></span>					
+						</a>
+					</div>
+					<div style="display:inline">	
+						<a class="btn icon-btn btn-default" data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Cancel">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>  
 </div>
 
 

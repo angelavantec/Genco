@@ -458,7 +458,7 @@ class GencoProyectos(models.Model):
     id_proyecto = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=45)
     descripcion = models.CharField(max_length=200, blank=True, null=True)
-    id_entorno = models.ForeignKey(GencoEntorno, models.DO_NOTHING, db_column='id_entorno')
+    #id_entorno = models.ForeignKey(GencoEntorno, models.DO_NOTHING, db_column='id_entorno')
     grupo = models.CharField(max_length=50, blank=True, null=True)
     ref_archivo_constructor = models.CharField(max_length=100, blank=True, null=True)
     empaquetado = models.CharField(max_length=45, blank=True, null=True)

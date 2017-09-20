@@ -120,22 +120,17 @@
 	    	<div id="dragbar"></div>			    
 
 	    		<div class="container-fluid" style="margin-top:70px;">
-					    <div class="well well-sm">
-							<img src="{% get_media_prefix %}{{icon}}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px">
-							{{entorno.nombre}}</img>
-							
-
+					    <div class="well well-sm">					    	
+							<img src="{% static 'gencoui/img/rndr/build.svg' %}"  onerror="this.onerror=null; this.src='{% static 'gencoui/img/desing.png' %}'" width="32px" height="32px"></img>
+							<h4 style="display:inline;margin-top: 10px;margin-right:10px">Build </h4>
 					    </div>
 
-				    <div style="margin-bottom: 15px;">
-				    	<input hidden id="key_module" value="{{entorno.id_entorno}}">
-				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px">Components </h4>
-					    <!-- <a class="btn icon-btn btn-default btn-xs" href="#" data-placement="bottom" data-tt="tooltip" title="Create Component" ng-click="new_component()">
-								<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
-						</a> -->	
+				    <div style="">
+				    	<h4 style="display:inline;margin-top: 10px;margin-right:10px"> </h4>
 				    </div>	
 
 				    <div id="jstree"></div>
+				    <div id="envTree"></div>
 
 				</div>       
 	    	

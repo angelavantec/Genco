@@ -707,14 +707,15 @@ def get_module(request, id_module=None, key_env=None, key_project=None):
         context = {'form_add_lang': GencoLenguajesForm, 'form_add_type': GencoTipodatoForm,'user': request.user}    
         return render(request,'gencoui/rndr_langs.html',context)
     elif id_module == 'builds':
-        # env = get_object_or_404(GencoEntorno, creado_por=request.user.id, id_entorno=key_env)
-        queryset=GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id))
-        env = get_object_or_404(queryset, id_entorno=key_env)
-        prj = get_object_or_404(GencoProyectos,id_proyecto=key_project, id_entorno=key_env)
+        
+        #queryset=GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id))
+        #env = get_object_or_404(queryset, id_entorno=key_env)
+        env = None;
+        prj = get_object_or_404(GencoProyectos,id_proyecto=key_project)
         
 
         context = {'form_create_file': GencoArchivosForm, 'form_create_folder': GencoDirectoriosForm, 'form_element_entity': GencoElementoEntidadForm,
-                    'user': request.user, 'key_module':key_env, 'entorno': env, 'proyecto': prj, 'icon': env.id_icono.upload}    
+                    'user': request.user, 'proyecto': prj}    
         return render(request,'gencoui/rndr_builds.html',context)            
     else:
         raise Http404
@@ -1253,6 +1254,66 @@ class component_template_tree(APIView):
 
         return JsonResponse({'dirs':comps})     
 
+
+class env_component_template_tree(APIView):
+    
+    def get(self, request, id_entorno=None):
+        idWS=request.session.get('wskey', False)
+
+
+        #comp = GencoComponentes.objects.filter(id_entorno=id_entorno, id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id)).order_by('id_componente')
+
+        env = GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id)).order_by('id_entorno')
+        envs = []
+        for e in env:
+            
+
+            comp = GencoComponentes.objects.filter(id_entorno=e.id_entorno, id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id)).order_by('id_componente')
+            template = GencoPlantillas.objects.filter(id_componente__in=comp).order_by('id_plantilla')
+
+            comps = []
+            id_padre = ''
+
+            for i  in comp:         
+                comps.append({'id': i.id_componente, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"component",'data-renderid': i.id_componente, 'data-rendername':i.nombre}})
+           
+
+            for i  in template:          
+                comps.append( {'id': 'template'+str(i.id_plantilla), 'parent': i.id_componente.id_componente, 'text': i.nombre + '<sub style="color:#CCCCCC">'+ i.id_lenguaje.nombre +'</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla, 'data-rendername': i.nombre}}) 
+
+            envs.append({'idEnv': e.id_entorno, 'nombre': e.nombre, 'dirs':comps})
+                
+        return JsonResponse({'envs':envs})
+
+class build_component_template_tree(APIView):
+    
+    def get(self, request):
+        idWS=request.session.get('wskey', False)
+
+
+        #comp = GencoComponentes.objects.filter(id_entorno=id_entorno, id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id)).order_by('id_componente')
+
+        env = GencoEntorno.objects.filter(id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id)).order_by('id_entorno')
+        envs = []
+        for e in env:
+            
+
+            comp = GencoComponentes.objects.filter(id_entorno=e.id_entorno, id_entorno__in=getAccessFilters(idWS, ACCESS_TYPE_ENV, request.user.id)).order_by('id_componente')
+            template = GencoPlantillas.objects.filter(id_componente__in=comp).order_by('id_plantilla')
+
+            comps = []
+            id_padre = ''
+
+            for i  in comp:         
+                comps.append({'id': i.id_componente, 'parent': '#', 'text': i.nombre, 'icon':"glyphicon glyphicon-folder-open", 'li_attr':{'data-renderas':"component",'data-renderid': i.id_componente, 'data-rendername':i.nombre}})
+           
+
+            for i  in template:          
+                comps.append( {'id': 'template'+str(i.id_plantilla), 'parent': i.id_componente.id_componente, 'text': i.nombre + '<sub style="color:#CCCCCC">'+ i.id_lenguaje.nombre +'</sub>', 'icon':"glyphicon glyphicon-file", 'li_attr':{'data-renderas':"template", 'data-renderid': i.id_plantilla, 'data-rendername': i.nombre}}) 
+
+            envs.append({'idEnv': e.id_entorno, 'nombre': e.nombre, 'dirs':comps})
+                
+        return JsonResponse({'envs':envs})          
 
 class processors(APIView):
     

@@ -1,8 +1,8 @@
 var buildApp = angular.module('app_builds', ['ngResource','editor.services','lang.services','builds.services','repository.services']);
 
 buildApp.controller('ctrl_builds', [ 
-                '$scope', '$http', 'componente_env', 'componente', 'plantillas', 'plantillas_comp', 'template', 'lang', 'directorioelemento', 'tree', 'dir_tmpl_tree', 'dir_item_tree','repotree', 'directorio', 'archivo', 'plantillaentidad', 'fileUpload', 'repository', 'entity_repo', 'entitydef', 'buildproject',
-                function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, tree, dir_tmpl_tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef, buildproject) {
+                '$scope', '$http', 'componente_env', 'componente', 'plantillas', 'plantillas_comp', 'template', 'lang', 'directorioelemento',  'dir_tmpl_tree', 'dir_item_tree','repotree', 'directorio', 'archivo', 'plantillaentidad', 'fileUpload', 'repository', 'entity_repo', 'entitydef', 'buildproject','fulltree',
+                function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, directorioelemento, dir_tmpl_tree, dir_item_tree,repotree, directorio, archivo, plantillaentidad, fileUpload, repository, entity_repo, entitydef, buildproject, fulltree) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -564,21 +564,72 @@ typeWarning = 'WARNING';
 
 /* Ya construidos los arboles cargo los items de directorio elemento*/
 $scope.getCmpTree = function(){
-tree.get({id:$scope.environment_selected}, function(success){
-                        
-                        console.log('success');    
-                        //$('#jstreeBuilds').jstree();
-                        //$('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
-                        //$('#jstreeBuilds').jstree(true).refresh();
 
-                        $('#jstree').jstree();
-                        $('#jstree').jstree(true).settings.core.data = success.dirs;
-                        $('#jstree').jstree(true).refresh();
-                                                    
-                    },function(error){                        
-                        $scope.showMessage($scope.getDataError(error), typeError); 
-                    });
-}
+
+
+    fulltree.get(function(success){    
+    //tree.get({id:$scope.environment_selected}, function(success){
+
+                                 
+                            var idTree;
+                            //console.log('success');    
+                            //$('#jstreeBuilds').jstree();
+                            //$('#jstreeBuilds').jstree(true).settings.core.data = success.dirs;
+                            //$('#jstreeBuilds').jstree(true).refresh();
+
+                            angular.forEach(success.envs, function(value, key){ 
+                                console.log('-----------');
+                                console.log(value);
+                                console.log('-----------');
+                                idTree='jstree'+ value.idEnv;   
+
+                                var txt1 = "<div id='" + idTree + "'></div>";               // Create element with HTML  
+                                $("#envTree").append('<p style="padding-top: 10px;"><span class="label label-primary   ">' +value.nombre + '</span></p>');
+                                $("#envTree").append(txt1);
+                                //$('#'+idTree).jstree();
+                                
+                                // $('#jstree').jstree();
+                                //                 $('#jstree').jstree(true).settings.core.data = success.envs[0].dirs;
+                                //                 $('#jstree').jstree(true).refresh(); 
+                                $('#'+idTree).jstree({
+                                    "core" : {
+                                    "check_callback" : function (operation, node, node_parent, node_position, more) {
+                                            // operation can be 'create_node', 'rename_node', 'delete_node', 'move_node' or 'copy_node'
+                                            // in case of 'rename_node' node_position is filled with the new node name                      
+                                            
+                                            var validator;
+
+                                            if(node_parent==null || typeof node_parent.li_attr == 'undefined'){
+                                                return false;
+                                            }
+                                                
+
+                                          
+                                            console.log(operation);
+                                            if(operation == 'move_node' || operation == 'copy_node'){
+
+                                                validator = false; 
+
+                                            }   
+                                            return validator;
+                                            
+                                        }
+                                },
+                                "crrm": { "move": { "always_copy": "multitree" } },
+                                "plugins" : [ "dnd","sort", "crrm" ],
+                                });
+
+                                $('#'+idTree).jstree(true).settings.core.data = value.dirs;
+                                $('#'+idTree).jstree(true).refresh();
+
+                            });
+                            
+                                                        
+                        },function(error){                        
+                            $scope.showMessage($scope.getDataError(error), typeError); 
+                        });
+
+    }
 
 /* Ya construidos los arboles cargo los items de directorio elemento*/
 $scope.getDirTree = function(){

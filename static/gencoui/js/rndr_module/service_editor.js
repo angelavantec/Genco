@@ -115,7 +115,7 @@ return $resource('http://127.0.0.1:8000/gencoui/tmpl/:id_plantilla',{id_plantill
     // }, 
   });
 
-}).factory('tree',function($resource){
+}).factory('cmp_tree',function($resource){
 
 return $resource('http://127.0.0.1:8000/gencoui/cmp_tmpl_tree/:id',{id:'@id'},{
     update: {

@@ -106,6 +106,17 @@ return $resource('http://127.0.0.1:8000/gencoui/plantillaentidad/:id\\/',{id:'@i
 
   });
 
+}).factory('fulltree',function($resource){
+
+return $resource('http://127.0.0.1:8000/gencoui/build_tmpl_tree\\/',{
+    update: {
+            method: 'PUT'
+        },
+    query: {
+        isArray:true    
+    }, 
+  });
+
 })
 // .factory('buildproject',function($resource){
 

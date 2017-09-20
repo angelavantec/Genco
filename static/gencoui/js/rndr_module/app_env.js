@@ -42,7 +42,7 @@ envApp.controller('ctrl_env', [
             $scope.tmpGencoEntorno =  $scope.GencoEntorno;
             $scope.langs=env_lang.get({id:id_env});
             $('#dropEnvOptions').attr('disabled', false);
-            $scope.chooseBuild();
+            
 
             //$('#lnkToEditorFull').attr('href', 'module/editor/' + id_env);
                 //$('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
@@ -52,8 +52,7 @@ envApp.controller('ctrl_env', [
 
     $scope.chooseBuild = function(){
 
-        env_projects.get({id_env:$scope.GencoEntorno.id_entorno}, 
-        function(success){
+        projects.query(function(success){
             $scope.envProjects = success;
             //$('#choose-build-modal').modal('show');
         }, function(error){
@@ -356,6 +355,8 @@ envApp.controller('ctrl_env', [
             return resp;
        }
     }
+
+    $scope.chooseBuild();
 
   }]);
 

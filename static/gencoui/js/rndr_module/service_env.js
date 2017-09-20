@@ -70,6 +70,7 @@ return $resource('http://127.0.0.1:8000/gencoui/projects/:id_project\\/',{id_pro
         method: 'POST'
     },
     query: {
+        url: 'http://127.0.0.1:8000/gencoui/projects\\/',
         isArray:true    
     },  
   });

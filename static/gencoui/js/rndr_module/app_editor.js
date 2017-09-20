@@ -1,6 +1,6 @@
 angular.module('app_editor', ['ngResource','editor.services','lang.services', 'env.services'])
 
-.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, tree, env_lang, processors) {
+.controller('ctrl_editor', function($scope, $http, componente_env, componente, plantillas, plantillas_comp, template, lang, cmp_tree, env_lang, processors) {
 
 //editors = [];
 $scope.environment_selected = $("#key_module").val();
@@ -119,7 +119,7 @@ $(function () {
 
 /* Ya construidos los arboles cargo los items de directorio elemento*/
 $scope.getDirTree = function(){
-tree.get({id:$scope.environment_selected}, function(success){
+cmp_tree.get({id:$scope.environment_selected}, function(success){
                         
                         console.log('success');    
                         //$('#jstreeBuilds').jstree();
@@ -597,7 +597,7 @@ tree.get({id:$scope.environment_selected}, function(success){
                 }
                 $('#tabPanel').append('<div id="' + idTempl + '" class="editor"></div>')
                 var editor = ace.edit(idTempl);
-                editor.setTheme("ace/theme/eclipse");
+                editor.setTheme("ace/theme/monokai");
                 editor.getSession().setMode("ace/mode/python");
                 editor.$blockScrolling = Infinity;
                 editors[pos]=editor;
