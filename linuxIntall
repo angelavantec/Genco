@@ -2,6 +2,7 @@ django==1.7
 djangorestframework
 django-cors-headers
 django-widget-tweaks
+django-filter
 cheetah
 
 # para mysql hacer lo siguiente:
