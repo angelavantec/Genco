@@ -1,0 +1,13 @@
+django==1.7
+djangorestframework
+django-cors-headers
+django-widget-tweaks
+cheetah
+
+# para mysql hacer lo siguiente:
+#    sudo apt-get update
+#    sudo apt-get install mysql-server
+#    sudo mysql_secure_installation
+#    sudo apt-get install libmysqlclient-dev
+#    sudo pip install mysql-python
+#    mysql -u root -p
