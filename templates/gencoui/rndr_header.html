@@ -21,26 +21,26 @@
         <div style="float: right; margin-top:20px">
             {% if user.is_authenticated %}
                 <div style="display:inline;padding:15px">
-                    <a href="/gencoui" style="color:#ffffff" data-placement="bottom" data-tt="tooltip" title="Go Main Panel">
+                    <a href="/gencoui" style="color:#202077" data-placement="bottom" data-tt="tooltip" title="Go Main Panel">
                         <span style="display:inline;" class="glyphicon glyphicon-home"></span>
                     </a>
                 </div>
                 <div style="display:inline;background-color: #eee; border-radius: 10px; padding-top: 3px; padding-bottom: 3px; padding-left:10px; padding-right: 10px;margin-top: 8px;">
-                    <p style="display:inline; font-size:12px">{{request.session.wsname}} - {{ user.get_username }}</p>    
+                    <p style="display:inline; font-size:12px; color:#202077">{{request.session.wsname}} - {{ user.get_username }}</p>    
                 </div>                
                 <div style="display:inline;padding:15px">
-                    <a style="color:#ffffff" data-placement="bottom" data-tt="tooltip" title="Close Session" href="/login/logout">
+                    <a style="color:#202077" data-placement="bottom" data-tt="tooltip" title="Close Session" href="/login/logout">
                         <span style="display:inline;" class="glyphicon glyphicon-off"></span>
                     </a>
                 </div> 
                 
             {% else %}
                 <div style="display:inline;padding:15px">
-                    <a href="/login" style="color:#ffffff" data-placement="bottom" data-tt="tooltip" title="Go Main Panel">
+                    <a href="/login" style="color:#202077" data-placement="bottom" data-tt="tooltip" title="Go Main Panel">
                         <span style="display:inline;" class="glyphicon glyphicon-menu-left"></span>
                     </a>
                 </div>
-                <p style="color:white; display:inline;">Welcome</p>
+                <p style="color:#202077; display:inline;">Welcome</p>
             {% endif %}
 
 
@@ -94,21 +94,21 @@
           <div class="modal-body">
             <table width="100%">
                 <tr>
-                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';">
+                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center" >
                             <a href="/gencoui">
                                 <img src="{% static 'gencoui/img/rndr/environment.svg' %}" width="48px"></div>
                             </a>
                         </div>
                     </td>
-                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';">
+                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center">
                             <a href="{% url 'gencoui:module' 'langs' %}">
                                 <img src="{% static 'gencoui/img/rndr/langs.svg' %}" width="48px"></div>
                             </a>
                         </div>
                     </td>
-                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';">
+                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center">
                             <a href="{% url 'gencoui:module' 'entities' %}">
                                 <img src="{% static 'gencoui/img/rndr/repository.svg' %}" width="48px"></div>
@@ -117,19 +117,19 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';">
+                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <!-- <div style="text-align:center">
                             <img src="{% static 'gencoui/img/rndr/design_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" >
                             </img>
                         </div> -->
                     </td>
-                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';">
+                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <!-- <div style="text-align:center">
                             <img src="{% static 'gencoui/img/rndr/build_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="48px" >
                             </img>
                         </div> -->
                     </td>
-                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';">
+                    <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center" >
                             <a class="btn btn-default btn-sm" role="button" data-placement="bottom" data-tt="tooltip" title="Close Session" href="/login/logout" style="width:64px">
                                 <span style="display:inline;" class="glyphicon glyphicon-off"></span>

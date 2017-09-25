@@ -549,6 +549,45 @@
 	        </div>
 	    </div>
 	</div>
+
+	    <!-- Modal Templates View-->
+	<div class="modal fade" id="template-view-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+	    <div class="modal-dialog modal-lg">
+
+	        <div class="modal-content">
+		        <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span aria-hidden="true">&times;</span></button>
+			     {% verbatim %}
+		        <h4 class="modal-title">View Template</h4>
+		        {% endverbatim %}
+			    </div>
+	          <!-- <div class="arrow-up"></div> -->
+	          	<div class="modal-body">
+	   				<form >
+				   			{% verbatim %}
+				   			<label>Name: {{ templateName }} </label><br>					        
+					        {% endverbatim %}
+    						<span></span>
+    						
+    						<div id="editor3" name="" class="editor"></div>
+							
+					</form>
+	          	</div>
+	          	<div class="modal-footer">
+	          		<div style="display:inline">
+		          		
+					</div>	
+					<div style="display:inline">	
+						<a class="btn icon-btn btn-default"  data-dismiss="modal" data-placement="bottom"data-tt="tooltip" title="Close">
+								<span class="glyphicon btn-glyphicon glyphicon-remove img-circle" ></span>					
+						</a>
+					</div>	
+	          	</div>
+
+	        </div>
+	    </div>
+	</div>
    
    <div  id="popBubble" style="position: absolute;display: none;"  class="bubble_message">
    		<!-- <img src="{% static 'gencoui/img/pebro.png' %}" width="32px" height="32px"></img> -->
@@ -576,6 +615,11 @@
     editor2.setTheme("ace/theme/monokai");
     editor2.getSession().setMode("ace/mode/java");
     editor2.$blockScrolling = Infinity;
+
+    var editor3 = ace.edit("editor3");
+    editor3.setTheme("ace/theme/monokai");
+    editor3.getSession().setMode("ace/mode/python");
+    editor3.$blockScrolling = Infinity;
 
     </script>
  

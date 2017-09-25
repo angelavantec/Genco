@@ -209,7 +209,7 @@ envApp.controller('ctrl_env', [
 
 
     $scope.save_project = function(){
-        project = new projects({id_entorno: $scope.GencoEntorno.id_entorno, nombre: $scope.GencoProyectos.nombre, descripcion: $scope.GencoProyectos.descripcion})
+        project = new projects(nombre: $scope.GencoProyectos.nombre, descripcion: $scope.GencoProyectos.descripcion})
 
         project.$save(function(success){
             $scope.envProjects.push(success);

@@ -173,7 +173,9 @@
 		}
 
 		.navbar-default {
-		    background-color: #476f98;
+		    //background-color: #476f98;
+		    background-color: #ffffff;
+		    color: #476f98;
 		    border-color: transparent;
 		    
 		}
@@ -332,8 +334,8 @@
 
 
 		 .well {
-		 	     background-color: transparent;
-		 }  */ 
+		 	background-color: rgba(236, 240, 241, 0.39);;
+		 }   
 
 		.btn-circle {	
 			width: 48px;

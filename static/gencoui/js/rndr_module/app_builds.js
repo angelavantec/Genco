@@ -94,6 +94,7 @@ $scope.asListModel = {
        value : true
 };
 
+$scope.templateName = '';
 
 typeError = 'ERROR';
 typeInfo = 'INFO';
@@ -617,6 +618,22 @@ $scope.getCmpTree = function(){
                                 },
                                 "crrm": { "move": { "always_copy": "multitree" } },
                                 "plugins" : [ "dnd","sort", "crrm" ],
+                                }).bind("dblclick.jstree", function(e) {
+
+                                    console.log('preview template');
+
+                                    var tree = $(this).jstree(); 
+                                    var node = tree.get_node(e.target); 
+                                    
+                                    var renderAs = node.li_attr['data-renderas'];
+                                    var renderId = node.li_attr['data-renderid']; 
+
+                                    console.log(node);      
+
+                                    if(renderAs === 'template'){                                            
+                                        $scope.load_template(renderId);
+                                        $('#template-view-modal').modal('show');
+                                    }
                                 });
 
                                 $('#'+idTree).jstree(true).settings.core.data = value.dirs;
@@ -1147,13 +1164,29 @@ $scope.getItemTree = function(id_direlemento, id_repositorio){
                                         $http.get($scope.GencoArchivos.upload).success(function(data) {
                                             editor2.setValue(data);
                                         }).error(function(data){
-                                            console.log(error);
+                                            $scope.showMessage($scope.getDataError(error), typeError);
                                         });
                                                                       
                                     }, 
                                     function(error){
                                         $scope.showMessage($scope.getDataError(error), typeError);
                                     });
+
+        }
+
+        $scope.load_template = function(id_template){
+
+            template.get({id_plantilla:id_template}, function(success){
+                                    console.log(success);
+                                    
+                                    //$scope.tabs.push({id_plantilla:id_template, nombre: data.templateName ,content: data.fileContent});
+                                    $scope.templateName = success.templateName;
+                                    console.log($scope.templateName );
+                                    //$scope.GencoArchivos.descripcion = success.descripcion;
+                                    editor3.setValue(success.fileContent);
+                                },function(error){
+                                    $scope.showMessage($scope.getDataError(error), typeError);
+            });
 
         }
 

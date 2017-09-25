@@ -48,18 +48,20 @@ return $resource('http://127.0.0.1:8000/gencoui/entornos/:id\\/',{id:'@id_entorn
     // }, 
   });
 
-}).factory('env_projects',function($resource){
+})
+// .factory('env_projects',function($resource){
 
-return $resource('http://127.0.0.1:8000/gencoui/projects/?id_env=:id_env',{id_env:'@id_env'},{
-    get: {
-        isArray:true
-    },
-    query: {
-        isArray:true    
-    },  
-  });
+// return $resource('http://127.0.0.1:8000/gencoui/projects/?id_env=:id_env',{id_env:'@id_env'},{
+//     get: {
+//         isArray:true
+//     },
+//     query: {
+//         isArray:true    
+//     },  
+//   });
 
-}).factory('projects',function($resource){
+// })
+.factory('projects',function($resource){
 
 return $resource('http://127.0.0.1:8000/gencoui/projects/:id_project\\/',{id_project:'@id_project'},{
     update: {    

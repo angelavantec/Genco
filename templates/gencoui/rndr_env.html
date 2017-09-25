@@ -20,44 +20,46 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-12 col-sm-6">
-						<div style="border: 1px solid #e3e3e3; border-radius: 4px; padding: 10px; margin-top: 20px; margin-left: 20px; background-color: rgba(236, 240, 241, 0.39);">
-							
-						<!-- 	<div id="jstreeEnvs">
-				    		</div> -->
-				    		<div style="margin-bottom: 15px; padding-top:10px;">
+
+				    		<div style="margin-top: 5px; margin-left: 20px;">
 				    			Environment
 							    <a class="btn icon-btn btn-default" role="button"  data-placement="bottom" data-tt="tooltip" title="Create Environment" ng-click="new()">
 										<span class="glyphicon btn-glyphicon glyphicon-plus img-circle" ></span>					
 								</a>	
 						    </div>
+							<div style="border: 1px solid #e3e3e3; border-radius: 4px; padding: 10px; margin-top: 20px; margin-left: 20px; background-color: rgba(236, 240, 241, 0.39);">
+							
+						<!-- 	<div id="jstreeEnvs">
+				    		</div> -->
 
-				    		<table class="table table-condensed table-hover ">
-							  <!-- <thead>
-							    <tr>
-							      <th>#</th>
-							      <th>Column heading</th>
-							      <th>Column heading</th>
-							      <th>Column heading</th>
-							    </tr>
-							  </thead> -->
-							  <tbody>
-							  	{% verbatim %}
-							  	
-							    <tr ng-repeat="env in envs">
-							      <td ng-click="load_env(env.id_entorno)">
-							      	
-							      	<img  ng-src="{{env.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px" style="display:inline;">
-							      	</img>						      		
-								   	
-							      </td>
-							      <td  ng-click="load_env(env.id_entorno)">
-							      	<div style="color:#8c8c8c; font-size:10px; width: 100%; white-space: nowrap; 	overflow: hidden; text-overflow: ellipsis;">{{env.nombre}}
- 										</div>
-							      </td>
-							    </tr>
-							    {% endverbatim %}
-						  	  </tbody>
-							</table>
+
+					    		<table class="table table-condensed table-hover ">
+								  <!-- <thead>
+								    <tr>
+								      <th>#</th>
+								      <th>Column heading</th>
+								      <th>Column heading</th>
+								      <th>Column heading</th>
+								    </tr>
+								  </thead> -->
+								  <tbody>
+								  	{% verbatim %}
+								  	
+								    <tr ng-repeat="env in envs">
+								      <td ng-click="load_env(env.id_entorno)">
+								      	
+								      	<img  ng-src="{{env.icon.upload}}" onerror="this.onerror=null; this.src='/static/gencoui/img/rndr/noimage.jpg'" width="24px" height="24px" style="display:inline;">
+								      	</img>						      		
+									   	
+								      </td>
+								      <td  ng-click="load_env(env.id_entorno)">
+								      	<div style="color:#8c8c8c; font-size:10px; width: 100%; white-space: nowrap; 	overflow: hidden; text-overflow: ellipsis;">{{env.nombre}}
+	 										</div>
+								      </td>
+								    </tr>
+								    {% endverbatim %}
+							  	  </tbody>
+								</table>
 
 		    				<!-- <ul class="nav nav-tabs " role="tablist" >
 								{% verbatim %}
@@ -71,10 +73,10 @@
 								{% endverbatim %}	
 							</ul -->
 							
-						</div>	
+							</div>	
 						</div>
-						<div class="col-xs-12 col-sm-6" style="">
-							<div style="min-height:300px;padding-top: 15px; padding-right: 15px; overflow:auto;">
+						<div class="col-xs-12 col-sm-6" style="border-left: 1px solid #e3e3e3">
+							<div style="min-height:400px;padding-top: 15px; padding-right: 15px; overflow:auto;">
 
 								<div class="panel panel-default" style="border:none; background-color:transparent" ng-if="GencoEntorno.id_entorno!=null">
 						
@@ -88,7 +90,7 @@
 											<p style="font-size:12px; display:inline;" ng-bind="nombre"></p>
 										</div>
 										
-										<div class="dropdown" style="display:inline; float: right">
+<!-- 										<div class="dropdown" style="display:inline; float: right" hidden >
 										  <button class="btn btn-default dropdown-toggle btn-xs" type="button" id="dropEnvOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 										    Options
 										    <span class="caret"></span>
@@ -102,19 +104,9 @@
 										    	</a>
 										    </li>
 										    <li>
-										    	<a id="lnkToEditorFull" href="#" ng-click="goEditor()">
-										    		<img src="{% static 'gencoui/img/rndr/design_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline;">
-													</img>	
-													Templates
-										    	</a>
+										    	
 										    </li>
-										    <!-- <li >
-										    	<a id="lnkToBuildsFull" href="#" ng-click="chooseBuild()">						    	
-										    		<img src="{% static 'gencoui/img/rndr/build_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px" style="display:inline;">
-													</img>
-													Build
-												</a>
-											</li> -->
+
 										    <li role="separator" class="divider"></li>
 										    <li>
 										    	<a href="#" ng-click="remove()">
@@ -125,7 +117,7 @@
 										    </li>
 										  </ul>
 										</div>
-
+ -->
 
 																				
 										
@@ -149,6 +141,31 @@
 							                </tr>
 						            	</table>
 										
+										<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 10px;text-align:center"  >
+											<div class="btn-group" role="group">												
+											  	<button type="button" class="btn btn-default btn-xs" id="lnkToEditorFull" href="#" ng-click="goEditor()">
+										    		<!-- <img src="{% static 'gencoui/img/rndr/design_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="16px" height="16px" style="display:inline;">
+													</img>	 -->
+													Templates
+										    	</button>
+										    	<button type="button" class="btn btn-default btn-xs" ng-click="edit()">				
+											    	<!-- <img src="{% static 'gencoui/img/rndr/editenv_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="16px" height="16px" style="display:inline;"> -->
+													</img>
+													Edit
+										    	</button>
+											  	<button type="button" class="btn btn-default btn-xs" ng-click="remove()">
+										    		<!-- <img src="{% static 'gencoui/img/rndr/removeenv_shortcut.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="16px" height="16px" style="display:inline;">
+													</img> -->
+										    		Remove
+										    	</button>
+											</div>
+										</div>	
+
+
+												
+
+
+
 							  			<div style="padding: 10px; " >
 											<!-- <p style="display:inline;">Langs</p> -->
 											<p style="display:inline;width:50px">Langs</p>
@@ -175,7 +192,7 @@
 										  	  	</tbody>
 											</table>  -->
 
-											<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 20px;  background-color:rgba(236, 240, 241, 0.39);">
+											<div style="border: 1px solid #e3e3e3;border-radius: 4px;padding: 10px; margin-top: 20px; ">
 												<div  ng-repeat="lang in langs" style="display:inline">
 											      			{% verbatim %}
 											      			<!-- <div class="rndr-envcard"> -->
