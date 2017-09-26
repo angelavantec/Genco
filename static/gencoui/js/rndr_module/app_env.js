@@ -1,8 +1,8 @@
 var envApp = angular.module('app_env', ['ngResource','env.services','lang.services']);
 
 envApp.controller('ctrl_env', [
-    '$scope', 'env_lang', 'env', 'lang', 'icons', 'env_projects', 'projects', '$window',
-    function($scope, env_lang, env, lang, icons, env_projects, projects, $window) {
+    '$scope', 'env_lang', 'env', 'lang', 'icons', 'projects', '$window',
+    function($scope, env_lang, env, lang, icons, projects, $window) {
 
     $scope.langIconos =  icons.get({id:'env'});
     $scope.iconSelected;
@@ -209,7 +209,7 @@ envApp.controller('ctrl_env', [
 
 
     $scope.save_project = function(){
-        project = new projects(nombre: $scope.GencoProyectos.nombre, descripcion: $scope.GencoProyectos.descripcion})
+        project = new projects({nombre: $scope.GencoProyectos.nombre, descripcion: $scope.GencoProyectos.descripcion});
 
         project.$save(function(success){
             $scope.envProjects.push(success);

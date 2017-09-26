@@ -180,7 +180,8 @@ class GencoRepositorioSerializer(serializers.ModelSerializer):
     class Meta:        
         model = GencoRepositorio
         fields = ('id_repositorio', 'nombre', 'descripcion')
-        read_only_fields = ('id_repositorio', 'creado_por','fecha_creacion',)        
+        read_only_fields = ('id_repositorio', 'creado_por','fecha_creacion',) 
+        labels = {'id_repositorio':'ID','nombre': 'Namex','descripcion':'Description'}
 
 
 class GencoEntidadDefinicionRefSerializer(serializers.ModelSerializer):     

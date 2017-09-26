@@ -2155,3 +2155,43 @@ class BuildProject(APIView):
         # # return JsonResponse({'project':project})
         # return Response(serializer.data)
 
+
+from rest_framework.views import exception_handler
+
+def custom_exception_handler(exc, context):
+    # Call REST framework's default exception handler first,
+    # to get the standard error response.
+    response = exception_handler(exc, context)
+    view = context
+    print view
+    if response is not None:
+        # response.data = {}
+        errors = []
+        for field, value in response.data.items():
+            errors.append("{} : {}".format(field, " ".join(value)))
+            print field
+
+ 
+        response.data['errors'] = errors
+        response.data['status'] = False
+ 
+        response.data['exception'] = str(exc)
+ 
+    return response
+    # view = context['view']
+    # response = exception_handler(exc, context)
+    # fields = view.get_serialzer().get_fields()
+    # details = {}
+    # for k, v in response.data['detail'].items():
+    #     try:
+    #         field = fields[k]
+    #         label = getattr(field, 'label', '')
+    #         if label:
+    #             detail[label] = v
+    #         else:
+    #             detail[k] = v
+    #     except KeyError:
+    #         detail[k] = v
+
+    # response.data['detail'] = detail
+    # return response

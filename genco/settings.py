@@ -70,6 +70,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
         # 'rest_framework.permissions.AllowAny',
     ),
+    'EXCEPTION_HANDLER': 'gencoui.views.custom_exception_handler'
     # 'DEFAULT_RENDERER_CLASSES': (
     #     'rest_framework.renderers.JSONRenderer',
     # ),

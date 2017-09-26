@@ -188,8 +188,10 @@ class GencoElementoEntidadForm(ModelForm):
         genco_init(GencoElementoEntidadForm, self, *args, **kwargs)
 
 def genco_init(mpodelform, self, *args, **kwargs):
-	super(mpodelform, self).__init__(*args, **kwargs)
-	for field in self.fields:
-		self.fields[field].widget.attrs.update({'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})
-        # self.fields[field].required = True 
+    super(mpodelform, self).__init__(*args, **kwargs)
+    for field in self.fields:
+        if(self.fields[field].required):
+            self.fields[field].widget.attrs.update({'required': 'required', 'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})
+        else:
+            self.fields[field].widget.attrs.update({'class': 'form-control', 'ng-model': ''.join([self._meta.model.__name__ ,'.' ,field])})
 
