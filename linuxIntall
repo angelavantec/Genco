@@ -1,5 +1,5 @@
 django==1.7
-djangorestframework
+djangorestframework==3.3.3
 django-cors-headers
 django-widget-tweaks
 django-filter
