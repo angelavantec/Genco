@@ -11,4 +11,5 @@ cheetah
 #    sudo mysql_secure_installation
 #    sudo apt-get install libmysqlclient-dev
 #    sudo pip install mysql-python
+#    easy_install MYSQL-python
 #    mysql -u root -p
