@@ -283,6 +283,10 @@ angular.module('app_entities', ['ngResource','repository.services'])
   } 
 
   $scope.add_entity_ref = function(){
+      if($scope.GencoEntidadDefinicion.entidad_ref==undefined || $scope.GencoEntidadDefinicion.entidad_ref==null){
+        $scope.showMessage('Please, select a entity to link.');
+        return;
+      }
       showBusy();
       var ves_pk = 'false';
 
