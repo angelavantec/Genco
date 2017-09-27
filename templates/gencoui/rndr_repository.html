@@ -5,7 +5,6 @@
 
 {% block extrastyle %}
     <link rel="stylesheet" href="{% static 'gencoui/jstree/themes/default/style.min.css' %}" />
-	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style-dev.css' %}">
 	<link rel="stylesheet" href="{% static 'gencoui/css/rndr-style.css' %}">
 {% endblock %}
 
@@ -149,10 +148,11 @@
 					<!-- <img src="{% static 'gencoui/img/rndr/entity.svg' %}" onerror="this.onerror=null; this.src='{% static 'gencoui/img/rndr/noimage.jpg' %}'" width="32px" height="32px"> -->
 					 
 		    		{% verbatim %}
-		    		<h3>{{GencoEntidad.nombre}} </h3>		    		
+		    		<h3>{{entity_selected.nombre}} </h3>
+		    		<p style="color:#cccccc">{{entity_selected.descripcion}}</p>	    		
 				</div>	
-		    		<p>{{GencoEntidad.descripcion}}</p>
-		    		<div id="RepoDesc"></div>
+		    		
+		    		<div id="RepoDesc" style="color:#cccccc"></div>
 		    		{% endverbatim %}
 
 		    		<!-- {{form_entitie_definition}} -->

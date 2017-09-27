@@ -8,7 +8,7 @@ insert into admin_grupo_alcance(id_alcance,nombre, creado_por, fecha_creacion) v
 
 -- insert into genco_grupo(nombre, creado_por, fecha_creacion) values('default', 1, now());
 
-insert into genco_lenguajes(nombre, version, descripcion, id_icono, creado_por, fecha_creacion) values('genco', '1', 'genco', 1, 1, now());
+insert into genco_lenguajes(nombre, version, descripcion, id_icono, creado_por, fecha_creacion, id_ws, extension) values('genco', '1', 'genco', 1, 1, now(),0,'gen');
 
 insert into genco_tipodato(nombre, descripcion, id_lenguaje, creado_por, fecha_creacion) values('text', 'alfanumeric values', 1, 1, now());
 insert into genco_tipodato(nombre, descripcion, id_lenguaje, creado_por, fecha_creacion) values('number', 'number values', 1, 1, now());

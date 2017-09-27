@@ -144,23 +144,23 @@ class GencoEntornoViewSet(viewsets.ModelViewSet):
         get_list_or_404(GencoUsuarioGrupo, auth_user_id=self.request.user.id, id_grupo=idWS)
         env = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now(), id_ws=idWS) 
     
-        project = GencoProyectos.objects.create(
-        nombre='Default Project',
-        descripcion='Default Project',
-        id_entorno = env,
-        creado_por=self.request.user.id,
-        fecha_creacion=timezone.now(),
-        id_ws=idWS
-        )
-        dirRoot = GencoDirectorios.objects.create(
-        nombre='root',
-        descripcion='Root Folder',
-        id_proyecto=project,
-        creado_por=self.request.user.id,
-        fecha_creacion=timezone.now()
-        )
+        # project = GencoProyectos.objects.create(
+        # nombre='Default Project',
+        # descripcion='Default Project',
+        # #id_entorno = env,
+        # creado_por=self.request.user.id,
+        # fecha_creacion=timezone.now(),
+        # id_ws=idWS
+        # )
+        # dirRoot = GencoDirectorios.objects.create(
+        # nombre='root',
+        # descripcion='Root Folder',
+        # id_proyecto=project,
+        # creado_por=self.request.user.id,
+        # fecha_creacion=timezone.now()
+        # )
         setAccessAuth(idWS, ACCESS_TYPE_ENV, self.request.user.id, env.pk)
-        setAccessAuth(idWS, ACCESS_TYPE_PROJECT, self.request.user.id, project.pk)
+        # setAccessAuth(idWS, ACCESS_TYPE_PROJECT, self.request.user.id, project.pk)
 
     def perform_update(self, serializer):
         idWS=self.request.session.get('wskey', None)
@@ -587,7 +587,18 @@ class GencoEntidadViewSet(viewsets.ModelViewSet):
         return GencoEntidad.objects.filter(creado_por=self.request.user.id)
     
     def perform_create(self, serializer):
-        serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now()) 
+        entity = serializer.save(creado_por=self.request.user.id, fecha_creacion=timezone.now())
+        tipoPK = get_object_or_404(GencoTipodato.objects.filter(id_tipodato=GENCO_ENTITY_ID_TYPE_ID))
+        GencoEntidadDefinicion.objects.create(
+        id_entidad=entity,
+        nombre='ID',
+        id_tipodato=tipoPK,
+        es_pk='true',
+        obligatorio='true',
+        creado_por=self.request.user.id,
+        fecha_creacion=timezone.now()
+        )
+
 
     def perform_update(self, serializer):
         serializer.save(modificado_por=self.request.user.id, fecha_modificacion=timezone.now())          
@@ -1182,7 +1193,7 @@ class langs_tree_view(APIView):
     
     def get(self, request, id_lenguaje=None):
 
-        langs = GencoLenguajes.objects.filter(id_lenguaje=id_lenguaje, id_lenguaje__gt=1)
+        langs = GencoLenguajes.objects.filter(id_lenguaje=id_lenguaje, id_lenguaje__gt=GENCO_LANG_ID)
         tipodatos = GencoTipodato.objects.filter(id_lenguaje__id_lenguaje=id_lenguaje)
 
         dirs = []
@@ -1355,8 +1366,8 @@ def getDataTest(tipo, id_lenguaje):
     # cliente = type('Client', (object,), 
     #              {'surname':'render', 'firstname':'generic', 'email':'@gamial', 'direccion':direccion})()
     
-    types = GencoTipodato.objects.filter(id_lenguaje=1).order_by('id_tipodato')
-    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=1, id_tipodato_cnv__id_lenguaje=id_lenguaje)
+    types = GencoTipodato.objects.filter(id_lenguaje=GENCO_LANG_ID).order_by('id_tipodato')
+    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=GENCO_LANG_ID, id_tipodato_cnv__id_lenguaje=id_lenguaje)
     
     for i in typesCnv:
         try:
@@ -1497,7 +1508,7 @@ def getDataBuildTags(id_lenguaje, id_entidad):
     links = []
     dict = {}
 
-    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=1, id_tipodato_cnv__id_lenguaje=id_lenguaje)
+    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=GENCO_LANG_ID, id_tipodato_cnv__id_lenguaje=id_lenguaje)
     
     for cni in typesCnv:
         try:
@@ -1565,9 +1576,9 @@ class searchLangs(APIView):
         # except:
         #     keysearch=''
         if keysearch=='*':
-            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(id_lenguaje__gt=1).exclude(creado_por=request.user.id)
+            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(id_lenguaje__gt=GENCO_LANG_ID).exclude(creado_por=request.user.id)
         else:   
-            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__istartswith=keysearch, id_lenguaje__gt=1).exclude(creado_por=request.user.id)
+            langs = GencoLenguajes.objects.extra(tables=('auth_user',),where=('genco_lenguajes.creado_por=auth_user.id',),select={'user':'username'}).filter(nombre__istartswith=keysearch, id_lenguaje__gt=GENCO_LANG_ID).exclude(creado_por=request.user.id)
 
 
         paginator = Paginator(langs, npages)
@@ -1645,7 +1656,7 @@ class CloneLang(APIView):
         
         idWS=self.request.session.get('wskey', None)
         # get_list_or_404(GencoUsuarioGrupo, auth_user_id=request.user.id, id_grupo=idWS)
-        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=1)        
+        langs = GencoLenguajes.objects.filter(id_lenguaje__in=langsItr, id_lenguaje__gt=GENCO_LANG_ID)        
 
         for lang in langs:
             cloneIdlang = lang.id_lenguaje
@@ -1898,7 +1909,7 @@ class GencoDatatype(APIView):
 
     def get(self, request):
         
-        tipos = GencoTipodato.objects.filter(id_lenguaje=1)
+        tipos = GencoTipodato.objects.filter(id_lenguaje=GENCO_LANG_ID)
         serializer = GencoTipodatoSerializer(tipos, many=True)
 
         return Response(serializer.data)
@@ -1988,7 +1999,7 @@ class BuildProject(APIView):
                         #     tInner.entities = getDataBuildTags(plantilla.id_lenguaje, int(id))
                         #     print tmpl;
 
-                    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=1, id_tipodato_cnv__id_lenguaje=item.id_plantilla.id_lenguaje)
+                    typesCnv = GencoConversionTipodato.objects.filter(id_tipodato__id_lenguaje=GENCO_LANG_ID, id_tipodato_cnv__id_lenguaje=item.id_plantilla.id_lenguaje)
                     for cni in typesCnv:
                         try:
                             dictCnv[cni.id_tipodato.id_tipodato] = cni
@@ -2175,7 +2186,7 @@ def custom_exception_handler(exc, context):
         response.data['errors'] = errors
         response.data['status'] = False
  
-        response.data['exception'] = str(exc)
+        #response.data['exception'] = str(exc)
  
     return response
     # view = context['view']

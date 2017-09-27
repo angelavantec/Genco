@@ -4,18 +4,11 @@ envApp.controller('ctrl_env', [
     '$scope', 'env_lang', 'env', 'lang', 'icons', 'projects', '$window',
     function($scope, env_lang, env, lang, icons, projects, $window) {
 
-    $scope.langIconos =  icons.get({id:'env'});
+
+    
     $scope.iconSelected;
     $scope.langs = [];
-    $scope.envs=env.query(
-                    function(success){
-                        //if($scope.envs.length>0){
-                        //    $scope.selectedTab = 0;
-                        //    $scope.load_env($scope.envs[0].id_entorno);
-                        //}    
-                    },function(error){
-                        $scope.showMessage($scope.getDataError(error));  
-    });
+    
     $scope.GencoEntorno = new env();
     $scope.GencoProyectos = new projects();
     $scope.tmpGencoEntorno;
@@ -27,10 +20,11 @@ envApp.controller('ctrl_env', [
     $scope.ConfirmDeleteCallback = null;
     $scope.envProjects = null;
 
-    $scope.all_langs=lang.query();
+    
    
     $scope.load_env = function(id_env){
         
+        showBusy();
         var data = env.get({id:id_env});       
         
         data.$promise.then(function(data){
@@ -42,24 +36,16 @@ envApp.controller('ctrl_env', [
             $scope.tmpGencoEntorno =  $scope.GencoEntorno;
             $scope.langs=env_lang.get({id:id_env});
             $('#dropEnvOptions').attr('disabled', false);
-            
+            hideBusy();
 
             //$('#lnkToEditorFull').attr('href', 'module/editor/' + id_env);
                 //$('#lnkToBuildsFull').attr('href', 'module/builds/' + id_env);
 
+        }).catch(function(error) {        
+            $scope.showMessage(error); 
+            hideBusy();
         });
     } 
-
-    $scope.chooseBuild = function(){
-
-        projects.query(function(success){
-            $scope.envProjects = success;
-            //$('#choose-build-modal').modal('show');
-        }, function(error){
-            $scope.showMessage($scope.getDataError(error));
-        });
-
-    }
 
 
     $scope.goEditor = function(){
@@ -84,39 +70,46 @@ envApp.controller('ctrl_env', [
 
 
     $scope.save = function(){
+        showBusy();
         $scope.GencoEntorno.$save(function(success){   
             $scope.envs=env.query();
             $('#env-modal').modal('hide')
+           hideBusy();
         }, function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
+
         
     } 
 
     $scope.update = function(){
         
-
+        showBusy();
         $scope.GencoEntorno.$update(function(success){
             $scope.envs=env.query();         
             $scope.load_env($scope.GencoEntorno.id_entorno);       
             $('#env-modal').modal('hide')
+            hideBusy();
         }, function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
-        //$scope.envs=env.query();
-        
-        //$scope.load_env($scope.GencoEntorno.id_entorno);
+
     }
 
     $scope.delete = function(){
+        showBusy();
         $scope.GencoEntorno.$delete(function(success){   
             $scope.envs=env.query();
             $scope.descripcion = '';
             $scope.nombre = '';
             $scope.id_grupo = '';
             $scope.icono = '';
+            hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
         
     }
@@ -139,24 +132,6 @@ envApp.controller('ctrl_env', [
                     $('#id_nombre').focus();
         });
         
-        // $('#env-add-modal').on('shown.bs.modal', function () {
-        //   $('#id_nombre').focus();
-        // });
-
-        // new Promise(
-        //     function(resolve, reject) {
-        //         $('#env-add-modal').modal('show').on('shown', function() {
-        //             $('#id_nombre').focus();
-        //         });
-        //         console.log('resolve');
-        //         resolve('ok');
-        //         //setInterval(function(){ resolve('ok'); }, 1000);
-                
-        //     }
-        // ).then (function (resolve) {
-        //     console.log('focus ' + resolve );
-        //     $('#id_nombre').focus();
-        // });
     }
 
     $scope.edit = function(){
@@ -180,12 +155,13 @@ envApp.controller('ctrl_env', [
 
     $scope.all_lang_init = function(){
         //console.log($scope.all_langs.map(function(x){return false;}));
+        showBusy();
         $scope.lang_added=$scope.all_langs.map(
             function(x){
                 var resp = false;
                 angular.forEach($scope.langs, function(value, key){    
-                    console.log(value.id_lenguaje);
-                    console.log(x.id_lenguaje);
+                    //console.log(value.id_lenguaje);
+                    //console.log(x.id_lenguaje);
                     if(value.id_lenguaje==x.id_lenguaje){
                        resp = true; 
                        return;
@@ -194,7 +170,8 @@ envApp.controller('ctrl_env', [
                 });
                 return resp;
             });
-        console.log($scope.lang_added);
+        hideBusy();
+        //console.log($scope.lang_added);
         //console.log($scope.langs.find(findLang));
         //angular.forEach($scope.langs, function(value, key){    
         //        console.log(key + ' - ' + value);
@@ -210,13 +187,14 @@ envApp.controller('ctrl_env', [
 
     $scope.save_project = function(){
         project = new projects({nombre: $scope.GencoProyectos.nombre, descripcion: $scope.GencoProyectos.descripcion});
-
+        showBusy();
         project.$save(function(success){
             $scope.envProjects.push(success);
             $('#create-project-modal').modal('hide');
-
+            hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
 
     }
@@ -224,8 +202,8 @@ envApp.controller('ctrl_env', [
 
     $scope.save_add_lang = function(){
         
-        console.log($scope.lang_added);
-
+        //console.log($scope.lang_added);
+        showBusy();
         index = 0;
         //total = $scope.lang_added.length;
         proccess = [];
@@ -240,8 +218,8 @@ envApp.controller('ctrl_env', [
 
             angular.forEach($scope.langs, function(v, k){    
                     if(v.id_lenguaje==$scope.all_langs[key].id_lenguaje){
-                       console.log('encontrado'); 
-                       console.log($scope.langs[k]);
+                       //console.log('encontrado'); 
+                       //console.log($scope.langs[k]);
                        findFlag = parseInt($scope.langs[k].id_entornolenguaje);
 
                        return;
@@ -251,11 +229,11 @@ envApp.controller('ctrl_env', [
             if(value){
 
                 if(findFlag==0){
-                    console.log($scope.all_langs[key]);
+                    //console.log($scope.all_langs[key]);
                     //send_add_lang($scope.all_langs[key].id_lenguaje,'POST', index, total, $scope.GencoEntorno.id_entorno, $scope.load_env);
                     proccess.push(1);
                     conv = new env_lang({id_entorno: $scope.GencoEntorno.id_entorno, id_lenguaje: $scope.all_langs[key].id_lenguaje});
-                    console.log(conv);
+                    //console.log(conv);
                     conv.$save(
                         function(success){
                         //$scope.showMessage($scope.getDataError(error));
@@ -288,7 +266,8 @@ envApp.controller('ctrl_env', [
 
             index++;
 
-        })
+        });
+        
 
         
     }
@@ -300,9 +279,10 @@ envApp.controller('ctrl_env', [
         //setTimeout(function() { }, 5000);
 
         if(proccess.length<=0){
-            console.log('reload');
+            //console.log('reload');
             callback(id_env);
             $('#lang-add-modal').modal('hide');
+            hideBusy();
 
         }
 
@@ -310,7 +290,7 @@ envApp.controller('ctrl_env', [
 
     $scope.setEnvIcon = function (icon) {
         $scope.GencoEntorno.id_icono = icon.id_icono;
-        console.log(icon);
+        //console.log(icon);
         $('#imgEnvIconAdd').attr('src',icon.upload);
     }
 
@@ -356,9 +336,85 @@ envApp.controller('ctrl_env', [
        }
     }
 
-    $scope.chooseBuild();
 
-  }]);
+    /*...........................................................................*/
+    /*.................................GENERICS..................................*/
+    /*                               LOADING PAGE                                */
+    /*...........................................................................*/
+    showBusy();
+    var p = new Promise(function(resolve, reject) {
+    
+        $scope.langIconos =  icons.get({id:'env'}, function(success){
+                        resolve('Success!');
+                    },function(error){
+                        
+                        reject($scope.getDataError(error));
+                    });    
+    });
+
+    p.then(function(success) { 
+        /* icons loaded */
+    }).catch(function(error) {        
+        $scope.showMessage(error); 
+    });
+    
+    p = new Promise(function(resolve, reject) {
+    
+        $scope.envs=env.query(function(success){
+                        resolve('Success!');
+                    },function(error){
+                        
+                        reject($scope.getDataError(error));
+                    });    
+    });
+
+    p.then(function(success) { 
+        /* environments loaded */
+    }).catch(function(error) {        
+        $scope.showMessage(error); 
+    });    
+
+
+    p = new Promise(function(resolve, reject) {
+    
+        $scope.all_langs=lang.query(function(success){
+                        resolve('Success!');
+                    },function(error){
+                        
+                        reject($scope.getDataError(error));
+                    });    
+    });
+
+    p.then(function(success) { 
+        /* langs loaded */
+    }).catch(function(error) {        
+        $scope.showMessage(error); 
+    });
+
+
+    p = new Promise(function(resolve, reject) {
+    
+        $scope.envProjects = projects.query(function(success){
+                        resolve('Success!');
+                    },function(error){
+                        
+                        reject($scope.getDataError(error));
+                    });    
+    });
+
+    /*...........................................................................*/
+    /*  last promise must hide busy                                              */
+    /*...........................................................................*/
+    p.then(function(success) { 
+        /* projects loaded */
+        hideBusy();
+    }).catch(function(error) {        
+        $scope.showMessage(error); 
+        hideBusy();
+    });
+
+    
+}]);
 
 angular.module('app_env').config(['$httpProvider', function($httpProvider){
 

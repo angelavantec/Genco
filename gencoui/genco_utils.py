@@ -11,6 +11,8 @@ ACCESS_TYPE_LANG='LANG'
 ACCESS_TYPE_ENV='ENV'
 ACCESS_TYPE_REPO='REPO'
 ACCESS_TYPE_PROJECT='PROJECT'
+GENCO_LANG_ID=1
+GENCO_ENTITY_ID_TYPE_ID=2
 
 def getAccessFilters(id_grupo, id_tipo, user_id):
 	#id_grupo = id del workspace

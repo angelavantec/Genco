@@ -30,6 +30,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
   $scope.entity_selected = {
       id: null,
       nombre: null,
+      desripcion: null,
   };
 
   $scope.ConfirmDeleteCallback;
@@ -194,45 +195,57 @@ angular.module('app_entities', ['ngResource','repository.services'])
 
 
   $scope.load_repositories = function(){
+    showBusy();
     repo_tree.get({}, function(success){
                               
                             $('#jstree').jstree();
                             $('#jstree').jstree(true).settings.core.data = success.dirs;
                             $('#jstree').jstree(true).refresh();
-                                                        
+                            hideBusy();                            
                         },function(error){                        
                             $scope.showMessage($scope.getDataError(error));
+                            hideBusy();
                         });
   }
 
   $scope.load_entities = function(id_repositorio){
+      showBusy();
       entity_repo.query({id_repositorio:id_repositorio}, function(success){
           $scope.repoEntities = success;
+          hideBusy();
       },function(error){
         $scope.showMessage($scope.getDataError(error));
+        hideBusy();
       });
   }
 
 
    
   $scope.load_entity = function(id_entity){
+        showBusy();
         $scope.entity_selected.id = id_entity;
-
         $scope.GencoEntidadDefinicion = new entitydef();
         $scope.pk_fields = [];
         $scope.GencoEntidadDefinicion.id_entidad = id_entity;
-        var data = entity.get({id_entidad:id_entity});
-        $scope.GencoEntidad = data;
-        data.$promise.then(function(data){
-            
-            entitydef.query({id_entidad:id_entity}, function(success){
-                // proccess.pop();
+
+        var data = entity.get({id_entidad:id_entity},function(success){
+          $scope.GencoEntidad = data;
+          $scope.entity_selected.nombre=data.nombre;
+          $scope.entity_selected.descripcion=data.descripcion;
+
+          entitydef.query({id_entidad:id_entity}, function(success){                
                 $scope.GencoEntidadFields =success;
+                hideBusy();
             },function(error){
                 $scope.showMessage($scope.getDataError(error));
+                hideBusy();
             });
-
-        });
+          
+        }          
+        ,function(error){
+          $scope.showMessage($scope.getDataError(error));
+          hideBusy();
+        });        
 
   } 
 
@@ -245,7 +258,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
 
 
   $scope.add_field = function(){
-     
+      showBusy();
       $scope.GencoEntidadDefinicion.id_entidad = $scope.entity_selected.id;
 
       console.log($scope.GencoEntidadDefinicion);
@@ -258,20 +271,19 @@ angular.module('app_entities', ['ngResource','repository.services'])
         $scope.GencoEntidadDefinicion.obligatorio = $scope.GencoEntidadDefinicion.obligatorio.toString();
       }      
 
-      $scope.GencoEntidadDefinicion.$save(function(success){   
-          // $scope.envs=env.query();    
-          //$scope.load_repositories();
+      $scope.GencoEntidadDefinicion.$save(function(success){             
           $scope.load_entity($scope.entity_selected.id);
           $scope.GencoEntidadDefinicion = new entitydef(); 
-          //$('#repository-add-modal').modal('hide')
+          hideBusy();
       }, function(error){
           $scope.showMessage($scope.getDataError(error));
+          hideBusy();
       });
       
   } 
 
   $scope.add_entity_ref = function(){
-
+      showBusy();
       var ves_pk = 'false';
 
       if($scope.GencoEntidadDefinicion.es_pk!=undefined)
@@ -284,8 +296,10 @@ angular.module('app_entities', ['ngResource','repository.services'])
           function(success){
             $scope.load_entity($scope.entity_selected.id);
             $scope.GencoEntidadDefinicion = new entitydef(); 
+            hideBusy();
           },function(error){
             $scope.showMessage($scope.getDataError(error)); 
+            hideBusy();
       });
       
   } 
@@ -310,7 +324,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
     } 
 
     $scope.save_repository = function(){
-
+        showBusy();
         $scope.GencoRepositorio.$save(function(success){   
           console.log(success);
           var nodeDef = {'id': success.id_repositorio, 
@@ -323,45 +337,51 @@ angular.module('app_entities', ['ngResource','repository.services'])
                                   }
                       }
 
-          $scope.addTreeNode($('#jstree').jstree(true).get_node('#'), nodeDef, $('#jstree').jstree(true));
+          $scope.addTreeNode($('#jstree').jstree(true).get_node('#'), nodeDef, $('#jstree').jstree(true));          
           $('#repository-modal').modal('hide');
+          hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
         
     } 
 
     $scope.delete_repository = function(node){
-
+        showBusy();
         repository.delete({id_repositorio: $scope.repository_selected.id},function(success){          
             $('#jstree').jstree(true).delete_node(node); 
+            hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
 
     } 
 
 
     $scope.update_repository = function(){
-
+        showBusy();
         $scope.GencoRepositorio.$update(function(success){
-          $scope.renameTreeNode($scope.node_selected, success.nombre);
-        //$scope.load_repositories();   
+          $scope.renameTreeNode($scope.node_selected, success.nombre);        
           $('#repository-modal').modal('hide');
+          hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
         
     } 
 
     $scope.load_repository = function(id_repositorio){
+        showBusy();
         $scope.wdnMode = 2;
-        var data = repository.get({id_repositorio:id_repositorio},function(success){
-            //$scope.load_repositories();   
-            //$('#repository-modal').modal('hide');
+        var data = repository.get({id_repositorio:id_repositorio},function(success){            
             $scope.GencoRepositorio = success;
+            hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
         
     }
@@ -378,11 +398,14 @@ angular.module('app_entities', ['ngResource','repository.services'])
     }
 
     $scope.edit_entity = function(id_entity){
+        showBusy();
         $scope.wdnMode = 2;
         entity.get({id_entidad:id_entity}, function(success){
             $scope.GencoEntidad = success;
+            hideBusy();
         }, function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
         $('#entity-modal').modal('show').on('shown.bs.modal', function() {
             $('#entity-modal #id_nombre').focus();
@@ -401,19 +424,23 @@ angular.module('app_entities', ['ngResource','repository.services'])
     } 
 
     $scope.update_entity = function(){
-
+        showBusy();
         $scope.GencoEntidad.$update(function(success){
           $scope.renameTreeNode($scope.node_selected, success.nombre);
-          //$scope.load_repositories();   
+          //$scope.load_repositories();
+          $scope.entity_selected.nombre=success.nombre;
+          $scope.entity_selected.descripcion=success.descripcion;
           $('#entity-modal').modal('hide');
+          hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
         
     } 
 
     $scope.save_entity = function(){
-
+        showBusy();
         $scope.GencoEntidad.$save(function(success){
             console.log(success);
             var nodeDef = {'id': 'entity' + success.id_entidad, 
@@ -427,30 +454,40 @@ angular.module('app_entities', ['ngResource','repository.services'])
                         }
             $scope.addTreeNode($scope.repository_selected, nodeDef, $('#jstree').jstree(true));
             $scope.load_entities($scope.repo_selected.id);
+            $scope.entity_selected.id = success.id_entidad;
+            $scope.load_entity($scope.entity_selected.id);
+            $("#RepoDesc").html('Repository: ' + $scope.repo_selected.text);
+            hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         }); 
 
         $('#entity-modal').modal('hide')
     }
 
     $scope.delete_entity = function(node){
-
+        showBusy();
         entity.delete({id_entidad: $scope.entity_selected.id},function(success){
             $('#jstree').jstree(true).delete_node(node); 
+            hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
         
     } 
 
 
     $scope.get_pk_fields = function() {
+        showBusy();
         var id_entity = $scope.GencoEntidadDefinicion.entidad_ref;
         entitydef.query({id_entidad:id_entity}, function(success){
             $scope.pk_fields =success;
+            hideBusy();
         },function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
     };
 
@@ -463,24 +500,25 @@ angular.module('app_entities', ['ngResource','repository.services'])
     }
 
     $scope.delete_field=function(fieldDefinition){
+      showBusy();
       var pos;
 
       entitydef.delete({id: $scope.field_selected.id_entidaddef},function(success){
         pos = $scope.GencoEntidadFields.map(function(x) {return x.id_entidaddef}).indexOf($scope.field_selected.id_entidaddef);
-        console.log($scope.GencoEntidadFields);
+        //console.log($scope.GencoEntidadFields);
         if(pos>=0){
             $scope.GencoEntidadFields.splice(pos, 1);
-            console.log($scope.GencoEntidadFields);
+            //console.log($scope.GencoEntidadFields);
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
 
         }
-
-        //$('#field-delete-modal').modal('hide');
+        hideBusy();
 
       },function(error){
           $scope.showMessage($scope.getDataError(error));
+          hideBusy();
       });
     }
 
@@ -505,7 +543,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
     }
 
     $scope.update_field = function(){
-
+      showBusy();
       if ($("#edit_es_pk").prop('checked')){
         $scope.GencoEntidadDefinicionEdit.es_pk = 'True';
       }else{
@@ -521,8 +559,10 @@ angular.module('app_entities', ['ngResource','repository.services'])
         
       $scope.GencoEntidadDefinicionEdit.$update({id:$scope.GencoEntidadDefinicionEdit.id_entidaddef},function(success){
         $('#field-edit-modal').modal('hide');
+        hideBusy();
       }, function(error){
         $scope.showMessage($scope.getDataError(error));
+        hideBusy();
       });
         
     } 
@@ -540,29 +580,33 @@ angular.module('app_entities', ['ngResource','repository.services'])
     Cloning repository 
     */
     $scope.searchRepos =  function(pagenum){
+        
         var searchKey = $('#findRepoKey').val();
-        console.log(searchKey);
+        //console.log(searchKey);
 
         if(searchKey.trim().length==0 || searchKey.trim()=='' || searchKey==undefined || searchKey==null){
-            $scope.showMessage('Invalid text for search');
+            $scope.showMessage('Invalid text for search');            
             return;
         }
 
+        showBusy();
         // var sl = new searchLangs({keysearch: searchKey, page:1})
         // console.log(sl);
         searchRepo.get({keysearch: searchKey, page:pagenum}, function(success){
             console.log(success.repos);
             $scope.setChecktoSearchRepos(success.langs);          
             $scope.pageFoundRepos = success;
-            //console.log('expand');
+            hideBusy();
             
         }, function(error){
             $scope.showMessage($scope.getDataError(error));
+            hideBusy();
         });
     }
 
 
     $scope.addToCloneRepos = function(index){
+        showBusy();
         var pos=0;
 
         pos = $scope.reposToClone.map(function(x) {return x.id_repositorio}).indexOf($scope.pageFoundRepos.repos[index].id_repositorio);
@@ -574,13 +618,14 @@ angular.module('app_entities', ['ngResource','repository.services'])
             $scope.reposToClone.push($scope.pageFoundRepos.repos[index]);
         } 
 
-
-        console.log($scope.reposToClone);
+        showBusy();
+        //console.log($scope.reposToClone);
          
     }
 
 
     $scope.setChecktoSearchRepos = function(repos){
+        showBusy();
         var pos=0;
 
         angular.forEach($scope.reposToClone, function(value, key){
@@ -595,7 +640,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
             // }  
         
         });
-
+        hideBusy();
         return repos;
   
          
@@ -603,7 +648,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
 
 
     $scope.save_clone_repo = function(){
-
+        
         if($scope.reposToClone.length<=0){
             $scope.showMessage('Please select a Lanaguage for clone');
             return;
@@ -611,7 +656,7 @@ angular.module('app_entities', ['ngResource','repository.services'])
 
         var cloneRepos = '[' + $scope.reposToClone.map(function(x) {return x.id_repositorio}).toString() + ']'
         
-
+        showBusy();
         clone = new cloneRepo({repos: cloneRepos});
         clone.$save(function(success){
             console.log(success);
@@ -620,8 +665,10 @@ angular.module('app_entities', ['ngResource','repository.services'])
             $scope.load_repositories();
             // $scope.getLangTree();
             $('#repo-clone-modal').modal('hide')
+            showBusy();
         }, function(error){
             $scope.showMessage($scope.getDataError(error));
+            showBusy();
         });
          
     }
@@ -631,8 +678,8 @@ angular.module('app_entities', ['ngResource','repository.services'])
             manipular el arbol.
     */
 
-    $scope.renameTreeNode = function(node, newText){
-        $('#jstree').jstree('set_text', node, newText); 
+    $scope.renameTreeNode = function(node, newText){        
+        $('#jstree').jstree('set_text', node, newText);         
     }
 
     $scope.addTreeNode = function(node, newNode, jsTree){

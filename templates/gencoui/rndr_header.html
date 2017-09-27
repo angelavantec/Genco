@@ -97,21 +97,21 @@
                     <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center" >
                             <a href="/gencoui">
-                                <img src="{% static 'gencoui/img/rndr/environment.svg' %}" width="48px"></div>
+                                <img src="{% static 'gencoui/img/rndr/environment.svg' %}" width="32px"></div>
                             </a>
                         </div>
                     </td>
                     <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center">
                             <a href="{% url 'gencoui:module' 'langs' %}">
-                                <img src="{% static 'gencoui/img/rndr/langs.svg' %}" width="48px"></div>
+                                <img src="{% static 'gencoui/img/rndr/langs.svg' %}" width="32px"></div>
                             </a>
                         </div>
                     </td>
                     <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center">
                             <a href="{% url 'gencoui:module' 'entities' %}">
-                                <img src="{% static 'gencoui/img/rndr/repository.svg' %}" width="48px"></div>
+                                <img src="{% static 'gencoui/img/rndr/repository.svg' %}" width="32px"></div>
                             </a>
                         </div>
                     </td>
@@ -131,7 +131,7 @@
                     </td>
                     <td width="60px" height="60px" onmouseover="this.style.background='#EBF4EB';" onmouseout="this.style.background='white';" style="border: 2px solid #eee;">
                         <div style="text-align:center" >
-                            <a class="btn btn-default btn-sm" role="button" data-placement="bottom" data-tt="tooltip" title="Close Session" href="/login/logout" style="width:64px">
+                            <a class="btn btn-default btn-xs" role="button" data-placement="bottom" data-tt="tooltip" title="Close Session" href="/login/logout" style="width:32px">
                                 <span style="display:inline;" class="glyphicon glyphicon-off"></span>
                             </a>
                         </div>                        
@@ -143,4 +143,9 @@
 
         </div>
     </div>
+</div>
+
+    
+<div id="BusyOverlay" tabindex="-1" >
+        <div id="loader"></div> 
 </div>

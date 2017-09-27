@@ -95,7 +95,9 @@ class GencoPlantillasForm(ModelForm):
 class GencoEntidadForm(ModelForm):
     class Meta:
         model = GencoEntidad
-        exclude = ['id_entidad', 'id_repositorio','url_repositorio','archivo_origen', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        fields = ['nombre','descripcion']
+        labels = {'nombre':'Name','descripcion':'Description'}
+        #exclude = ['id_entidad', 'id_repositorio','url_repositorio','archivo_origen', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
 
     def __init__(self, *args, **kwargs):    
         genco_init(GencoEntidadForm, self, *args, **kwargs)
@@ -108,7 +110,7 @@ class GencoEntidadDefinicionForm(ModelForm):
 
     class Meta:
         model = GencoEntidadDefinicion
-        exclude = ['id_entidad','url_repositorio','archivo_origen', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        exclude = ['id_entidad','creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
 
     def __init__(self, *args, **kwargs):    
         super(GencoEntidadDefinicionForm, self).__init__(*args, **kwargs)
@@ -131,7 +133,7 @@ class GencoEntidadDefinicionFormEdit(ModelForm):
 
     class Meta:
         model = GencoEntidadDefinicion
-        exclude = ['id_entidad','url_repositorio','archivo_origen', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
+        exclude = ['id_entidad', 'creado_por', 'fecha_creacion', 'modificado_por', 'fecha_modificacion']
 
     def __init__(self, *args, **kwargs):    
         super(GencoEntidadDefinicionFormEdit, self).__init__(*args, **kwargs)
